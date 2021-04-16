@@ -26,18 +26,17 @@ package org.jasig.cas.monitor;
  */
 public interface Monitor<S extends Status> {
 
-    /**
-     * Gets the name of the monitor.
-     *
-     * @return Monitor name.
-     */
-    String getName();
+	/**
+	 * Gets the name of the monitor.
+	 *
+	 * @return Monitor name.
+	 */
+	String getName();
 
-
-    /**
-     * Observes the monitored resource and reports the status.
-     *
-     * @return Status of monitored resource.
-     */
-    S observe();
+	/**
+	 * Observes the monitored resource and reports the status.
+	 *
+	 * @return Status of monitored resource.
+	 */
+	S observe();
 }

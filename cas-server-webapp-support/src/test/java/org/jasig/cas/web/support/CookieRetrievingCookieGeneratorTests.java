@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.web.support;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import javax.servlet.http.Cookie;
 
@@ -36,51 +36,51 @@ import org.springframework.mock.web.MockHttpServletResponse;
  */
 public final class CookieRetrievingCookieGeneratorTests {
 
-    private CookieRetrievingCookieGenerator g;
+	private CookieRetrievingCookieGenerator g;
 
-    @Before
-    public void setUp() throws Exception {
-        this.g = new CookieRetrievingCookieGenerator();
-        this.g.setRememberMeMaxAge(100);
-        this.g.setCookieDomain("cas.org");
-        this.g.setCookieMaxAge(5);
-        this.g.setCookiePath("/");
-        this.g.setCookieName("test");
-    }
+	@Before
+	public void setUp() throws Exception {
+		this.g = new CookieRetrievingCookieGenerator();
+		this.g.setRememberMeMaxAge(100);
+		this.g.setCookieDomain("cas.org");
+		this.g.setCookieMaxAge(5);
+		this.g.setCookiePath("/");
+		this.g.setCookieName("test");
+	}
 
-    @Test
-    public void testCookieAddWithRememberMe() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "true");
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+	@Test
+	public void testCookieAddWithRememberMe() {
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		request.addParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "true");
+		final MockHttpServletResponse response = new MockHttpServletResponse();
 
-        this.g.addCookie(request, response, "test");
+		this.g.addCookie(request, response, "test");
 
-        final Cookie c = response.getCookie("test");
-        assertEquals(100, c.getMaxAge());
-        assertEquals("test", c.getValue());
-    }
+		final Cookie c = response.getCookie("test");
+		assertEquals(100, c.getMaxAge());
+		assertEquals("test", c.getValue());
+	}
 
-    @Test
-    public void testCookieAddWithoutRememberMe() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+	@Test
+	public void testCookieAddWithoutRememberMe() {
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		final MockHttpServletResponse response = new MockHttpServletResponse();
 
-        this.g.addCookie(request, response, "test");
+		this.g.addCookie(request, response, "test");
 
-        final Cookie c = response.getCookie("test");
-        assertEquals(5, c.getMaxAge());
-        assertEquals("test", c.getValue());
-    }
+		final Cookie c = response.getCookie("test");
+		assertEquals(5, c.getMaxAge());
+		assertEquals("test", c.getValue());
+	}
 
-    @Test
-    public void testCookieRetrieve() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final Cookie cookie = new Cookie("test", "test");
-        cookie.setDomain("cas.org");
-        cookie.setMaxAge(5);
-        request.setCookies(new Cookie[] {cookie});
+	@Test
+	public void testCookieRetrieve() {
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		final Cookie cookie = new Cookie("test", "test");
+		cookie.setDomain("cas.org");
+		cookie.setMaxAge(5);
+		request.setCookies(new Cookie[] { cookie });
 
-        assertEquals("test", this.g.retrieveCookieValue(request));
-    }
+		assertEquals("test", this.g.retrieveCookieValue(request));
+	}
 }

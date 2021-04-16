@@ -19,10 +19,10 @@
 
 package org.jasig.cas.audit.spi;
 
-import com.github.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.util.AopUtils;
 
+import com.github.inspektr.audit.spi.AuditResourceResolver;
 
 /**
  * Resolves a service id to the service.
@@ -34,23 +34,23 @@ import org.jasig.cas.util.AopUtils;
  */
 public final class ServiceManagementResourceResolver implements AuditResourceResolver {
 
-    public String[] resolveFrom(final JoinPoint target, final Object returnValue) {
-        return findService(target);
-    }
+	public String[] resolveFrom(final JoinPoint target, final Object returnValue) {
+		return findService(target);
+	}
 
-    public String[] resolveFrom(final JoinPoint target, final Exception exception) {
-        return findService(target);
-    }
+	public String[] resolveFrom(final JoinPoint target, final Exception exception) {
+		return findService(target);
+	}
 
-    private String[] findService(final JoinPoint joinPoint) {
-        final JoinPoint j = AopUtils.unWrapJoinPoint(joinPoint);
+	private String[] findService(final JoinPoint joinPoint) {
+		final JoinPoint j = AopUtils.unWrapJoinPoint(joinPoint);
 
-        final Long id = (Long) j.getArgs()[0];
+		final Long id = (Long) j.getArgs()[0];
 
-        if (id == null) {
-            return new String[] {""};
-        }
+		if (id == null) {
+			return new String[] { "" };
+		}
 
-        return new String[] {"id=" + id};
-    }
+		return new String[] { "id=" + id };
+	}
 }

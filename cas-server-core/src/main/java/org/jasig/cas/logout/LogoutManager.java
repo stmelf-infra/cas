@@ -30,19 +30,21 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  */
 public interface LogoutManager {
 
-    /**
-     * Perform a back channel logout for a given ticket granting ticket and returns all the logout requests.
-     *
-     * @param ticket a given ticket granting ticket.
-     * @return all logout requests.
-     */
-    List<LogoutRequest> performLogout(TicketGrantingTicket ticket);
+	/**
+	 * Perform a back channel logout for a given ticket granting ticket and returns all the logout requests.
+	 *
+	 * @param ticket
+	 *            a given ticket granting ticket.
+	 * @return all logout requests.
+	 */
+	List<LogoutRequest> performLogout(TicketGrantingTicket ticket);
 
-    /**
-     * Create a logout message for front channel logout.
-     *
-     * @param logoutRequest the logout request.
-     * @return a front SAML logout message.
-     */
-    String createFrontChannelLogoutMessage(LogoutRequest logoutRequest);
+	/**
+	 * Create a logout message for front channel logout.
+	 *
+	 * @param logoutRequest
+	 *            the logout request.
+	 * @return a front SAML logout message.
+	 */
+	String createFrontChannelLogoutMessage(LogoutRequest logoutRequest);
 }

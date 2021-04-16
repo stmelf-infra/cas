@@ -18,58 +18,58 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import static org.junit.Assert.assertNotNull;
+
 import javax.security.auth.login.LoginException;
 
 import org.jasig.cas.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.*;
-
 public class JaasAuthenticationHandlerTests {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private JaasAuthenticationHandler handler;
+	private JaasAuthenticationHandler handler;
 
-    @Before
-    public void setUp() throws Exception {
-        String pathPrefix = System.getProperty("user.dir");
-        pathPrefix = !pathPrefix.contains("cas-server-core") ? pathPrefix
-            + "/cas-server-core" : pathPrefix;
-        logger.info("PATH PREFIX: {}", pathPrefix);
+	@Before
+	public void setUp() throws Exception {
+		String pathPrefix = System.getProperty("user.dir");
+		pathPrefix = !pathPrefix.contains("cas-server-core") ? pathPrefix
+				+ "/cas-server-core" : pathPrefix;
+		logger.info("PATH PREFIX: {}", pathPrefix);
 
-        final String pathToConfig = pathPrefix
-            + "/src/test/resources/org/jasig/cas/authentication/handler/support/jaas.conf";
-        System.setProperty("java.security.auth.login.config", "="+pathToConfig);
-        this.handler = new JaasAuthenticationHandler();
-    }
+		final String pathToConfig = pathPrefix
+				+ "/src/test/resources/org/jasig/cas/authentication/handler/support/jaas.conf";
+		System.setProperty("java.security.auth.login.config", "=" + pathToConfig);
+		this.handler = new JaasAuthenticationHandler();
+	}
 
-    @Test(expected = LoginException.class)
-    public void testWithAlternativeRealm() throws Exception {
+	@Test(expected = LoginException.class)
+	public void testWithAlternativeRealm() throws Exception {
 
-        this.handler.setRealm("TEST");
-        this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
-    }
+		this.handler.setRealm("TEST");
+		this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
+	}
 
-    @Test
-    public void testWithAlternativeRealmAndValidCredentials() throws Exception {
-        this.handler.setRealm("TEST");
-        assertNotNull(this.handler.authenticate(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test")));
-    }
+	@Test
+	public void testWithAlternativeRealmAndValidCredentials() throws Exception {
+		this.handler.setRealm("TEST");
+		assertNotNull(
+				this.handler.authenticate(
+						TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test")));
+	}
 
-    @Test
-    public void testWithValidCredenials() throws Exception {
-        assertNotNull(this.handler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword()));
-    }
+	@Test
+	public void testWithValidCredenials() throws Exception {
+		assertNotNull(this.handler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword()));
+	}
 
-    @Test(expected = LoginException.class)
-    public void testWithInvalidCredentials() throws Exception {
-        this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
-    }
+	@Test(expected = LoginException.class)
+	public void testWithInvalidCredentials() throws Exception {
+		this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
+	}
 
 }

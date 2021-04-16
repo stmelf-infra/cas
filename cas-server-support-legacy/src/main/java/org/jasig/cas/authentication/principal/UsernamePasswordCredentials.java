@@ -22,88 +22,90 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * UsernamePasswordCredentials respresents the username and password that a user
- * may provide in order to prove the authenticity of who they say they are.
+ * UsernamePasswordCredentials respresents the username and password that a user may provide in order to prove the
+ * authenticity of who they say they are.
  *
  * @author Scott Battaglia
  * @since 3.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
+ *        <p>
+ *        This is a published and supported CAS Server 3 API.
+ *        </p>
  */
 public class UsernamePasswordCredentials implements Credentials {
 
-    /** Unique ID for serialization. */
-    private static final long serialVersionUID = -8343864967200862794L;
+	/** Unique ID for serialization. */
+	private static final long serialVersionUID = -8343864967200862794L;
 
-    /** The username. */
-    @NotNull
-    @Size(min=1, message = "required.username")
-    private String username;
+	/** The username. */
+	@NotNull
+	@Size(min = 1, message = "required.username")
+	private String username;
 
-    /** The password. */
-    @NotNull
-    @Size(min=1, message = "required.password")
-    private String password;
+	/** The password. */
+	@NotNull
+	@Size(min = 1, message = "required.password")
+	private String password;
 
-    /**
-     * @return Returns the password.
-     */
-    public final String getPassword() {
-        return this.password;
-    }
+	/**
+	 * @return Returns the password.
+	 */
+	public final String getPassword() {
+		return this.password;
+	}
 
-    /**
-     * @param password The password to set.
-     */
-    public final void setPassword(final String password) {
-        this.password = password;
-    }
+	/**
+	 * @param password
+	 *            The password to set.
+	 */
+	public final void setPassword(final String password) {
+		this.password = password;
+	}
 
-    /**
-     * @return Returns the userName.
-     */
-    public final String getUsername() {
-        return this.username;
-    }
+	/**
+	 * @return Returns the userName.
+	 */
+	public final String getUsername() {
+		return this.username;
+	}
 
-    /**
-     * @param userName The userName to set.
-     */
-    public final void setUsername(final String userName) {
-        this.username = userName;
-    }
+	/**
+	 * @param userName
+	 *            The userName to set.
+	 */
+	public final void setUsername(final String userName) {
+		this.username = userName;
+	}
 
-    public String toString() {
-        return "[username: " + this.username + "]";
-    }
+	public String toString() {
+		return "[username: " + this.username + "]";
+	}
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
 
-        UsernamePasswordCredentials that = (UsernamePasswordCredentials) o;
+		UsernamePasswordCredentials that = (UsernamePasswordCredentials) o;
 
-        if (password != null ? !password.equals(that.password) : that.password != null) {
-            return false;
-        }
+		if (password != null ? !password.equals(that.password) : that.password != null) {
+			return false;
+		}
 
-        if (username != null ? !username.equals(that.username) : that.username != null) {
-            return false;
-        }
+		if (username != null ? !username.equals(that.username) : that.username != null) {
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result = username != null ? username.hashCode() : 0;
+		result = 31 * result + (password != null ? password.hashCode() : 0);
+		return result;
+	}
 }

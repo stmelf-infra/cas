@@ -19,8 +19,9 @@
 
 package org.jasig.cas.monitor;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link AbstractCacheMonitor}.
@@ -29,49 +30,48 @@ import static org.junit.Assert.*;
  * @since 3.5.1
  */
 public class AbstractCacheMonitorTests {
-    @Test
-    public void testObserveOk() throws Exception {
-        final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
-            protected SimpleCacheStatistics[] getStatistics() {
-                return statsArray(new SimpleCacheStatistics(100, 200, 0));
-            }
-        };
-        assertEquals(StatusCode.OK, monitor.observe().getCode());
-    }
+	@Test
+	public void testObserveOk() throws Exception {
+		final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
+			protected SimpleCacheStatistics[] getStatistics() {
+				return statsArray(new SimpleCacheStatistics(100, 200, 0));
+			}
+		};
+		assertEquals(StatusCode.OK, monitor.observe().getCode());
+	}
 
-    @Test
-    public void testObserveWarn() throws Exception {
-        final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
-            protected SimpleCacheStatistics[] getStatistics() {
-                return statsArray(new SimpleCacheStatistics(199, 200, 0));
-            }
-        };
-        assertEquals(StatusCode.WARN, monitor.observe().getCode());
-    }
+	@Test
+	public void testObserveWarn() throws Exception {
+		final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
+			protected SimpleCacheStatistics[] getStatistics() {
+				return statsArray(new SimpleCacheStatistics(199, 200, 0));
+			}
+		};
+		assertEquals(StatusCode.WARN, monitor.observe().getCode());
+	}
 
-    @Test
-    public void testObserveError() throws Exception {
-        final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
-            protected SimpleCacheStatistics[] getStatistics() {
-                return statsArray(new SimpleCacheStatistics(100, 200, 1));
-            }
-        };
-        assertEquals(StatusCode.WARN, monitor.observe().getCode());
-    }
+	@Test
+	public void testObserveError() throws Exception {
+		final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
+			protected SimpleCacheStatistics[] getStatistics() {
+				return statsArray(new SimpleCacheStatistics(100, 200, 1));
+			}
+		};
+		assertEquals(StatusCode.WARN, monitor.observe().getCode());
+	}
 
+	@Test
+	public void testObserveError2() throws Exception {
+		// When cache has exceeded both thresholds, should report ERROR status
+		final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
+			protected SimpleCacheStatistics[] getStatistics() {
+				return statsArray(new SimpleCacheStatistics(199, 200, 1));
+			}
+		};
+		assertEquals(StatusCode.WARN, monitor.observe().getCode());
+	}
 
-    @Test
-    public void testObserveError2() throws Exception {
-        // When cache has exceeded both thresholds, should report ERROR status
-        final AbstractCacheMonitor monitor = new AbstractCacheMonitor() {
-            protected SimpleCacheStatistics[] getStatistics() {
-                return statsArray(new SimpleCacheStatistics(199, 200, 1));
-            }
-        };
-        assertEquals(StatusCode.WARN, monitor.observe().getCode());
-    }
-
-    protected static SimpleCacheStatistics[] statsArray(final SimpleCacheStatistics... statistics) {
-        return statistics;
-    }
+	protected static SimpleCacheStatistics[] statsArray(final SimpleCacheStatistics... statistics) {
+		return statistics;
+	}
 }

@@ -30,13 +30,13 @@ import org.jasig.cas.authentication.Credential;
  */
 public class BasicPrincipalResolver implements PrincipalResolver {
 
-    @Override
-    public Principal resolve(final Credential credential) {
-        return new SimplePrincipal(credential.getId());
-    }
+	@Override
+	public Principal resolve(final Credential credential) {
+		return new SimplePrincipal(credential.getId());
+	}
 
-    @Override
-    public boolean supports(final Credential credential) {
-        return credential.getId() != null;
-    }
+	@Override
+	public boolean supports(final Credential credential) {
+		return credential.getId() != null;
+	}
 }

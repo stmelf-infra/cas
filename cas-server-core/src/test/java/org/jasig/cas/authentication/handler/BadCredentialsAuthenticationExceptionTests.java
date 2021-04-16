@@ -18,10 +18,9 @@
  */
 package org.jasig.cas.authentication.handler;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
 
 /**
  * @author Scott Battaglia
@@ -29,39 +28,39 @@ import org.junit.Test;
  */
 public final class BadCredentialsAuthenticationExceptionTests {
 
-    private static final String CODE = "error.authentication.credentials.bad";
+	private static final String CODE = "error.authentication.credentials.bad";
 
-    @Test
-    public void testGetCode() {
-        AuthenticationException e = new BadCredentialsAuthenticationException();
-        assertEquals(CODE, e.getCode());
-        assertEquals(CODE, e.toString());
-    }
+	@Test
+	public void testGetCode() {
+		AuthenticationException e = new BadCredentialsAuthenticationException();
+		assertEquals(CODE, e.getCode());
+		assertEquals(CODE, e.toString());
+	}
 
-    @Test
-    public void testThrowableConstructor() {
-        final RuntimeException r = new RuntimeException();
-        final BadCredentialsAuthenticationException e = new BadCredentialsAuthenticationException(r);
+	@Test
+	public void testThrowableConstructor() {
+		final RuntimeException r = new RuntimeException();
+		final BadCredentialsAuthenticationException e = new BadCredentialsAuthenticationException(r);
 
-        assertEquals(CODE, e.getCode());
-        assertEquals(r, e.getCause());
-    }
+		assertEquals(CODE, e.getCode());
+		assertEquals(r, e.getCause());
+	}
 
-    @Test
-    public void testCodeConstructor() {
-        final String MESSAGE = "GG";
-        final BadCredentialsAuthenticationException e = new BadCredentialsAuthenticationException(MESSAGE);
+	@Test
+	public void testCodeConstructor() {
+		final String MESSAGE = "GG";
+		final BadCredentialsAuthenticationException e = new BadCredentialsAuthenticationException(MESSAGE);
 
-        assertEquals(MESSAGE, e.getCode());
-    }
+		assertEquals(MESSAGE, e.getCode());
+	}
 
-    @Test
-    public void testThrowableConstructorWithCode() {
-        final String MESSAGE = "GG";
-        final RuntimeException r = new RuntimeException();
-        final BadCredentialsAuthenticationException e = new BadCredentialsAuthenticationException(MESSAGE, r);
+	@Test
+	public void testThrowableConstructorWithCode() {
+		final String MESSAGE = "GG";
+		final RuntimeException r = new RuntimeException();
+		final BadCredentialsAuthenticationException e = new BadCredentialsAuthenticationException(MESSAGE, r);
 
-        assertEquals(MESSAGE, e.getCode());
-        assertEquals(r, e.getCause());
-    }
+		assertEquals(MESSAGE, e.getCode());
+		assertEquals(r, e.getCause());
+	}
 }

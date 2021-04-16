@@ -27,20 +27,26 @@ package org.jasig.cas.support.spnego.util;
  */
 public interface SpnegoConstants {
 
-    String HEADER_AUTHENTICATE = "WWW-Authenticate";
+	String HEADER_AUTHENTICATE = "WWW-Authenticate";
 
-    String HEADER_AUTHORIZATION = "Authorization";
+	String HEADER_AUTHORIZATION = "Authorization";
 
-    String HEADER_USER_AGENT = "User-Agent";
+	String HEADER_USER_AGENT = "User-Agent";
 
-    String NEGOTIATE = "Negotiate";
+	String NEGOTIATE = "Negotiate";
 
-    String SPNEGO_FIRST_TIME = "spnegoFirstTime";
+	String SPNEGO_FIRST_TIME = "spnegoFirstTime";
 
-    String SPNEGO_CREDENTIALS = "spnegoCredentials";
+	String SPNEGO_CREDENTIALS = "spnegoCredentials";
 
-    byte[] NTLMSSP_SIGNATURE = new byte[]{(byte) 'N', (byte) 'T', (byte) 'L',
-            (byte) 'M', (byte) 'S', (byte) 'S', (byte) 'P', (byte) 0};
+	byte[] NTLMSSP_SIGNATURE = new byte[] { (byte) 'N',
+			(byte) 'T',
+			(byte) 'L',
+			(byte) 'M',
+			(byte) 'S',
+			(byte) 'S',
+			(byte) 'P',
+			(byte) 0 };
 
-    String NTLM = "NTLM";
+	String NTLM = "NTLM";
 }

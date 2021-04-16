@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.web.support;
 
-import com.github.inspektr.common.web.ClientInfo;
-import com.github.inspektr.common.web.ClientInfoHolder;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import static org.junit.Assert.assertEquals;
+import com.github.inspektr.common.web.ClientInfo;
+import com.github.inspektr.common.web.ClientInfoHolder;
 
 /**
  * Base class for submission throttle tests.
@@ -36,63 +37,62 @@ import static org.junit.Assert.assertEquals;
  */
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
-    protected static final int FAILURE_RANGE = 5;
+	protected static final int FAILURE_RANGE = 5;
 
-    protected static final int FAILURE_THRESHOLD = 10;
+	protected static final int FAILURE_THRESHOLD = 10;
 
-    protected static final String IP_ADDRESS = "1.2.3.4";
+	protected static final String IP_ADDRESS = "1.2.3.4";
 
-    protected static final ClientInfo CLIENT_INFO = new ClientInfo(IP_ADDRESS, IP_ADDRESS);
+	protected static final ClientInfo CLIENT_INFO = new ClientInfo(IP_ADDRESS, IP_ADDRESS);
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Before
-    public void setUp() throws Exception {
-        ClientInfoHolder.setClientInfo(CLIENT_INFO);
-    }
+	@Before
+	public void setUp() throws Exception {
+		ClientInfoHolder.setClientInfo(CLIENT_INFO);
+	}
 
-    @After
-    public void tearDown() throws Exception {
-        ClientInfoHolder.setClientInfo(null);
-    }
+	@After
+	public void tearDown() throws Exception {
+		ClientInfoHolder.setClientInfo(null);
+	}
 
-    @Test
-    public void testThrottle() throws Exception {
-        final double rate = (double) FAILURE_THRESHOLD / (double) FAILURE_RANGE;
-        getThrottle().setFailureRangeInSeconds(FAILURE_RANGE);
-        getThrottle().setFailureThreshold(FAILURE_THRESHOLD);
-        getThrottle().afterPropertiesSet();
+	@Test
+	public void testThrottle() throws Exception {
+		final double rate = (double) FAILURE_THRESHOLD / (double) FAILURE_RANGE;
+		getThrottle().setFailureRangeInSeconds(FAILURE_RANGE);
+		getThrottle().setFailureThreshold(FAILURE_THRESHOLD);
+		getThrottle().afterPropertiesSet();
 
-        // Ensure that repeated logins BELOW threshold rate are allowed
-        // Wait 7% more than threshold period
-        int wait = (int) (1000.0 * 1.07 / rate);
-        failLoop(3, wait, 200);
+		// Ensure that repeated logins BELOW threshold rate are allowed
+		// Wait 7% more than threshold period
+		int wait = (int) (1000.0 * 1.07 / rate);
+		failLoop(3, wait, 200);
 
-        // Ensure that repeated logins ABOVE threshold rate are throttled
-        // Wait 7% less than threshold period
-        wait = (int) (1000.0 * 0.93 / rate);
-        failLoop(3, wait, 403);
+		// Ensure that repeated logins ABOVE threshold rate are throttled
+		// Wait 7% less than threshold period
+		wait = (int) (1000.0 * 0.93 / rate);
+		failLoop(3, wait, 403);
 
-        // Ensure that slowing down relieves throttle
-        // Wait 7% more than threshold period
-        wait = (int) (1000.0 * 1.07 / rate);
-        Thread.sleep(wait);
-        failLoop(3, wait, 200);
-    }
+		// Ensure that slowing down relieves throttle
+		// Wait 7% more than threshold period
+		wait = (int) (1000.0 * 1.07 / rate);
+		Thread.sleep(wait);
+		failLoop(3, wait, 200);
+	}
 
+	private void failLoop(final int trials, final int period, final int expected) throws Exception {
+		// Seed with something to compare against
+		loginUnsuccessfully("mog", "1.2.3.4").getStatus();
+		for (int i = 0; i < trials; i++) {
+			logger.debug("Waiting for {} ms", period);
+			Thread.sleep(period);
+			assertEquals(expected, loginUnsuccessfully("mog", "1.2.3.4").getStatus());
+		}
+	}
 
-    private void failLoop(final int trials, final int period, final int expected) throws Exception {
-        // Seed with something to compare against
-        loginUnsuccessfully("mog", "1.2.3.4").getStatus();
-        for (int i = 0; i < trials; i++) {
-            logger.debug("Waiting for {} ms", period);
-            Thread.sleep(period);
-            assertEquals(expected, loginUnsuccessfully("mog", "1.2.3.4").getStatus());
-        }
-    }
+	protected abstract MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress)
+			throws Exception;
 
-
-    protected abstract MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception;
-
-    protected abstract AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle();
+	protected abstract AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle();
 }

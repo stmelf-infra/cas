@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
 import javax.validation.constraints.NotNull;
 
 /**
@@ -33,91 +34,89 @@ import javax.validation.constraints.NotNull;
  */
 public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatus> {
 
-    /** Default maximum wait time for asynchronous pool validation. */
-    public static final int DEFAULT_MAX_WAIT = 3000;
+	/** Default maximum wait time for asynchronous pool validation. */
+	public static final int DEFAULT_MAX_WAIT = 3000;
 
-    /** Maximum amount of time in ms to wait while validating pool resources. */
-    private int maxWait = DEFAULT_MAX_WAIT;
+	/** Maximum amount of time in ms to wait while validating pool resources. */
+	private int maxWait = DEFAULT_MAX_WAIT;
 
-    /** Executor that performs pool resource validation. */
-    @NotNull
-    private ExecutorService executor;
+	/** Executor that performs pool resource validation. */
+	@NotNull
+	private ExecutorService executor;
 
+	/**
+	 * Sets the executor service responsible for pool resource validation.
+	 *
+	 * @param executorService
+	 *            Executor of pool validation operations.
+	 */
+	public void setExecutor(final ExecutorService executorService) {
+		this.executor = executorService;
+	}
 
-    /**
-     * Sets the executor service responsible for pool resource validation.
-     *
-     * @param executorService Executor of pool validation operations.
-     */
-    public void setExecutor(final ExecutorService executorService) {
-        this.executor = executorService;
-    }
+	/**
+	 * Set the maximum amount of time wait while validating pool resources. If the pool defines a minumum time to wait
+	 * for a resource, this property should be set less than that value.
+	 *
+	 * @param time
+	 *            Wait time in milliseconds.
+	 */
+	public void setMaxWait(final int time) {
+		this.maxWait = time;
+	}
 
+	/** {@inheritDoc} */
+	@Override
+	public PoolStatus observe() {
+		final Future<StatusCode> result = this.executor.submit(new Validator());
+		StatusCode code;
+		String description = null;
+		try {
+			code = result.get(this.maxWait, TimeUnit.MILLISECONDS);
+		}
+		catch (final InterruptedException e) {
+			code = StatusCode.UNKNOWN;
+			description = "Validator thread interrupted during pool validation.";
+		}
+		catch (final TimeoutException e) {
+			code = StatusCode.WARN;
+			description = String.format("Pool validation timed out.  Max wait is %s ms.", this.maxWait);
+		}
+		catch (final Exception e) {
+			code = StatusCode.ERROR;
+			description = e.getMessage();
+		}
+		return new PoolStatus(code, description, getActiveCount(), getIdleCount());
+	}
 
-    /**
-     * Set the maximum amount of time wait while validating pool resources.
-     * If the pool defines a minumum time to wait for a resource, this property
-     * should be set less than that value.
-     *
-     * @param time Wait time in milliseconds.
-     */
-    public void setMaxWait(final int time) {
-        this.maxWait = time;
-    }
+	/**
+	 * Performs a health check on a the pool. The recommended implementation is to obtain a pool resource, validate it,
+	 * and return it to the pool.
+	 *
+	 * @return Status code describing pool health.
+	 *
+	 * @throws Exception
+	 *             Thrown to indicate a serious problem with pool validation.
+	 */
+	protected abstract StatusCode checkPool() throws Exception;
 
+	/**
+	 * Gets the number of pool resources idle at present.
+	 *
+	 * @return Number of idle pool resources.
+	 */
+	protected abstract int getIdleCount();
 
-    /** {@inheritDoc} */
-    @Override
-    public PoolStatus observe() {
-        final Future<StatusCode> result = this.executor.submit(new Validator());
-        StatusCode code;
-        String description = null;
-        try {
-            code = result.get(this.maxWait, TimeUnit.MILLISECONDS);
-        } catch (final InterruptedException e) {
-            code = StatusCode.UNKNOWN;
-            description = "Validator thread interrupted during pool validation.";
-        } catch (final TimeoutException e) {
-            code = StatusCode.WARN;
-            description = String.format("Pool validation timed out.  Max wait is %s ms.", this.maxWait);
-        } catch (final Exception e) {
-            code = StatusCode.ERROR;
-            description = e.getMessage();
-        }
-        return new PoolStatus(code, description, getActiveCount(), getIdleCount());
-    }
+	/**
+	 * Gets the number of pool resources active at present.
+	 *
+	 * @return Number of active pool resources.
+	 */
+	protected abstract int getActiveCount();
 
-
-    /**
-     * Performs a health check on a the pool.  The recommended implementation is to
-     * obtain a pool resource, validate it, and return it to the pool.
-     *
-     * @return Status code describing pool health.
-     *
-     * @throws Exception Thrown to indicate a serious problem with pool validation.
-     */
-    protected abstract StatusCode checkPool() throws Exception;
-
-
-    /**
-     * Gets the number of pool resources idle at present.
-     *
-     * @return Number of idle pool resources.
-     */
-    protected abstract int getIdleCount();
-
-
-    /**
-     * Gets the number of pool resources active at present.
-     *
-     * @return Number of active pool resources.
-     */
-    protected abstract int getActiveCount();
-
-
-    private class Validator implements Callable<StatusCode> {
-        public StatusCode call() throws Exception {
-            return checkPool();
-        }
-    }
+	private class Validator implements Callable<StatusCode> {
+		public StatusCode call() throws Exception {
+			return checkPool();
+		}
+	}
 }

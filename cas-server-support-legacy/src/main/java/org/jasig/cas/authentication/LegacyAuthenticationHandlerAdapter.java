@@ -36,75 +36,82 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  */
 public class LegacyAuthenticationHandlerAdapter implements AuthenticationHandler {
 
-    /** Wrapped CAS 3.0 authentication handler. */
-    @NotNull
-    private final org.jasig.cas.authentication.handler.AuthenticationHandler legacyHandler;
+	/** Wrapped CAS 3.0 authentication handler. */
+	@NotNull
+	private final org.jasig.cas.authentication.handler.AuthenticationHandler legacyHandler;
 
-    /** Adapts CAS 4.0 credentials onto CAS 3.0 credentials. */
-    @NotNull
-    private final CredentialsAdapter credentialsAdapter;
+	/** Adapts CAS 4.0 credentials onto CAS 3.0 credentials. */
+	@NotNull
+	private final CredentialsAdapter credentialsAdapter;
 
+	/**
+	 * Creates a new instance that adapts the given legacy authentication handler.
+	 *
+	 * @param legacy
+	 *            CAS 3.0 authentication handler.
+	 */
+	public LegacyAuthenticationHandlerAdapter(final org.jasig.cas.authentication.handler.AuthenticationHandler legacy) {
+		if (!legacy.supports(new UsernamePasswordCredentials())) {
+			throw new IllegalArgumentException(
+					"Cannot infer credential conversion strategy - specify CredentialsAdapter explicitly.");
+		}
+		this.legacyHandler = legacy;
+		this.credentialsAdapter = new UsernamePasswordCredentialsAdapter();
+	}
 
-    /**
-     * Creates a new instance that adapts the given legacy authentication handler.
-     *
-     * @param legacy CAS 3.0 authentication handler.
-     */
-    public LegacyAuthenticationHandlerAdapter(final org.jasig.cas.authentication.handler.AuthenticationHandler legacy) {
-        if (!legacy.supports(new UsernamePasswordCredentials())) {
-            throw new IllegalArgumentException(
-                    "Cannot infer credential conversion strategy - specify CredentialsAdapter explicitly.");
-        }
-        this.legacyHandler = legacy;
-        this.credentialsAdapter = new UsernamePasswordCredentialsAdapter();
-    }
+	/**
+	 * Creates a new instance that adapts the given legacy authentication handler. Use this form for a handler that
+	 * supports a credential type other than username/password credentials.
+	 *
+	 * @param legacy
+	 *            CAS 3.0 authentication handler.
+	 * @param adapter
+	 *            Adapts CAS 4.0 credential onto 3.0 credential.
+	 */
+	public LegacyAuthenticationHandlerAdapter(
+			final org.jasig.cas.authentication.handler.AuthenticationHandler legacy,
+			final CredentialsAdapter adapter) {
+		this.legacyHandler = legacy;
+		this.credentialsAdapter = adapter;
+	}
 
-    /**
-     * Creates a new instance that adapts the given legacy authentication handler.
-     * Use this form for a handler that supports a credential type other than username/password credentials.
-     *
-     * @param legacy CAS 3.0 authentication handler.
-     * @param adapter Adapts CAS 4.0 credential onto 3.0 credential.
-     */
-    public LegacyAuthenticationHandlerAdapter(
-            final org.jasig.cas.authentication.handler.AuthenticationHandler legacy,
-            final CredentialsAdapter adapter) {
-        this.legacyHandler = legacy;
-        this.credentialsAdapter = adapter;
-    }
+	@Override
+	public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
+		try {
+			if (this.legacyHandler.authenticate(credentialsAdapter.convert(credential))) {
+				final CredentialMetaData md;
+				if (credential instanceof CredentialMetaData) {
+					md = (CredentialMetaData) credential;
+				}
+				else {
+					md = new BasicCredentialMetaData(credential);
+				}
+				return new HandlerResult(this, md);
+			}
+			else {
+				throw new FailedLoginException(
+						String.format("%s failed to authenticate %s", this.getName(), credential));
+			}
+		}
+		catch (final AuthenticationException e) {
+			throw new GeneralSecurityException(
+					String.format("%s failed to authenticate %s", this.getName(), credential),
+					e);
+		}
+	}
 
-    @Override
-    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
-        try {
-            if (this.legacyHandler.authenticate(credentialsAdapter.convert(credential))) {
-                final CredentialMetaData md;
-                if (credential instanceof CredentialMetaData) {
-                    md = (CredentialMetaData) credential;
-                } else {
-                    md = new BasicCredentialMetaData(credential);
-                }
-                return new HandlerResult(this, md);
-            } else {
-                throw new FailedLoginException(
-                        String.format("%s failed to authenticate %s", this.getName(), credential));
-            }
-        } catch (final AuthenticationException e) {
-            throw new GeneralSecurityException(
-                    String.format("%s failed to authenticate %s", this.getName(), credential), e);
-        }
-    }
+	@Override
+	public boolean supports(final Credential credential) {
+		return this.legacyHandler.supports(credentialsAdapter.convert(credential));
+	}
 
-    @Override
-    public boolean supports(final Credential credential) {
-        return this.legacyHandler.supports(credentialsAdapter.convert(credential));
-    }
-
-    @Override
-    public String getName() {
-        if (this.legacyHandler instanceof NamedAuthenticationHandler) {
-            return ((NamedAuthenticationHandler) this.legacyHandler).getName();
-        } else {
-            return this.legacyHandler.getClass().getSimpleName();
-        }
-    }
+	@Override
+	public String getName() {
+		if (this.legacyHandler instanceof NamedAuthenticationHandler) {
+			return ((NamedAuthenticationHandler) this.legacyHandler).getName();
+		}
+		else {
+			return this.legacyHandler.getClass().getSimpleName();
+		}
+	}
 }

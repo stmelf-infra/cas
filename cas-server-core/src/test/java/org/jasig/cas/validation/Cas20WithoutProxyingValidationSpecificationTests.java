@@ -18,7 +18,8 @@
  */
 package org.jasig.cas.validation;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.jasig.cas.TestUtils;
 import org.junit.Before;
@@ -30,38 +31,39 @@ import org.junit.Test;
  */
 public class Cas20WithoutProxyingValidationSpecificationTests {
 
-    private Cas20WithoutProxyingValidationSpecification validationSpecification;
+	private Cas20WithoutProxyingValidationSpecification validationSpecification;
 
-    @Before
-    public void setUp() throws Exception {
-        this.validationSpecification = new Cas20WithoutProxyingValidationSpecification();
-    }
+	@Before
+	public void setUp() throws Exception {
+		this.validationSpecification = new Cas20WithoutProxyingValidationSpecification();
+	}
 
-    @Test
-    public void testSatisfiesSpecOfTrue() {
-        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(true)));
-    }
+	@Test
+	public void testSatisfiesSpecOfTrue() {
+		assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(true)));
+	}
 
-    @Test
-    public void testNotSatisfiesSpecOfTrue() {
-        this.validationSpecification.setRenew(true);
-        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false)));
-    }
+	@Test
+	public void testNotSatisfiesSpecOfTrue() {
+		this.validationSpecification.setRenew(true);
+		assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false)));
+	}
 
-    @Test
-    public void testSatisfiesSpecOfFalse() {
-        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false)));
-    }
+	@Test
+	public void testSatisfiesSpecOfFalse() {
+		assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false)));
+	}
 
-    @Test
-    public void testDoesNotSatisfiesSpecOfFalse() {
-        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false, new String[] {"test2"})));
-    }
+	@Test
+	public void testDoesNotSatisfiesSpecOfFalse() {
+		assertFalse(
+				this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false, new String[] { "test2" })));
+	}
 
-    @Test
-    public void testSettingRenew() {
-        final Cas20WithoutProxyingValidationSpecification validation = new Cas20WithoutProxyingValidationSpecification(
-                true);
-        assertTrue(validation.isRenew());
-    }
+	@Test
+	public void testSettingRenew() {
+		final Cas20WithoutProxyingValidationSpecification validation = new Cas20WithoutProxyingValidationSpecification(
+				true);
+		assertTrue(validation.isRenew());
+	}
 }

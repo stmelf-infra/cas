@@ -25,62 +25,61 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 
 /**
- * Simple implementation of a AttributePrincipal that exposes an unmodifiable
- * map of attributes.
+ * Simple implementation of a AttributePrincipal that exposes an unmodifiable map of attributes.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @since 3.1
  */
 public class SimplePrincipal implements Principal {
-    /** Serialization support. */
-    private static final long serialVersionUID = -1255260750151385796L;
+	/** Serialization support. */
+	private static final long serialVersionUID = -1255260750151385796L;
 
-    /** The unique identifier for the principal. */
-    private final String id;
+	/** The unique identifier for the principal. */
+	private final String id;
 
-    /** Map of attributes for the Principal. */
-    private Map<String, Object> attributes;
+	/** Map of attributes for the Principal. */
+	private Map<String, Object> attributes;
 
-    /** No-arg constructor for serialization support. */
-    private SimplePrincipal() {
-        this.id = null;
-    }
+	/** No-arg constructor for serialization support. */
+	private SimplePrincipal() {
+		this.id = null;
+	}
 
-    public SimplePrincipal(final String id) {
-        this(id, null);
-    }
+	public SimplePrincipal(final String id) {
+		this(id, null);
+	}
 
-    public SimplePrincipal(final String id, final Map<String, Object> attributes) {
-        Assert.notNull(id, "id cannot be null");
-        this.id = id;
-        this.attributes = attributes;
-    }
+	public SimplePrincipal(final String id, final Map<String, Object> attributes) {
+		Assert.notNull(id, "id cannot be null");
+		this.id = id;
+		this.attributes = attributes;
+	}
 
-    /**
-     * @return An immutable map of principal attributes
-     */
-    public Map<String, Object> getAttributes() {
-        return this.attributes == null
-                ? Collections.<String, Object>emptyMap()
-                : Collections.unmodifiableMap(this.attributes);
-    }
+	/**
+	 * @return An immutable map of principal attributes
+	 */
+	public Map<String, Object> getAttributes() {
+		return this.attributes == null
+				? Collections.<String, Object> emptyMap()
+				: Collections.unmodifiableMap(this.attributes);
+	}
 
-    public String toString() {
-        return this.id;
-    }
+	public String toString() {
+		return this.id;
+	}
 
-    public int hashCode() {
-        final HashCodeBuilder builder = new HashCodeBuilder(83, 31);
-        builder.append(this.id);
-        return builder.toHashCode();
-    }
+	public int hashCode() {
+		final HashCodeBuilder builder = new HashCodeBuilder(83, 31);
+		builder.append(this.id);
+		return builder.toHashCode();
+	}
 
-    public final String getId() {
-        return this.id;
-    }
+	public final String getId() {
+		return this.id;
+	}
 
-    public boolean equals(final Object o) {
-        return o instanceof SimplePrincipal && ((SimplePrincipal) o).getId().equals(this.id);
-    }
+	public boolean equals(final Object o) {
+		return o instanceof SimplePrincipal && ((SimplePrincipal) o).getId().equals(this.id);
+	}
 }

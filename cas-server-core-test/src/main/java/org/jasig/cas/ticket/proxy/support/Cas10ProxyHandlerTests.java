@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
@@ -30,15 +30,15 @@ import org.junit.Test;
  */
 public class Cas10ProxyHandlerTests {
 
-    private ProxyHandler proxyHandler = new Cas10ProxyHandler();
+	private ProxyHandler proxyHandler = new Cas10ProxyHandler();
 
-    @Test
-    public void testNoCredentialsOrProxy() {
-        assertNull(this.proxyHandler.handle(null, null));
-    }
+	@Test
+	public void testNoCredentialsOrProxy() {
+		assertNull(this.proxyHandler.handle(null, null));
+	}
 
-    @Test
-    public void testCredentialsAndProxy() {
-        assertNull(this.proxyHandler.handle(TestUtils.getCredentialsWithSameUsernameAndPassword(), "test"));
-    }
+	@Test
+	public void testCredentialsAndProxy() {
+		assertNull(this.proxyHandler.handle(TestUtils.getCredentialsWithSameUsernameAndPassword(), "test"));
+	}
 }

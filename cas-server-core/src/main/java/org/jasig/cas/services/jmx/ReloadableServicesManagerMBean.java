@@ -26,24 +26,22 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 /**
  * Provides capabilities to reload a {@link org.jasig.cas.services.ReloadableServicesManager} from JMX.
  * <p>
- * You should only expose either this class or
- * the {@link org.jasig.cas.services.jmx.ServicesManagerMBean}, but not both.
+ * You should only expose either this class or the {@link org.jasig.cas.services.jmx.ServicesManagerMBean}, but not
+ * both.
  *
  * @author Scott Battaglia
-
+ * 
  * @since 3.4.4
  */
-@ManagedResource(objectName = "CAS:name=JasigCasServicesManagerMBean",
-        description = "Exposes the services management tool via JMX", log = true, logFile="jasig_cas_jmx.logger",
-        currencyTimeLimit = 15)
+@ManagedResource(objectName = "CAS:name=JasigCasServicesManagerMBean", description = "Exposes the services management tool via JMX", log = true, logFile = "jasig_cas_jmx.logger", currencyTimeLimit = 15)
 public final class ReloadableServicesManagerMBean extends AbstractServicesManagerMBean<ReloadableServicesManager> {
 
-    public ReloadableServicesManagerMBean(final ReloadableServicesManager reloadableServicesManager) {
-        super(reloadableServicesManager);
-    }
+	public ReloadableServicesManagerMBean(final ReloadableServicesManager reloadableServicesManager) {
+		super(reloadableServicesManager);
+	}
 
-    @ManagedOperation(description = "Reloads the list of the services from the persistence storage.")
-    public void reload() {
-        getServicesManager().reload();
-    }
+	@ManagedOperation(description = "Reloads the list of the services from the persistence storage.")
+	public void reload() {
+		getServicesManager().reload();
+	}
 }

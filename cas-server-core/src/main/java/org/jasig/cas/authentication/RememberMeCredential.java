@@ -19,8 +19,7 @@
 package org.jasig.cas.authentication;
 
 /**
- * Credential that wish to handle remember me scenarios need
- * to implement this class.
+ * Credential that wish to handle remember me scenarios need to implement this class.
  *
  * @author Scott Battaglia
  * @since 3.2.1
@@ -28,13 +27,13 @@ package org.jasig.cas.authentication;
  */
 public interface RememberMeCredential extends Credential {
 
-    /** Authentication attribute name for remember-me. **/
-    String AUTHENTICATION_ATTRIBUTE_REMEMBER_ME = "org.jasig.cas.authentication.principal.REMEMBER_ME";
+	/** Authentication attribute name for remember-me. **/
+	String AUTHENTICATION_ATTRIBUTE_REMEMBER_ME = "org.jasig.cas.authentication.principal.REMEMBER_ME";
 
-    /** Request parameter name. **/
-    String REQUEST_PARAMETER_REMEMBER_ME = "rememberMe";
+	/** Request parameter name. **/
+	String REQUEST_PARAMETER_REMEMBER_ME = "rememberMe";
 
-    boolean isRememberMe();
+	boolean isRememberMe();
 
-    void setRememberMe(boolean rememberMe);
+	void setRememberMe(boolean rememberMe);
 }

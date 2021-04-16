@@ -33,98 +33,91 @@ import org.springframework.context.ApplicationContextException;
 import org.springframework.web.servlet.DispatcherServlet;
 
 /**
- * This servlet wraps the Spring DispatchServlet, catching any exceptions it
- * throws on init() to guarantee that servlet initialization succeeds. This
- * allows our application context to succeed in initializing so that we can
- * display a friendly "CAS is not available" page to the deployer (an
- * appropriate use of the page in development) or to the end user (an
- * appropriate use of the page in production). The error page associated with
- * this deployment failure is configured in the web.xml via the standard error
- * handling mechanism.
+ * This servlet wraps the Spring DispatchServlet, catching any exceptions it throws on init() to guarantee that servlet
+ * initialization succeeds. This allows our application context to succeed in initializing so that we can display a
+ * friendly "CAS is not available" page to the deployer (an appropriate use of the page in development) or to the end
+ * user (an appropriate use of the page in production). The error page associated with this deployment failure is
+ * configured in the web.xml via the standard error handling mechanism.
  * <p>
- * If the underlying Spring DispatcherServlet failed to init(), this
- * SafeDispatcherServlet will throw an
- * <code>org.springframework.context.ApplicationContextException</code> on
- * <code>service()</code>.
+ * If the underlying Spring DispatcherServlet failed to init(), this SafeDispatcherServlet will throw an
+ * <code>org.springframework.context.ApplicationContextException</code> on <code>service()</code>.
  * <p>
- * The exception thrown by the underlying Spring DispatcherServlet init() and
- * caught in the SafeDispatcherServlet init() is exposed as a Servlet Context
- * attribute under the key "exceptionCaughtByServlet".
+ * The exception thrown by the underlying Spring DispatcherServlet init() and caught in the SafeDispatcherServlet init()
+ * is exposed as a Servlet Context attribute under the key "exceptionCaughtByServlet".
  *
  * @author Andrew Petro
  * @see DispatcherServlet
  */
 public final class SafeDispatcherServlet extends HttpServlet {
 
-    /** Unique Id for serialization. */
-    private static final long serialVersionUID = 1L;
+	/** Unique Id for serialization. */
+	private static final long serialVersionUID = 1L;
 
-    /** Key under which we will store the exception in the ServletContext. */
-    public static final String CAUGHT_THROWABLE_KEY = "exceptionCaughtByServlet";
+	/** Key under which we will store the exception in the ServletContext. */
+	public static final String CAUGHT_THROWABLE_KEY = "exceptionCaughtByServlet";
 
-    /** Instance of Commons Logging. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SafeDispatcherServlet.class);
+	/** Instance of Commons Logging. */
+	private static final Logger LOGGER = LoggerFactory.getLogger(SafeDispatcherServlet.class);
 
-    /** The actual DispatcherServlet to which we will delegate to. */
-    private DispatcherServlet delegate = new DispatcherServlet();
+	/** The actual DispatcherServlet to which we will delegate to. */
+	private DispatcherServlet delegate = new DispatcherServlet();
 
-    /** Boolean to determine if the application deployed successfully. */
-    private boolean initSuccess = true;
+	/** Boolean to determine if the application deployed successfully. */
+	private boolean initSuccess = true;
 
-    public void init(final ServletConfig config) {
-        try {
-            this.delegate.init(config);
+	public void init(final ServletConfig config) {
+		try {
+			this.delegate.init(config);
 
-        } catch (final Throwable t) {
-            // let the service method know initialization failed.
-            this.initSuccess = false;
+		}
+		catch (final Throwable t) {
+			// let the service method know initialization failed.
+			this.initSuccess = false;
 
-            /*
-             * no matter what went wrong, our role is to capture this error and
-             * prevent it from blocking initialization of the servlet. logging
-             * overkill so that our deployer will find a record of this problem
-             * even if unfamiliar with Commons Logging and properly configuring
-             * it.
-             */
+			/*
+			 * no matter what went wrong, our role is to capture this error and prevent it from blocking initialization
+			 * of the servlet. logging overkill so that our deployer will find a record of this problem even if
+			 * unfamiliar with Commons Logging and properly configuring it.
+			 */
 
-            final String message = "SafeDispatcherServlet: \n"
-                + "The Spring DispatcherServlet we wrap threw on init.\n"
-                + "But for our having caught this error, the servlet would not have initialized.";
+			final String message = "SafeDispatcherServlet: \n"
+					+ "The Spring DispatcherServlet we wrap threw on init.\n"
+					+ "But for our having caught this error, the servlet would not have initialized.";
 
-            // logger it via Commons Logging
-            LOGGER.error(message, t);
+			// logger it via Commons Logging
+			LOGGER.error(message, t);
 
-            // logger it to the ServletContext
-            ServletContext context = config.getServletContext();
-            context.log(message, t);
+			// logger it to the ServletContext
+			ServletContext context = config.getServletContext();
+			context.log(message, t);
 
-            /*
-             * record the error so that the application has access to later
-             * display a proper error message based on the exception.
-             */
-            context.setAttribute(CAUGHT_THROWABLE_KEY, t);
+			/*
+			 * record the error so that the application has access to later display a proper error message based on the
+			 * exception.
+			 */
+			context.setAttribute(CAUGHT_THROWABLE_KEY, t);
 
-        }
-    }
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     * @throws ApplicationContextException if the DispatcherServlet does not
-     * initialize properly, but the servlet attempts to process a request.
-     */
-    @Override
-    public void service(final ServletRequest req, final ServletResponse resp)
-        throws ServletException, IOException {
-        /*
-         * Since our container calls only this method and not any of the other
-         * HttpServlet runtime methods, such as doDelete(), etc., delegating
-         * this method is sufficient to delegate all of the methods in the
-         * HttpServlet API.
-         */
-        if (this.initSuccess) {
-            this.delegate.service(req, resp);
-        } else {
-            throw new ApplicationContextException("Unable to initialize application context.");
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws ApplicationContextException
+	 *             if the DispatcherServlet does not initialize properly, but the servlet attempts to process a request.
+	 */
+	@Override
+	public void service(final ServletRequest req, final ServletResponse resp)
+			throws ServletException, IOException {
+		/*
+		 * Since our container calls only this method and not any of the other HttpServlet runtime methods, such as
+		 * doDelete(), etc., delegating this method is sufficient to delegate all of the methods in the HttpServlet API.
+		 */
+		if (this.initSuccess) {
+			this.delegate.service(req, resp);
+		}
+		else {
+			throw new ApplicationContextException("Unable to initialize application context.");
+		}
+	}
 }

@@ -26,8 +26,8 @@ package org.jasig.cas.authentication;
  */
 public class AllAuthenticationPolicy implements AuthenticationPolicy {
 
-    @Override
-    public boolean isSatisfiedBy(final Authentication authn) {
-        return authn.getSuccesses().size() == authn.getCredentials().size();
-    }
+	@Override
+	public boolean isSatisfiedBy(final Authentication authn) {
+		return authn.getSuccesses().size() == authn.getCredentials().size();
+	}
 }

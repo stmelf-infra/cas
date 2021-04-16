@@ -29,11 +29,12 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
  * @since 3.1
  */
 public interface ArgumentExtractor {
-    /**
-     * Retrieve the service from the request.
-     *
-     * @param request the request context.
-     * @return the fully formed Service or null if it could not be found.
-     */
-    WebApplicationService extractService(HttpServletRequest request);
+	/**
+	 * Retrieve the service from the request.
+	 *
+	 * @param request
+	 *            the request context.
+	 * @return the fully formed Service or null if it could not be found.
+	 */
+	WebApplicationService extractService(HttpServletRequest request);
 }

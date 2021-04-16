@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.web.view;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,34 +41,40 @@ import org.springframework.mock.web.MockHttpServletResponse;
  */
 public class Cas10ResponseViewTests {
 
-    private final Cas10ResponseView view = new Cas10ResponseView();
+	private final Cas10ResponseView view = new Cas10ResponseView();
 
-    private Map<String, Object> model;
+	private Map<String, Object> model;
 
-    @Before
-    public void setUp() throws Exception {
-        this.model = new HashMap<String, Object>();
-        List<Authentication> list = new ArrayList<Authentication>();
-        list.add(TestUtils.getAuthentication("someothername"));
-        this.model.put("assertion", new ImmutableAssertion(
-                TestUtils.getAuthentication(), list, TestUtils.getService("TestService"), true));
-    }
+	@Before
+	public void setUp() throws Exception {
+		this.model = new HashMap<String, Object>();
+		List<Authentication> list = new ArrayList<Authentication>();
+		list.add(TestUtils.getAuthentication("someothername"));
+		this.model.put(
+				"assertion",
+				new ImmutableAssertion(
+						TestUtils.getAuthentication(),
+						list,
+						TestUtils.getService("TestService"),
+						true));
+	}
 
-    @Test
-    public void testSuccessView() throws Exception {
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        this.view.setSuccessResponse(true);
-        this.view.render(this.model, new MockHttpServletRequest(), response
-                );
-        assertEquals("yes\ntest\n", response.getContentAsString());
-    }
+	@Test
+	public void testSuccessView() throws Exception {
+		final MockHttpServletResponse response = new MockHttpServletResponse();
+		this.view.setSuccessResponse(true);
+		this.view.render(this.model, new MockHttpServletRequest(), response);
+		assertEquals("yes\ntest\n", response.getContentAsString());
+	}
 
-    @Test
-    public void testFailureView() throws Exception {
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        this.view.setSuccessResponse(false);
-        this.view.render(this.model, new MockHttpServletRequest(),
-                response);
-        assertEquals("no\n\n", response.getContentAsString());
-    }
+	@Test
+	public void testFailureView() throws Exception {
+		final MockHttpServletResponse response = new MockHttpServletResponse();
+		this.view.setSuccessResponse(false);
+		this.view.render(
+				this.model,
+				new MockHttpServletRequest(),
+				response);
+		assertEquals("no\n\n", response.getContentAsString());
+	}
 }

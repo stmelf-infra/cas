@@ -33,127 +33,130 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractWebApplicationService implements SingleLogoutService {
 
-    private static final long serialVersionUID = 610105280927740076L;
+	private static final long serialVersionUID = 610105280927740076L;
 
-    /** Logger instance. **/
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractWebApplicationService.class);
+	/** Logger instance. **/
+	protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractWebApplicationService.class);
 
-    private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
-    /** The id of the service. */
-    private final String id;
+	private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
+	/** The id of the service. */
+	private final String id;
 
-    /** The original url provided, used to reconstruct the redirect url. */
-    private final String originalUrl;
+	/** The original url provided, used to reconstruct the redirect url. */
+	private final String originalUrl;
 
-    private final String artifactId;
+	private final String artifactId;
 
-    private Principal principal;
+	private Principal principal;
 
-    private boolean loggedOutAlready = false;
+	private boolean loggedOutAlready = false;
 
-    protected AbstractWebApplicationService(final String id, final String originalUrl,
-            final String artifactId) {
-        this.id = id;
-        this.originalUrl = originalUrl;
-        this.artifactId = artifactId;
-    }
+	protected AbstractWebApplicationService(
+			final String id,
+			final String originalUrl,
+			final String artifactId) {
+		this.id = id;
+		this.originalUrl = originalUrl;
+		this.artifactId = artifactId;
+	}
 
-    public final String toString() {
-        return this.id;
-    }
+	public final String toString() {
+		return this.id;
+	}
 
-    public final String getId() {
-        return this.id;
-    }
+	public final String getId() {
+		return this.id;
+	}
 
-    public final String getArtifactId() {
-        return this.artifactId;
-    }
+	public final String getArtifactId() {
+		return this.artifactId;
+	}
 
-    public final Map<String, Object> getAttributes() {
-        return EMPTY_MAP;
-    }
+	public final Map<String, Object> getAttributes() {
+		return EMPTY_MAP;
+	}
 
-    protected static String cleanupUrl(final String url) {
-        if (url == null) {
-            return null;
-        }
+	protected static String cleanupUrl(final String url) {
+		if (url == null) {
+			return null;
+		}
 
-        final int jsessionPosition = url.indexOf(";jsession");
+		final int jsessionPosition = url.indexOf(";jsession");
 
-        if (jsessionPosition == -1) {
-            return url;
-        }
+		if (jsessionPosition == -1) {
+			return url;
+		}
 
-        final int questionMarkPosition = url.indexOf("?");
+		final int questionMarkPosition = url.indexOf("?");
 
-        if (questionMarkPosition < jsessionPosition) {
-            return url.substring(0, url.indexOf(";jsession"));
-        }
+		if (questionMarkPosition < jsessionPosition) {
+			return url.substring(0, url.indexOf(";jsession"));
+		}
 
-        return url.substring(0, jsessionPosition)
-            + url.substring(questionMarkPosition);
-    }
+		return url.substring(0, jsessionPosition)
+				+ url.substring(questionMarkPosition);
+	}
 
-    /**
-     * Return the original url provided (as <code>service</code> or <code>targetService</code> request parameter).
-     * Used to reconstruct the redirect url.
-     *
-     * @return the original url provided.
-     */
-    public final String getOriginalUrl() {
-        return this.originalUrl;
-    }
+	/**
+	 * Return the original url provided (as <code>service</code> or <code>targetService</code> request parameter). Used
+	 * to reconstruct the redirect url.
+	 *
+	 * @return the original url provided.
+	 */
+	public final String getOriginalUrl() {
+		return this.originalUrl;
+	}
 
-    public boolean equals(final Object object) {
-        if (object == null) {
-            return false;
-        }
+	public boolean equals(final Object object) {
+		if (object == null) {
+			return false;
+		}
 
-        if (object instanceof Service) {
-            final Service service = (Service) object;
+		if (object instanceof Service) {
+			final Service service = (Service) object;
 
-            return getId().equals(service.getId());
-        }
+			return getId().equals(service.getId());
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    public int hashCode() {
-        final int prime = 41;
-        int result = 1;
-        result = prime * result
-            + ((this.id == null) ? 0 : this.id.hashCode());
-        return result;
-    }
+	public int hashCode() {
+		final int prime = 41;
+		int result = 1;
+		result = prime * result
+				+ ((this.id == null) ? 0 : this.id.hashCode());
+		return result;
+	}
 
-    protected Principal getPrincipal() {
-        return this.principal;
-    }
+	protected Principal getPrincipal() {
+		return this.principal;
+	}
 
-    public void setPrincipal(final Principal principal) {
-        this.principal = principal;
-    }
+	public void setPrincipal(final Principal principal) {
+		this.principal = principal;
+	}
 
-    public boolean matches(final Service service) {
-        return this.id.equals(service.getId());
-    }
+	public boolean matches(final Service service) {
+		return this.id.equals(service.getId());
+	}
 
-    /**
-     * Return if the service is already logged out.
-     *
-     * @return if the service is already logged out.
-     */
-    public boolean isLoggedOutAlready() {
-        return loggedOutAlready;
-    }
+	/**
+	 * Return if the service is already logged out.
+	 *
+	 * @return if the service is already logged out.
+	 */
+	public boolean isLoggedOutAlready() {
+		return loggedOutAlready;
+	}
 
-    /**
-     * Set if the service is already logged out.
-     *
-     * @param loggedOutAlready if the service is already logged out.
-     */
-    public final void setLoggedOutAlready(final boolean loggedOutAlready) {
-        this.loggedOutAlready = loggedOutAlready;
-    }
+	/**
+	 * Set if the service is already logged out.
+	 *
+	 * @param loggedOutAlready
+	 *            if the service is already logged out.
+	 */
+	public final void setLoggedOutAlready(final boolean loggedOutAlready) {
+		this.loggedOutAlready = loggedOutAlready;
+	}
 }

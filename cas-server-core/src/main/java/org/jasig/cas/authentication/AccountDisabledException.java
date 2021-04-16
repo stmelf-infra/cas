@@ -28,13 +28,13 @@ import javax.security.auth.login.AccountException;
  */
 public class AccountDisabledException extends AccountException {
 
-    /** Serialization metadata. */
-    private static final long serialVersionUID = 7487835035108753209L;
+	/** Serialization metadata. */
+	private static final long serialVersionUID = 7487835035108753209L;
 
-    public AccountDisabledException() {
-    }
+	public AccountDisabledException() {
+	}
 
-    public AccountDisabledException(final String msg) {
-        super(msg);
-    }
+	public AccountDisabledException(final String msg) {
+		super(msg);
+	}
 }

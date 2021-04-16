@@ -18,7 +18,9 @@
  */
 package org.jasig.cas.support.spnego.web.flow;
 
-import jcifs.util.Base64;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.jasig.cas.support.spnego.util.SpnegoConstants;
@@ -27,15 +29,13 @@ import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jcifs.util.Base64;
 
 /**
  * Second action of a SPNEGO flow : decode the gssapi-data and build a new
  * {@link org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential}.<br/>
- * Once AbstractNonInteractiveCredentialsAction has executed the authentication
- * procedure, this action check whether a principal is present in Credential and
- * add corresponding response headers.
+ * Once AbstractNonInteractiveCredentialsAction has executed the authentication procedure, this action check whether a
+ * principal is present in Credential and add corresponding response headers.
  *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
@@ -43,99 +43,112 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.1
  */
 public final class SpnegoCredentialsAction extends
-AbstractNonInteractiveCredentialsAction {
+		AbstractNonInteractiveCredentialsAction {
 
-    private boolean ntlm = false;
+	private boolean ntlm = false;
 
-    private String messageBeginPrefix = constructMessagePrefix();
+	private String messageBeginPrefix = constructMessagePrefix();
 
-    /**
-     * Behavior in case of SPNEGO authentication failure :<br />
-     * <ul><li>True : if spnego is the last authentication method with no fallback.</li>
-     * <li>False : if an interactive view (eg: login page) should be send to user as SPNEGO failure fallback</li>
-     * </ul>
-     */
-    private boolean send401OnAuthenticationFailure = true;
+	/**
+	 * Behavior in case of SPNEGO authentication failure :<br />
+	 * <ul>
+	 * <li>True : if spnego is the last authentication method with no fallback.</li>
+	 * <li>False : if an interactive view (eg: login page) should be send to user as SPNEGO failure fallback</li>
+	 * </ul>
+	 */
+	private boolean send401OnAuthenticationFailure = true;
 
-    @Override
-    protected Credential constructCredentialsFromRequest(
-            final RequestContext context) {
-        final HttpServletRequest request = WebUtils
-                .getHttpServletRequest(context);
+	@Override
+	protected Credential constructCredentialsFromRequest(
+			final RequestContext context) {
+		final HttpServletRequest request = WebUtils
+				.getHttpServletRequest(context);
 
-        final String authorizationHeader = request
-                .getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
+		final String authorizationHeader = request
+				.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
 
-        if (StringUtils.hasText(authorizationHeader)
-                && authorizationHeader.startsWith(this.messageBeginPrefix)
-                && authorizationHeader.length() > this.messageBeginPrefix.length()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("SPNEGO Authorization header found with "
-                        + (authorizationHeader.length() - this.messageBeginPrefix
-                                .length()) + " bytes");
-            }
-            final byte[] token = Base64.decode(authorizationHeader
-                    .substring(this.messageBeginPrefix.length()));
-            if (logger.isDebugEnabled()) {
-                logger.debug("Obtained token: " + new String(token));
-            }
-            return new SpnegoCredential(token);
-        }
+		if (StringUtils.hasText(authorizationHeader)
+				&& authorizationHeader.startsWith(this.messageBeginPrefix)
+				&& authorizationHeader.length() > this.messageBeginPrefix.length()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(
+						"SPNEGO Authorization header found with "
+								+ (authorizationHeader.length()
+										- this.messageBeginPrefix
+												.length())
+								+ " bytes");
+			}
+			final byte[] token = Base64.decode(
+					authorizationHeader
+							.substring(this.messageBeginPrefix.length()));
+			if (logger.isDebugEnabled()) {
+				logger.debug("Obtained token: " + new String(token));
+			}
+			return new SpnegoCredential(token);
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    protected String constructMessagePrefix() {
-        return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
-                + " ";
-    }
+	protected String constructMessagePrefix() {
+		return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
+				+ " ";
+	}
 
-    @Override
-    protected void onError(final RequestContext context,
-            final Credential credential) {
-        setResponseHeader(context, credential);
-    }
+	@Override
+	protected void onError(
+			final RequestContext context,
+			final Credential credential) {
+		setResponseHeader(context, credential);
+	}
 
-    @Override
-    protected void onSuccess(final RequestContext context,
-            final Credential credential) {
-        setResponseHeader(context, credential);
-    }
+	@Override
+	protected void onSuccess(
+			final RequestContext context,
+			final Credential credential) {
+		setResponseHeader(context, credential);
+	}
 
-    private void setResponseHeader(final RequestContext context,
-            final Credential credential) {
-        if (credential == null) {
-            return;
-        }
+	private void setResponseHeader(
+			final RequestContext context,
+			final Credential credential) {
+		if (credential == null) {
+			return;
+		}
 
-        final HttpServletResponse response = WebUtils
-                .getHttpServletResponse(context);
-        final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
-        final byte[] nextToken = spnegoCredentials.getNextToken();
-        if (nextToken != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Obtained output token: " + new String(nextToken));
-            }
-            response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm
-                    ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
-                    + " " + Base64.encode(nextToken));
-        } else {
-            logger.debug("Unable to obtain the output token required.");
-        }
+		final HttpServletResponse response = WebUtils
+				.getHttpServletResponse(context);
+		final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
+		final byte[] nextToken = spnegoCredentials.getNextToken();
+		if (nextToken != null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Obtained output token: " + new String(nextToken));
+			}
+			response.setHeader(
+					SpnegoConstants.HEADER_AUTHENTICATE,
+					(this.ntlm
+							? SpnegoConstants.NTLM
+							: SpnegoConstants.NEGOTIATE)
+							+ " "
+							+ Base64.encode(nextToken));
+		}
+		else {
+			logger.debug("Unable to obtain the output token required.");
+		}
 
-        if (spnegoCredentials.getPrincipal() == null && send401OnAuthenticationFailure) {
-            logger.debug("Setting HTTP Status to 401");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        }
-    }
+		if (spnegoCredentials.getPrincipal() == null && send401OnAuthenticationFailure) {
+			logger.debug("Setting HTTP Status to 401");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		}
+	}
 
-    public void setNtlm(final boolean ntlm) {
-        this.ntlm = ntlm;
-        this.messageBeginPrefix = constructMessagePrefix();
-    }
+	public void setNtlm(final boolean ntlm) {
+		this.ntlm = ntlm;
+		this.messageBeginPrefix = constructMessagePrefix();
+	}
 
-    public void setSend401OnAuthenticationFailure(final boolean send401OnAuthenticationFailure) {
-        this.send401OnAuthenticationFailure = send401OnAuthenticationFailure;
-    }
+	public void setSend401OnAuthenticationFailure(final boolean send401OnAuthenticationFailure) {
+		this.send401OnAuthenticationFailure = send401OnAuthenticationFailure;
+	}
 
 }

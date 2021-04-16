@@ -18,7 +18,10 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,179 +41,220 @@ import org.junit.Test;
  */
 public abstract class AbstractTicketRegistryTests {
 
-    private static final int TICKETS_IN_REGISTRY = 10;
+	private static final int TICKETS_IN_REGISTRY = 10;
 
-    private TicketRegistry ticketRegistry;
+	private TicketRegistry ticketRegistry;
 
-    @Before
-    public void setUp() throws Exception {
-        this.ticketRegistry = this.getNewTicketRegistry();
-    }
+	@Before
+	public void setUp() throws Exception {
+		this.ticketRegistry = this.getNewTicketRegistry();
+	}
 
-    /**
-     * Abstract method to retrieve a new ticket registry. Implementing classes
-     * return the TicketRegistry they wish to test.
-     *
-     * @return the TicketRegistry we wish to test
-     */
-    public abstract TicketRegistry getNewTicketRegistry() throws Exception;
+	/**
+	 * Abstract method to retrieve a new ticket registry. Implementing classes return the TicketRegistry they wish to
+	 * test.
+	 *
+	 * @return the TicketRegistry we wish to test
+	 */
+	public abstract TicketRegistry getNewTicketRegistry() throws Exception;
 
-    /**
-     * Method to add a TicketGrantingTicket to the ticket cache. This should add
-     * the ticket and return. Failure upon any exception.
-     */
-    @Test
-    public void testAddTicketToCache() {
-        try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
-        } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
-        }
-    }
+	/**
+	 * Method to add a TicketGrantingTicket to the ticket cache. This should add the ticket and return. Failure upon any
+	 * exception.
+	 */
+	@Test
+	public void testAddTicketToCache() {
+		try {
+			this.ticketRegistry.addTicket(
+					new TicketGrantingTicketImpl(
+							"TEST",
+							TestUtils.getAuthentication(),
+							new NeverExpiresExpirationPolicy()));
+		}
+		catch (final Exception e) {
+			fail("Caught an exception. But no exception should have been thrown.");
+		}
+	}
 
-    @Test
-    public void testGetNullTicket() {
-        try {
-            this.ticketRegistry.getTicket(null, TicketGrantingTicket.class);
-        } catch (final Exception e) {
-            fail("Exception caught.  None expected.");
-        }
-    }
+	@Test
+	public void testGetNullTicket() {
+		try {
+			this.ticketRegistry.getTicket(null, TicketGrantingTicket.class);
+		}
+		catch (final Exception e) {
+			fail("Exception caught.  None expected.");
+		}
+	}
 
-    @Test
-    public void testGetNonExistingTicket() {
-        try {
-            this.ticketRegistry.getTicket("FALALALALALAL", TicketGrantingTicket.class);
-        } catch (final Exception e) {
-            fail("Exception caught.  None expected.");
-        }
-    }
+	@Test
+	public void testGetNonExistingTicket() {
+		try {
+			this.ticketRegistry.getTicket("FALALALALALAL", TicketGrantingTicket.class);
+		}
+		catch (final Exception e) {
+			fail("Exception caught.  None expected.");
+		}
+	}
 
-    @Test
-    public void testGetExistingTicketWithProperClass() {
-        try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
-            this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
-        } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
-        }
-    }
+	@Test
+	public void testGetExistingTicketWithProperClass() {
+		try {
+			this.ticketRegistry.addTicket(
+					new TicketGrantingTicketImpl(
+							"TEST",
+							TestUtils.getAuthentication(),
+							new NeverExpiresExpirationPolicy()));
+			this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
+		}
+		catch (final Exception e) {
+			fail("Caught an exception. But no exception should have been thrown.");
+		}
+	}
 
-    @Test
-    public void testGetExistingTicketWithInproperClass() {
-        try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
-            this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
-        } catch (final ClassCastException e) {
-            return;
-        }
-        fail("ClassCastfinal Exception expected.");
-    }
+	@Test
+	public void testGetExistingTicketWithInproperClass() {
+		try {
+			this.ticketRegistry.addTicket(
+					new TicketGrantingTicketImpl(
+							"TEST",
+							TestUtils.getAuthentication(),
+							new NeverExpiresExpirationPolicy()));
+			this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
+		}
+		catch (final ClassCastException e) {
+			return;
+		}
+		fail("ClassCastfinal Exception expected.");
+	}
 
-    @Test
-    public void testGetNullTicketWithoutClass() {
-        try {
-            this.ticketRegistry.getTicket(null);
-        } catch (final Exception e) {
-            fail("Exception caught.  None expected.");
-        }
-    }
+	@Test
+	public void testGetNullTicketWithoutClass() {
+		try {
+			this.ticketRegistry.getTicket(null);
+		}
+		catch (final Exception e) {
+			fail("Exception caught.  None expected.");
+		}
+	}
 
-    @Test
-    public void testGetNonExistingTicketWithoutClass() {
-        try {
-            this.ticketRegistry.getTicket("FALALALALALAL");
-        } catch (final Exception e) {
-            fail("Exception caught.  None expected.");
-        }
-    }
+	@Test
+	public void testGetNonExistingTicketWithoutClass() {
+		try {
+			this.ticketRegistry.getTicket("FALALALALALAL");
+		}
+		catch (final Exception e) {
+			fail("Exception caught.  None expected.");
+		}
+	}
 
-    @Test
-    public void testGetExistingTicket() {
-        try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
-            this.ticketRegistry.getTicket("TEST");
-        } catch (final Exception e) {
-            e.printStackTrace();
-            fail("Caught an exception. But no exception should have been thrown.");
-        }
-    }
+	@Test
+	public void testGetExistingTicket() {
+		try {
+			this.ticketRegistry.addTicket(
+					new TicketGrantingTicketImpl(
+							"TEST",
+							TestUtils.getAuthentication(),
+							new NeverExpiresExpirationPolicy()));
+			this.ticketRegistry.getTicket("TEST");
+		}
+		catch (final Exception e) {
+			e.printStackTrace();
+			fail("Caught an exception. But no exception should have been thrown.");
+		}
+	}
 
-    @Test
-    public void testDeleteExistingTicket() {
-        try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
-            assertTrue("Ticket was not deleted.", this.ticketRegistry.deleteTicket("TEST"));
-        } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
-        }
-    }
+	@Test
+	public void testDeleteExistingTicket() {
+		try {
+			this.ticketRegistry.addTicket(
+					new TicketGrantingTicketImpl(
+							"TEST",
+							TestUtils.getAuthentication(),
+							new NeverExpiresExpirationPolicy()));
+			assertTrue("Ticket was not deleted.", this.ticketRegistry.deleteTicket("TEST"));
+		}
+		catch (final Exception e) {
+			fail("Caught an exception. But no exception should have been thrown.");
+		}
+	}
 
-    @Test
-    public void testDeleteNonExistingTicket() {
-        try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
-            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket("TEST1"));
-        } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
-        }
-    }
+	@Test
+	public void testDeleteNonExistingTicket() {
+		try {
+			this.ticketRegistry.addTicket(
+					new TicketGrantingTicketImpl(
+							"TEST",
+							TestUtils.getAuthentication(),
+							new NeverExpiresExpirationPolicy()));
+			assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket("TEST1"));
+		}
+		catch (final Exception e) {
+			fail("Caught an exception. But no exception should have been thrown.");
+		}
+	}
 
-    @Test
-    public void testDeleteNullTicket() {
-        try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
-            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null));
-        } catch (final Exception e) {
-            e.printStackTrace();
-            fail("Caught an exception. But no exception should have been thrown.");
-        }
-    }
+	@Test
+	public void testDeleteNullTicket() {
+		try {
+			this.ticketRegistry.addTicket(
+					new TicketGrantingTicketImpl(
+							"TEST",
+							TestUtils.getAuthentication(),
+							new NeverExpiresExpirationPolicy()));
+			assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null));
+		}
+		catch (final Exception e) {
+			e.printStackTrace();
+			fail("Caught an exception. But no exception should have been thrown.");
+		}
+	}
 
-    @Test
-    public void testGetTicketsIsZero() {
-        try {
-            assertEquals("The size of the empty registry is not zero.", this.ticketRegistry.getTickets().size(), 0);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            fail("Caught an exception. But no exception should have been thrown.");
-        }
-    }
+	@Test
+	public void testGetTicketsIsZero() {
+		try {
+			assertEquals("The size of the empty registry is not zero.", this.ticketRegistry.getTickets().size(), 0);
+		}
+		catch (final Exception e) {
+			e.printStackTrace();
+			fail("Caught an exception. But no exception should have been thrown.");
+		}
+	}
 
-    @Test
-    public void testGetTicketsFromRegistryEqualToTicketsAdded() {
-        final Collection<Ticket> tickets = new ArrayList<Ticket>();
+	@Test
+	public void testGetTicketsFromRegistryEqualToTicketsAdded() {
+		final Collection<Ticket> tickets = new ArrayList<Ticket>();
 
-        for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
-            final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl("TEST" + i,
-                    TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i, TestUtils.getService(),
-                    new NeverExpiresExpirationPolicy(), false);
-            tickets.add(ticketGrantingTicket);
-            tickets.add(st);
-            this.ticketRegistry.addTicket(ticketGrantingTicket);
-            this.ticketRegistry.addTicket(st);
-        }
+		for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
+			final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
+					"TEST" + i,
+					TestUtils.getAuthentication(),
+					new NeverExpiresExpirationPolicy());
+			final ServiceTicket st = ticketGrantingTicket.grantServiceTicket(
+					"tests" + i,
+					TestUtils.getService(),
+					new NeverExpiresExpirationPolicy(),
+					false);
+			tickets.add(ticketGrantingTicket);
+			tickets.add(st);
+			this.ticketRegistry.addTicket(ticketGrantingTicket);
+			this.ticketRegistry.addTicket(st);
+		}
 
-        try {
-            Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
-            assertEquals("The size of the registry is not the same as the collection.", ticketRegistryTickets.size(),
-                    tickets.size());
+		try {
+			Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
+			assertEquals(
+					"The size of the registry is not the same as the collection.",
+					ticketRegistryTickets.size(),
+					tickets.size());
 
-            for (final Ticket ticket : tickets) {
-                if (!ticketRegistryTickets.contains(ticket)) {
-                    fail("Ticket was added to registry but was not found in retrieval of collection of all tickets.");
-                }
-            }
-        } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
-        }
-    }
+			for (final Ticket ticket : tickets) {
+				if (!ticketRegistryTickets.contains(ticket)) {
+					fail("Ticket was added to registry but was not found in retrieval of collection of all tickets.");
+				}
+			}
+		}
+		catch (final Exception e) {
+			fail("Caught an exception. But no exception should have been thrown.");
+		}
+	}
 }

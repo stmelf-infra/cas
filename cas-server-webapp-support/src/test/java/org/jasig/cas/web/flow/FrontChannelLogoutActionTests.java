@@ -57,83 +57,87 @@ import org.springframework.webflow.test.MockFlowExecutionKey;
  */
 public class FrontChannelLogoutActionTests {
 
-    private static final String FLOW_EXECUTION_KEY = "12234";
+	private static final String FLOW_EXECUTION_KEY = "12234";
 
-    private static final String TICKET_ID = "ST-XXX";
+	private static final String TICKET_ID = "ST-XXX";
 
-    private FrontChannelLogoutAction frontChannelLogoutAction;
+	private FrontChannelLogoutAction frontChannelLogoutAction;
 
-    private MockHttpServletRequest request;
+	private MockHttpServletRequest request;
 
-    private MockHttpServletResponse response;
+	private MockHttpServletResponse response;
 
-    private RequestContext requestContext;
+	private RequestContext requestContext;
 
-    @Before
-    public void onSetUp() throws Exception {
-        final LogoutManager logoutManager = new LogoutManagerImpl(mock(ServicesManager.class),
-                new SimpleHttpClient(), new SamlCompliantLogoutMessageCreator());
-        this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
+	@Before
+	public void onSetUp() throws Exception {
+		final LogoutManager logoutManager = new LogoutManagerImpl(
+				mock(ServicesManager.class),
+				new SimpleHttpClient(),
+				new SamlCompliantLogoutMessageCreator());
+		this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
 
-        this.request = new MockHttpServletRequest();
-        this.response = new MockHttpServletResponse();
-        this.requestContext = mock(RequestContext.class);
-        final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
-        when(this.requestContext.getExternalContext()).thenReturn(servletExternalContext);
-        when(servletExternalContext.getNativeRequest()).thenReturn(request);
-        when(servletExternalContext.getNativeResponse()).thenReturn(response);
-        final LocalAttributeMap flowScope = new LocalAttributeMap();
-        when(this.requestContext.getFlowScope()).thenReturn(flowScope);
-        final MockFlowExecutionKey mockFlowExecutionKey = new MockFlowExecutionKey(FLOW_EXECUTION_KEY);
-        final MockFlowExecutionContext mockFlowExecutionContext = new MockFlowExecutionContext();
-        mockFlowExecutionContext.setKey(mockFlowExecutionKey);
-        when(this.requestContext.getFlowExecutionContext()).thenReturn(mockFlowExecutionContext);
-    }
+		this.request = new MockHttpServletRequest();
+		this.response = new MockHttpServletResponse();
+		this.requestContext = mock(RequestContext.class);
+		final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
+		when(this.requestContext.getExternalContext()).thenReturn(servletExternalContext);
+		when(servletExternalContext.getNativeRequest()).thenReturn(request);
+		when(servletExternalContext.getNativeResponse()).thenReturn(response);
+		final LocalAttributeMap flowScope = new LocalAttributeMap();
+		when(this.requestContext.getFlowScope()).thenReturn(flowScope);
+		final MockFlowExecutionKey mockFlowExecutionKey = new MockFlowExecutionKey(FLOW_EXECUTION_KEY);
+		final MockFlowExecutionContext mockFlowExecutionContext = new MockFlowExecutionContext();
+		mockFlowExecutionContext.setKey(mockFlowExecutionKey);
+		when(this.requestContext.getFlowExecutionContext()).thenReturn(mockFlowExecutionContext);
+	}
 
-    @Test
-    public void testLogoutNoRequest() throws Exception {
-        this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
-        final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
-        assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
-    }
+	@Test
+	public void testLogoutNoRequest() throws Exception {
+		this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
+		final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
+		assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
+	}
 
-    @Test
-    public void testLogoutNoIndex() throws Exception {
-        WebUtils.putLogoutRequests(this.requestContext, Collections.<LogoutRequest>emptyList());
-        final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
-        assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
-    }
+	@Test
+	public void testLogoutNoIndex() throws Exception {
+		WebUtils.putLogoutRequests(this.requestContext, Collections.<LogoutRequest> emptyList());
+		final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
+		assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
+	}
 
-    @Test
-    public void testLogoutOneLogoutRequestSuccess() throws Exception {
-        final LogoutRequest logoutRequest = new LogoutRequest("", null);
-        logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-        WebUtils.putLogoutRequests(this.requestContext, Collections.<LogoutRequest>emptyList());
-        this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
-        final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
-        assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
-    }
+	@Test
+	public void testLogoutOneLogoutRequestSuccess() throws Exception {
+		final LogoutRequest logoutRequest = new LogoutRequest("", null);
+		logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
+		WebUtils.putLogoutRequests(this.requestContext, Collections.<LogoutRequest> emptyList());
+		this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
+		final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
+		assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
+	}
 
-    @Test
-    public void testLogoutOneLogoutRequestNotAttempted() throws Exception {
-        final String FAKE_URL = "http://url";
-        LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID, new SimpleWebApplicationServiceImpl(FAKE_URL));
-        WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
-        this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
-        final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
-        assertEquals(FrontChannelLogoutAction.REDIRECT_APP_EVENT, event.getId());
-        List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
-        assertEquals(1, list.size());
-        final String url = (String) event.getAttributes().get("logoutUrl");
-        assertTrue(url.startsWith(FAKE_URL + "?SAMLRequest="));
-        final byte[] samlMessage = Base64.decodeBase64(URLDecoder.decode(StringUtils.substringAfter(url,  "?SAMLRequest="), "UTF-8"));
-        final Inflater decompresser = new Inflater();
-        decompresser.setInput(samlMessage);
-        final byte[] result = new byte[1000];
-        decompresser.inflate(result);
-        decompresser.end();
-        final String message = new String(result);
-        assertTrue(message.startsWith("<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\""));
-        assertTrue(message.indexOf("<samlp:SessionIndex>" + TICKET_ID + "</samlp:SessionIndex>") >= 0);
-    }
+	@Test
+	public void testLogoutOneLogoutRequestNotAttempted() throws Exception {
+		final String FAKE_URL = "http://url";
+		LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID, new SimpleWebApplicationServiceImpl(FAKE_URL));
+		WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
+		this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
+		final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
+		assertEquals(FrontChannelLogoutAction.REDIRECT_APP_EVENT, event.getId());
+		List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
+		assertEquals(1, list.size());
+		final String url = (String) event.getAttributes().get("logoutUrl");
+		assertTrue(url.startsWith(FAKE_URL + "?SAMLRequest="));
+		final byte[] samlMessage =
+				Base64.decodeBase64(URLDecoder.decode(StringUtils.substringAfter(url, "?SAMLRequest="), "UTF-8"));
+		final Inflater decompresser = new Inflater();
+		decompresser.setInput(samlMessage);
+		final byte[] result = new byte[1000];
+		decompresser.inflate(result);
+		decompresser.end();
+		final String message = new String(result);
+		assertTrue(
+				message.startsWith("<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\""));
+		assertTrue(message.indexOf("<samlp:SessionIndex>" + TICKET_ID + "</samlp:SessionIndex>") >= 0);
+	}
 }

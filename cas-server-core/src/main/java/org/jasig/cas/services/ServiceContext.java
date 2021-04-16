@@ -30,43 +30,45 @@ import org.jasig.cas.authentication.principal.Service;
  */
 public class ServiceContext {
 
-    /** Service principal. */
-    @NotNull
-    private final Service service;
+	/** Service principal. */
+	@NotNull
+	private final Service service;
 
-    /** Registered service corresponding to service principal. */
-    @NotNull
-    private final RegisteredService registeredService;
+	/** Registered service corresponding to service principal. */
+	@NotNull
+	private final RegisteredService registeredService;
 
-    /**
-     * Creates a new instance with required parameters.
-     *
-     * @param service Service principal.
-     * @param registeredService Registered service corresponding to given service.
-     */
-    public ServiceContext(@NotNull final Service service, @NotNull final RegisteredService registeredService) {
-        this.service = service;
-        this.registeredService = registeredService;
-        if (!registeredService.matches(service)) {
-            throw new IllegalArgumentException("Registered service does not match given service.");
-        }
-    }
+	/**
+	 * Creates a new instance with required parameters.
+	 *
+	 * @param service
+	 *            Service principal.
+	 * @param registeredService
+	 *            Registered service corresponding to given service.
+	 */
+	public ServiceContext(@NotNull final Service service, @NotNull final RegisteredService registeredService) {
+		this.service = service;
+		this.registeredService = registeredService;
+		if (!registeredService.matches(service)) {
+			throw new IllegalArgumentException("Registered service does not match given service.");
+		}
+	}
 
-    /**
-     * Gets the service principal.
-     *
-     * @return Non-null service principal.
-     */
-    public Service getService() {
-        return service;
-    }
+	/**
+	 * Gets the service principal.
+	 *
+	 * @return Non-null service principal.
+	 */
+	public Service getService() {
+		return service;
+	}
 
-    /**
-     * Gets the registered service for the service principal.
-     *
-     * @return Non-null registered service.
-     */
-    public RegisteredService getRegisteredService() {
-        return registeredService;
-    }
+	/**
+	 * Gets the registered service for the service principal.
+	 *
+	 * @return Non-null registered service.
+	 */
+	public RegisteredService getRegisteredService() {
+		return registeredService;
+	}
 }

@@ -31,9 +31,9 @@ import org.springframework.webflow.execution.RequestContext;
  * Webflow action that checks whether the TGT in the request context is valid. There are three possible outcomes:
  *
  * <ol>
- *     <li>{@link #NOT_EXISTS} - TGT not found in flow request context.</li>
- *     <li>{@link #INVALID} TGT has expired or is not found in ticket registry.</li>
- *     <li>{@link #VALID} - TGT found in ticket registry and has not expired.</li>
+ * <li>{@link #NOT_EXISTS} - TGT not found in flow request context.</li>
+ * <li>{@link #INVALID} TGT has expired or is not found in ticket registry.</li>
+ * <li>{@link #VALID} - TGT found in ticket registry and has not expired.</li>
  * </ol>
  *
  * @author Marvin S. Addison
@@ -41,44 +41,45 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class TicketGrantingTicketCheckAction {
 
-    /** TGT does not exist event ID={@value}. */
-    public static final String NOT_EXISTS = "notExists";
+	/** TGT does not exist event ID={@value}. */
+	public static final String NOT_EXISTS = "notExists";
 
-    /** TGT invalid event ID={@value}. */
-    public static final String INVALID = "invalid";
+	/** TGT invalid event ID={@value}. */
+	public static final String INVALID = "invalid";
 
-    /** TGT valid event ID={@value}. */
-    public static final String VALID = "valid";
+	/** TGT valid event ID={@value}. */
+	public static final String VALID = "valid";
 
-    /** Ticket registry searched for TGT by ID. */
-    @NotNull
-    private final TicketRegistry ticketRegistry;
+	/** Ticket registry searched for TGT by ID. */
+	@NotNull
+	private final TicketRegistry ticketRegistry;
 
+	/**
+	 * Creates a new instance with the given ticket registry.
+	 *
+	 * @param registry
+	 *            Ticket registry to query for valid tickets.
+	 */
+	public TicketGrantingTicketCheckAction(final TicketRegistry registry) {
+		this.ticketRegistry = registry;
+	}
 
-    /**
-     * Creates a new instance with the given ticket registry.
-     *
-     * @param registry Ticket registry to query for valid tickets.
-     */
-    public TicketGrantingTicketCheckAction(final TicketRegistry registry) {
-        this.ticketRegistry = registry;
-    }
+	/**
+	 * Determines whether the TGT in the flow request context is valid.
+	 *
+	 * @param requestContext
+	 *            Flow request context.
+	 *
+	 * @return {@link #NOT_EXISTS}, {@link #INVALID}, or {@link #VALID}.
+	 */
+	public Event checkValidity(final RequestContext requestContext) {
 
-    /**
-     * Determines whether the TGT in the flow request context is valid.
-     *
-     * @param requestContext Flow request context.
-     *
-     * @return {@link #NOT_EXISTS}, {@link #INVALID}, or {@link #VALID}.
-     */
-    public Event checkValidity(final RequestContext requestContext) {
+		final String tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
+		if (!StringUtils.hasText(tgtId)) {
+			return new Event(this, NOT_EXISTS);
+		}
 
-        final String tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
-        if (!StringUtils.hasText(tgtId)) {
-            return new Event(this, NOT_EXISTS);
-        }
-
-        final Ticket ticket = this.ticketRegistry.getTicket(tgtId);
-        return new Event(this, ticket != null && !ticket.isExpired() ? VALID : INVALID);
-    }
+		final Ticket ticket = this.ticketRegistry.getTicket(tgtId);
+		return new Event(this, ticket != null && !ticket.isExpired() ? VALID : INVALID);
+	}
 }

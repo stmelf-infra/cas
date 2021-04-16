@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -28,38 +28,43 @@ import org.junit.Test;
  */
 public class DefaultLongNumericGeneratorTests {
 
-    @Test
-    public void testWrap() {
-        assertEquals(Long.MAX_VALUE, new DefaultLongNumericGenerator(Long.MAX_VALUE)
-            .getNextLong());
-    }
+	@Test
+	public void testWrap() {
+		assertEquals(
+				Long.MAX_VALUE,
+				new DefaultLongNumericGenerator(Long.MAX_VALUE)
+						.getNextLong());
+	}
 
-    @Test
-    public void testInitialValue() {
-        assertEquals(10L, new DefaultLongNumericGenerator(10L)
-            .getNextLong());
-    }
+	@Test
+	public void testInitialValue() {
+		assertEquals(
+				10L,
+				new DefaultLongNumericGenerator(10L)
+						.getNextLong());
+	}
 
-    @Test
-    public void testIncrementWithNoWrap() {
-        assertEquals(0, new DefaultLongNumericGenerator().getNextLong());
-    }
+	@Test
+	public void testIncrementWithNoWrap() {
+		assertEquals(0, new DefaultLongNumericGenerator().getNextLong());
+	}
 
-    @Test
-    public void testIncrementWithNoWrap2() {
-        final DefaultLongNumericGenerator g = new DefaultLongNumericGenerator();
-        g.getNextLong();
-        assertEquals(1, g.getNextLong());
-    }
+	@Test
+	public void testIncrementWithNoWrap2() {
+		final DefaultLongNumericGenerator g = new DefaultLongNumericGenerator();
+		g.getNextLong();
+		assertEquals(1, g.getNextLong());
+	}
 
-    @Test
-    public void testMinimumSize() {
-        assertEquals(1, new DefaultLongNumericGenerator().minLength());
-    }
+	@Test
+	public void testMinimumSize() {
+		assertEquals(1, new DefaultLongNumericGenerator().minLength());
+	}
 
-    @Test
-    public void testMaximumLength() {
-        assertEquals(Long.toString(Long.MAX_VALUE).length(),
-            new DefaultLongNumericGenerator().maxLength());
-    }
+	@Test
+	public void testMaximumLength() {
+		assertEquals(
+				Long.toString(Long.MAX_VALUE).length(),
+				new DefaultLongNumericGenerator().maxLength());
+	}
 }

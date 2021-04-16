@@ -18,9 +18,10 @@
  */
 package org.jasig.cas.ticket.support;
 
-import java.util.Collections;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import static org.junit.Assert.*;
+import java.util.Collections;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
@@ -39,36 +40,37 @@ import org.junit.Test;
  */
 public final class RememberMeDelegatingExpirationPolicyTests {
 
-    private RememberMeDelegatingExpirationPolicy p;
+	private RememberMeDelegatingExpirationPolicy p;
 
-    @Before
-    public void setUp() throws Exception {
-        this.p = new RememberMeDelegatingExpirationPolicy();
-        this.p.setRememberMeExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000));
-        this.p.setSessionExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(5, 20000));
-    }
+	@Before
+	public void setUp() throws Exception {
+		this.p = new RememberMeDelegatingExpirationPolicy();
+		this.p.setRememberMeExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(1, 20000));
+		this.p.setSessionExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(5, 20000));
+	}
 
-    @Test
-    public void testTicketExpirationWithRememberMe() {
-        final Authentication authentication = TestUtils.getAuthentication(
-                new SimplePrincipal("test"),
-                Collections.<String, Object>singletonMap(
-                        RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
-        final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
-        assertFalse(t.isExpired());
-        t.grantServiceTicket("55", TestUtils.getService(), this.p, false);
-        assertTrue(t.isExpired());
+	@Test
+	public void testTicketExpirationWithRememberMe() {
+		final Authentication authentication = TestUtils.getAuthentication(
+				new SimplePrincipal("test"),
+				Collections.<String, Object> singletonMap(
+						RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME,
+						true));
+		final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
+		assertFalse(t.isExpired());
+		t.grantServiceTicket("55", TestUtils.getService(), this.p, false);
+		assertTrue(t.isExpired());
 
-    }
+	}
 
-    @Test
-    public void testTicketExpirationWithoutRememberMe() {
-        final Authentication authentication = TestUtils.getAuthentication();
-        final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
-        assertFalse(t.isExpired());
-        t.grantServiceTicket("55", TestUtils.getService(), this.p, false);
-        assertFalse(t.isExpired());
+	@Test
+	public void testTicketExpirationWithoutRememberMe() {
+		final Authentication authentication = TestUtils.getAuthentication();
+		final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
+		assertFalse(t.isExpired());
+		t.grantServiceTicket("55", TestUtils.getService(), this.p, false);
+		assertFalse(t.isExpired());
 
-    }
+	}
 
 }

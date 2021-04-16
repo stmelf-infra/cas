@@ -32,43 +32,44 @@ import org.jasig.cas.authentication.principal.Service;
  */
 public class MockService implements Service {
 
-    private static final long serialVersionUID = 117438127028057173L;
-    private boolean loggedOut = false;
-    private String id;
+	private static final long serialVersionUID = 117438127028057173L;
+	private boolean loggedOut = false;
+	private String id;
 
-    public MockService(final String id) {
-        this.id = id;
-    }
+	public MockService(final String id) {
+		this.id = id;
+	}
 
-    public String getArtifactId() {
-        return null;
-    }
+	public String getArtifactId() {
+		return null;
+	}
 
-    public Response getResponse(final String ticketId) {
-        return null;
-    }
+	public Response getResponse(final String ticketId) {
+		return null;
+	}
 
-    public boolean logOutOfService(final String sessionIdentifier) {
-        this.loggedOut = true;
-        return false;
-    }
+	public boolean logOutOfService(final String sessionIdentifier) {
+		this.loggedOut = true;
+		return false;
+	}
 
-    public boolean isLoggedOut() {
-        return this.loggedOut;
-    }
+	public boolean isLoggedOut() {
+		return this.loggedOut;
+	}
 
-    public void setPrincipal(final Principal principal) {}
+	public void setPrincipal(final Principal principal) {
+	}
 
-    public Map<String, Object> getAttributes() {
-        return null;
-    }
+	public Map<String, Object> getAttributes() {
+		return null;
+	}
 
-    public String getId() {
-        return id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public boolean matches(final Service service) {
-        return true;
-    }
+	public boolean matches(final Service service) {
+		return true;
+	}
 
 }

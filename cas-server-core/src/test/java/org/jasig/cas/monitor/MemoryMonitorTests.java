@@ -19,9 +19,9 @@
 
 package org.jasig.cas.monitor;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Unit test for {@link MemoryMonitor} class.
@@ -31,15 +31,15 @@ import static org.junit.Assert.assertEquals;
  */
 public class MemoryMonitorTests {
 
-    @Test
-    public void testObserveOk() throws Exception {
-        assertEquals(StatusCode.OK, new MemoryMonitor().observe().getCode());
-    }
+	@Test
+	public void testObserveOk() throws Exception {
+		assertEquals(StatusCode.OK, new MemoryMonitor().observe().getCode());
+	}
 
-    @Test
-    public void testObserveWarn() throws Exception {
-        final MemoryMonitor monitor = new MemoryMonitor();
-        monitor.setFreeMemoryWarnThreshold(100);
-        assertEquals(StatusCode.WARN, monitor.observe().getCode());
-    }
+	@Test
+	public void testObserveWarn() throws Exception {
+		final MemoryMonitor monitor = new MemoryMonitor();
+		monitor.setFreeMemoryWarnThreshold(100);
+		assertEquals(StatusCode.WARN, monitor.observe().getCode());
+	}
 }

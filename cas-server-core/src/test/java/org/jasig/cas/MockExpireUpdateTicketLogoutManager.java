@@ -32,21 +32,21 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  */
 public final class MockExpireUpdateTicketLogoutManager implements LogoutManager {
 
-    private final MockOnlyOneTicketRegistry registry;
-    
-    public MockExpireUpdateTicketLogoutManager(final MockOnlyOneTicketRegistry ticketRegistry) {
-        this.registry = ticketRegistry;
-    }
+	private final MockOnlyOneTicketRegistry registry;
 
-    @Override
-    public List<LogoutRequest> performLogout(final TicketGrantingTicket ticket) {
-        ticket.markTicketExpired();
-        registry.updateTicket(ticket);
-        return null;
-    }
+	public MockExpireUpdateTicketLogoutManager(final MockOnlyOneTicketRegistry ticketRegistry) {
+		this.registry = ticketRegistry;
+	}
 
-    @Override
-    public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
+	@Override
+	public List<LogoutRequest> performLogout(final TicketGrantingTicket ticket) {
+		ticket.markTicketExpired();
+		registry.updateTicket(ticket);
+		return null;
+	}
+
+	@Override
+	public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }

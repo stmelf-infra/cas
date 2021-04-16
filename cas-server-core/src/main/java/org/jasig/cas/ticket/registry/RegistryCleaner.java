@@ -23,16 +23,16 @@ package org.jasig.cas.ticket.registry;
  * Strategy interface to denote the start of cleaning the registry.
  *
  * @author Scott Battaglia
-
+ * 
  * @since 3.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
+ *        <p>
+ *        This is a published and supported CAS Server 3 API.
+ *        </p>
  */
 public interface RegistryCleaner {
 
-    /**
-     * Method to kick-off the cleaning of a registry.
-     */
-    void clean();
+	/**
+	 * Method to kick-off the cleaning of a registry.
+	 */
+	void clean();
 }

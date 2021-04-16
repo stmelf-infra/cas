@@ -18,35 +18,36 @@
  */
 package org.jasig.cas.authentication.handler;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 /**
  * @author Scott Battaglia
-
+ * 
  * @since 3.0
  */
 public class UnsupportedCredentialsExceptionTests {
 
-    private static final String CODE = "error.authentication.credentials.unsupported";
+	private static final String CODE = "error.authentication.credentials.unsupported";
 
-    @Test
-    public void testNoParamConstructor() {
-        new UnsupportedCredentialsException();
-    }
+	@Test
+	public void testNoParamConstructor() {
+		new UnsupportedCredentialsException();
+	}
 
-    @Test
-    public void testGetCode() {
-        assertEquals(CODE,
-            new UnsupportedCredentialsException().getCode());
-    }
+	@Test
+	public void testGetCode() {
+		assertEquals(
+				CODE,
+				new UnsupportedCredentialsException().getCode());
+	}
 
-    @Test
-    public void testThrowableConstructor() {
-        final RuntimeException r = new RuntimeException();
-        final UnsupportedCredentialsException e = new UnsupportedCredentialsException(r);
-        assertEquals(CODE, e.getCode());
-        assertEquals(r, e.getCause());
-    }
+	@Test
+	public void testThrowableConstructor() {
+		final RuntimeException r = new RuntimeException();
+		final UnsupportedCredentialsException e = new UnsupportedCredentialsException(r);
+		assertEquals(CODE, e.getCode());
+		assertEquals(r, e.getCause());
+	}
 }

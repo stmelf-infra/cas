@@ -32,21 +32,22 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class AbstractArgumentExtractor implements
-    ArgumentExtractor {
+		ArgumentExtractor {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public final WebApplicationService extractService(final HttpServletRequest request) {
-        final WebApplicationService service = extractServiceInternal(request);
+	public final WebApplicationService extractService(final HttpServletRequest request) {
+		final WebApplicationService service = extractServiceInternal(request);
 
-        if (service == null) {
-            logger.debug("Extractor did not generate service.");
-        } else {
-            logger.debug("Extractor generated service for: {}", service.getId());
-        }
+		if (service == null) {
+			logger.debug("Extractor did not generate service.");
+		}
+		else {
+			logger.debug("Extractor generated service for: {}", service.getId());
+		}
 
-        return service;
-    }
+		return service;
+	}
 
-    protected abstract WebApplicationService extractServiceInternal(final HttpServletRequest request);
+	protected abstract WebApplicationService extractServiceInternal(final HttpServletRequest request);
 }

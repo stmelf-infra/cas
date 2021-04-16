@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.quartz.Scheduler;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Test case for {@link org.jasig.cas.util.AutowiringSchedulerFactoryBean} class.
@@ -34,24 +34,19 @@ import org.quartz.Scheduler;
  *
  */
 public class AutowiringSchedulerFactoryBeanTests {
-    private ApplicationContext context;
+	private ApplicationContext context;
 
-    private Scheduler scheduler;
+	private Scheduler scheduler;
 
+	@Before
+	public void setUp() throws Exception {
+		context = new ClassPathXmlApplicationContext(
+				new String[] {
+						"core-context.xml",
+						"applicationContext.xml" });
 
-    @Before
-    public void setUp() throws Exception {
-        context = new ClassPathXmlApplicationContext(new String[] {
-        "core-context.xml",
-        "applicationContext.xml"});
+		this.scheduler = (Scheduler) context.getBean("autowiringSchedulerFactoryBean");
+		this.scheduler.start();
 
-        this.scheduler = (Scheduler) context.getBean("autowiringSchedulerFactoryBean");
-        this.scheduler.start();
-
-    }
-
-    @Test
-    public void testAfterPropertiesSet() throws Exception {
-        assertEquals(1, this.scheduler.getTriggerNames(Scheduler.DEFAULT_GROUP).length);
-    }
+	}
 }

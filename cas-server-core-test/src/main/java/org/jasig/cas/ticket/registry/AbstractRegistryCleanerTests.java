@@ -34,51 +34,55 @@ import org.junit.Test;
  */
 public abstract class AbstractRegistryCleanerTests {
 
-    private RegistryCleaner registryCleaner;
+	private RegistryCleaner registryCleaner;
 
-    private TicketRegistry ticketRegistry;
+	private TicketRegistry ticketRegistry;
 
-    @Before
-    public void setUp() throws Exception {
-        this.ticketRegistry = this.getNewTicketRegistry();
-        this.registryCleaner = this.getNewRegistryCleaner(this.ticketRegistry);
-    }
+	@Before
+	public void setUp() throws Exception {
+		this.ticketRegistry = this.getNewTicketRegistry();
+		this.registryCleaner = this.getNewRegistryCleaner(this.ticketRegistry);
+	}
 
-    public abstract RegistryCleaner getNewRegistryCleaner(TicketRegistry newTicketRegistry);
+	public abstract RegistryCleaner getNewRegistryCleaner(TicketRegistry newTicketRegistry);
 
-    public abstract TicketRegistry getNewTicketRegistry();
+	public abstract TicketRegistry getNewTicketRegistry();
 
-    @Test
-    public void testCleanEmptyTicketRegistry() {
-        this.registryCleaner.clean();
-        assertTrue(this.ticketRegistry.getTickets().isEmpty());
-    }
+	@Test
+	public void testCleanEmptyTicketRegistry() {
+		this.registryCleaner.clean();
+		assertTrue(this.ticketRegistry.getTickets().isEmpty());
+	}
 
-    @Test
-    public void testCleanRegistryOfExpiredTicketsAllExpired() {
-        populateRegistryWithExpiredTickets();
-        this.registryCleaner.clean();
-        assertTrue(this.ticketRegistry.getTickets().isEmpty());
-    }
+	@Test
+	public void testCleanRegistryOfExpiredTicketsAllExpired() {
+		populateRegistryWithExpiredTickets();
+		this.registryCleaner.clean();
+		assertTrue(this.ticketRegistry.getTickets().isEmpty());
+	}
 
-    @Test
-    public void testCleanRegistryOneNonExpired() {
-        populateRegistryWithExpiredTickets();
-        TicketGrantingTicket ticket = new TicketGrantingTicketImpl("testNoExpire", TestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy());
-        this.ticketRegistry.addTicket(ticket);
+	@Test
+	public void testCleanRegistryOneNonExpired() {
+		populateRegistryWithExpiredTickets();
+		TicketGrantingTicket ticket = new TicketGrantingTicketImpl(
+				"testNoExpire",
+				TestUtils.getAuthentication(),
+				new NeverExpiresExpirationPolicy());
+		this.ticketRegistry.addTicket(ticket);
 
-        this.registryCleaner.clean();
+		this.registryCleaner.clean();
 
-        assertEquals(this.ticketRegistry.getTickets().size(), 1);
-    }
+		assertEquals(this.ticketRegistry.getTickets().size(), 1);
+	}
 
-    private void populateRegistryWithExpiredTickets() {
-        for (int i = 0; i < 10; i++) {
-            TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test" + i, TestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy());
-            ticket.markTicketExpired();
-            this.ticketRegistry.addTicket(ticket);
-        }
-    }
+	private void populateRegistryWithExpiredTickets() {
+		for (int i = 0; i < 10; i++) {
+			TicketGrantingTicket ticket = new TicketGrantingTicketImpl(
+					"test" + i,
+					TestUtils.getAuthentication(),
+					new NeverExpiresExpirationPolicy());
+			ticket.markTicketExpired();
+			this.ticketRegistry.addTicket(ticket);
+		}
+	}
 }

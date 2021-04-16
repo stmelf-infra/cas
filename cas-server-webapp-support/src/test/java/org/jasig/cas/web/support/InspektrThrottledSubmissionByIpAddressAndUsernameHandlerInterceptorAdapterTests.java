@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.web.support;
 
+import static org.junit.Assert.fail;
+
 import javax.sql.DataSource;
 
-import com.github.inspektr.common.web.ClientInfo;
-import com.github.inspektr.common.web.ClientInfoHolder;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -37,7 +37,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.fail;
+import com.github.inspektr.common.web.ClientInfo;
+import com.github.inspektr.common.web.ClientInfoHolder;
 
 /**
  * Unit test for {@link InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter}.
@@ -46,69 +47,73 @@ import static org.junit.Assert.fail;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-        "classpath:/core-context.xml", "classpath:/applicationContext.xml", "classpath:/jpaTestApplicationContext.xml",
-        "classpath:/inspektrThrottledSubmissionContext.xml"
+		"classpath:/core-context.xml",
+		"classpath:/applicationContext.xml",
+		"classpath:/jpaTestApplicationContext.xml",
+		"classpath:/inspektrThrottledSubmissionContext.xml"
 })
 @Ignore("Disable temporarily until we have time to investigate cause of test failure")
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
-AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
+		AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
-    @Autowired
-    private InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter throttle;
+	@Autowired
+	private InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter throttle;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+	@Autowired
+	private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private DataSource dataSource;
+	@Autowired
+	private DataSource dataSource;
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        new JdbcTemplate(dataSource).execute("CREATE TABLE COM_AUDIT_TRAIL ( "
-                + "AUD_USER      VARCHAR(100)  NOT NULL, "
-                + "AUD_CLIENT_IP VARCHAR(15)    NOT NULL, "
-                + "AUD_SERVER_IP VARCHAR(15)    NOT NULL, "
-                + "AUD_RESOURCE  VARCHAR(100)  NOT NULL, "
-                + "AUD_ACTION    VARCHAR(100)  NOT NULL, "
-                + "APPLIC_CD     VARCHAR(5)    NOT NULL, "
-                + "AUD_DATE      TIMESTAMP      NOT NULL)");
-    }
+	@Override
+	@Before
+	public void setUp() throws Exception {
+		new JdbcTemplate(dataSource).execute(
+				"CREATE TABLE COM_AUDIT_TRAIL ( "
+						+ "AUD_USER      VARCHAR(100)  NOT NULL, "
+						+ "AUD_CLIENT_IP VARCHAR(15)    NOT NULL, "
+						+ "AUD_SERVER_IP VARCHAR(15)    NOT NULL, "
+						+ "AUD_RESOURCE  VARCHAR(100)  NOT NULL, "
+						+ "AUD_ACTION    VARCHAR(100)  NOT NULL, "
+						+ "APPLIC_CD     VARCHAR(5)    NOT NULL, "
+						+ "AUD_DATE      TIMESTAMP      NOT NULL)");
+	}
 
-    @Override
-    protected AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle() {
-        return throttle;
-    }
+	@Override
+	protected AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle() {
+		return throttle;
+	}
 
-    @Override
-    protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress)
-            throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        request.setMethod("POST");
-        request.setParameter("username", username);
-        request.setRemoteAddr(fromAddress);
-        MockRequestContext context = new MockRequestContext();
-        context.setCurrentEvent(new Event("", "error"));
-        request.setAttribute("flowRequestContext", context);
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+	@Override
+	protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress)
+			throws Exception {
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		final MockHttpServletResponse response = new MockHttpServletResponse();
+		request.setMethod("POST");
+		request.setParameter("username", username);
+		request.setRemoteAddr(fromAddress);
+		MockRequestContext context = new MockRequestContext();
+		context.setCurrentEvent(new Event("", "error"));
+		request.setAttribute("flowRequestContext", context);
+		ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        getThrottle().preHandle(request, response, null);
+		getThrottle().preHandle(request, response, null);
 
-        try {
-            authenticationManager.authenticate(badCredentials(username));
-        } catch (final AuthenticationException e) {
-            getThrottle().postHandle(request, response, null, null);
-            return response;
-        }
-        fail("Expected AuthenticationException");
-        return null;
-    }
+		try {
+			authenticationManager.authenticate(badCredentials(username));
+		}
+		catch (final AuthenticationException e) {
+			getThrottle().postHandle(request, response, null, null);
+			return response;
+		}
+		fail("Expected AuthenticationException");
+		return null;
+	}
 
-    private UsernamePasswordCredential badCredentials(final String username) {
-        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
-        credentials.setUsername(username);
-        credentials.setPassword("badpassword");
-        return credentials;
-    }
+	private UsernamePasswordCredential badCredentials(final String username) {
+		final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
+		credentials.setUsername(username);
+		credentials.setPassword("badpassword");
+		return credentials;
+	}
 }

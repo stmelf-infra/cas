@@ -18,9 +18,10 @@
  */
 package org.jasig.cas.services;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Default In Memory Service Registry Dao for test/demonstration purposes.
@@ -31,56 +32,56 @@ import java.util.List;
  */
 public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
 
-    @NotNull
-    private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
+	@NotNull
+	private List<RegisteredService> registeredServices = new ArrayList<RegisteredService>();
 
-    public boolean delete(final RegisteredService registeredService) {
-        return this.registeredServices.remove(registeredService);
-    }
+	public boolean delete(final RegisteredService registeredService) {
+		return this.registeredServices.remove(registeredService);
+	}
 
-    public RegisteredService findServiceById(final long id) {
-        for (final RegisteredService r : this.registeredServices) {
-            if (r.getId() == id) {
-                return r;
-            }
-        }
+	public RegisteredService findServiceById(final long id) {
+		for (final RegisteredService r : this.registeredServices) {
+			if (r.getId() == id) {
+				return r;
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    public List<RegisteredService> load() {
-        return this.registeredServices;
-    }
+	public List<RegisteredService> load() {
+		return this.registeredServices;
+	}
 
-    public RegisteredService save(final RegisteredService registeredService) {
-        if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            ((AbstractRegisteredService) registeredService).setId(findHighestId()+1);
-        }
+	public RegisteredService save(final RegisteredService registeredService) {
+		if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+			((AbstractRegisteredService) registeredService).setId(findHighestId() + 1);
+		}
 
-        this.registeredServices.remove(registeredService);
-        this.registeredServices.add(registeredService);
+		this.registeredServices.remove(registeredService);
+		this.registeredServices.add(registeredService);
 
-        return registeredService;
-    }
+		return registeredService;
+	}
 
-    public void setRegisteredServices(final List<RegisteredService> registeredServices) {
-        this.registeredServices = registeredServices;
-    }
+	public void setRegisteredServices(final List<RegisteredService> registeredServices) {
+		this.registeredServices = registeredServices;
+	}
 
-    /**
-     * This isn't super-fast but we don't expect thousands of services.
-     *
-     * @return the highest service id in the list of registered services
-     */
-    private long findHighestId() {
-        long id = 0;
+	/**
+	 * This isn't super-fast but we don't expect thousands of services.
+	 *
+	 * @return the highest service id in the list of registered services
+	 */
+	private long findHighestId() {
+		long id = 0;
 
-        for (final RegisteredService r : this.registeredServices) {
-            if (r.getId() > id) {
-                id = r.getId();
-            }
-        }
+		for (final RegisteredService r : this.registeredServices) {
+			if (r.getId() > id) {
+				id = r.getId();
+			}
+		}
 
-        return id;
-    }
+		return id;
+	}
 }

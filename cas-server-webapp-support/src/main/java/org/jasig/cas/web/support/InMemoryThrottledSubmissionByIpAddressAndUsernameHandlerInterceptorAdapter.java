@@ -18,28 +18,28 @@
  */
 package org.jasig.cas.web.support;
 
-import com.github.inspektr.common.web.ClientInfoHolder;
-
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.inspektr.common.web.ClientInfoHolder;
+
 /**
- * Attempts to throttle by both IP Address and username.  Protects against instances where there is a NAT, such as
- * a local campus wireless network.
+ * Attempts to throttle by both IP Address and username. Protects against instances where there is a NAT, such as a
+ * local campus wireless network.
  *
  * @author Scott Battaglia
  * @since 3.3.5
  */
 public final class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
-          extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
+		extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
 
-    @Override
-    protected String constructKey(final HttpServletRequest request) {
-        final String username = request.getParameter(getUsernameParameter());
+	@Override
+	protected String constructKey(final HttpServletRequest request) {
+		final String username = request.getParameter(getUsernameParameter());
 
-        if (username == null) {
-            return request.getRemoteAddr();
-        }
+		if (username == null) {
+			return request.getRemoteAddr();
+		}
 
-        return ClientInfoHolder.getClientInfo().getClientIpAddress() + ";" + username.toLowerCase();
-    }
+		return ClientInfoHolder.getClientInfo().getClientIpAddress() + ";" + username.toLowerCase();
+	}
 }

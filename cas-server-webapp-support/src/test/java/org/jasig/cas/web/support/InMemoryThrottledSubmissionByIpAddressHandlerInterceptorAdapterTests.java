@@ -30,15 +30,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Marvin S. Addison
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:/inMemoryThrottledSubmissionContext.xml"})
+@ContextConfiguration(locations = { "classpath:/inMemoryThrottledSubmissionContext.xml" })
 public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests
-extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests {
+		extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests {
 
-    @Autowired
-    private InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter throttle;
+	@Autowired
+	private InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter throttle;
 
-    @Override
-    protected AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle() {
-        return throttle;
-    }
+	@Override
+	protected AbstractThrottledSubmissionHandlerInterceptorAdapter getThrottle() {
+		return throttle;
+	}
 }

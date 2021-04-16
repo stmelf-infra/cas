@@ -18,36 +18,37 @@
  */
 package org.jasig.cas.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 
 import org.junit.Test;
 
-
 /**
  * @author Scott Battaglia
-
+ * 
  * @since 3.0
  */
 public class DefaultRandomStringGeneratorTests {
 
-    private static final int LENGTH = 35;
+	private static final int LENGTH = 35;
 
-    private RandomStringGenerator randomStringGenerator = new DefaultRandomStringGenerator(
-        LENGTH);
+	private RandomStringGenerator randomStringGenerator = new DefaultRandomStringGenerator(
+			LENGTH);
 
-    @Test
-    public void testMaxLength() {
-        assertEquals(LENGTH, this.randomStringGenerator.getMaxLength());
-    }
+	@Test
+	public void testMaxLength() {
+		assertEquals(LENGTH, this.randomStringGenerator.getMaxLength());
+	}
 
-    @Test
-    public void testMinLength() {
-        assertEquals(LENGTH, this.randomStringGenerator.getMinLength());
-    }
+	@Test
+	public void testMinLength() {
+		assertEquals(LENGTH, this.randomStringGenerator.getMinLength());
+	}
 
-    @Test
-    public void testRandomString() {
-        assertNotSame(this.randomStringGenerator.getNewString(),
-            this.randomStringGenerator.getNewString());
-    }
+	@Test
+	public void testRandomString() {
+		assertNotSame(
+				this.randomStringGenerator.getNewString(),
+				this.randomStringGenerator.getNewString());
+	}
 }

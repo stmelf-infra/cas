@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.logout;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -31,31 +34,28 @@ import org.junit.runners.JUnit4;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
-
 @RunWith(JUnit4.class)
 public class SamlCompliantLogoutMessageCreatorTests {
 
-    private final LogoutMessageCreator builder = new SamlCompliantLogoutMessageCreator();
+	private final LogoutMessageCreator builder = new SamlCompliantLogoutMessageCreator();
 
-    @Test
-    public void testMessageBuilding() throws Exception {
+	@Test
+	public void testMessageBuilding() throws Exception {
 
-        final SingleLogoutService service = mock(SingleLogoutService.class);
-        final LogoutRequest request = new LogoutRequest("TICKET-ID", service);
+		final SingleLogoutService service = mock(SingleLogoutService.class);
+		final LogoutRequest request = new LogoutRequest("TICKET-ID", service);
 
-        final String msg = builder.create(request);
+		final String msg = builder.create(request);
 
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        final DocumentBuilder builder = factory.newDocumentBuilder();
+		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		final DocumentBuilder builder = factory.newDocumentBuilder();
 
-        final InputStream is = new ByteArrayInputStream(msg.getBytes());
-        final Document document = builder.parse(is);
-        
-        final NodeList list = document.getDocumentElement().getElementsByTagName("samlp:SessionIndex");
-        assertEquals(list.getLength(), 1);
-        
-        assertEquals(list.item(0).getTextContent(), request.getTicketId());
-    }
+		final InputStream is = new ByteArrayInputStream(msg.getBytes());
+		final Document document = builder.parse(is);
+
+		final NodeList list = document.getDocumentElement().getElementsByTagName("samlp:SessionIndex");
+		assertEquals(list.getLength(), 1);
+
+		assertEquals(list.item(0).getTextContent(), request.getTicketId());
+	}
 }

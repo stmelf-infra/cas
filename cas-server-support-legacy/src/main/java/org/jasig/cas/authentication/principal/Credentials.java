@@ -28,4 +28,5 @@ import java.io.Serializable;
  * @since 4.0
  */
 @Deprecated
-public interface Credentials extends Serializable {}
+public interface Credentials extends Serializable {
+}

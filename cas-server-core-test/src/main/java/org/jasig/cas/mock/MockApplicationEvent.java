@@ -22,10 +22,10 @@ import org.springframework.context.ApplicationEvent;
 
 public class MockApplicationEvent extends ApplicationEvent {
 
-    private static final long serialVersionUID = 3761968285092032567L;
+	private static final long serialVersionUID = 3761968285092032567L;
 
-    public MockApplicationEvent(final Object arg0) {
-        super(arg0);
-    }
+	public MockApplicationEvent(final Object arg0) {
+		super(arg0);
+	}
 
 }

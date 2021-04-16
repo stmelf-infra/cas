@@ -21,6 +21,7 @@ package org.jasig.cas.web.flow;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Min;
+
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +31,8 @@ import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Listener to expire web session as soon as the webflow is ended. The goal is to decrease memory
- * consumption by deleting as soon as
- * possible the web sessions created mainly for login process.
+ * Listener to expire web session as soon as the webflow is ended. The goal is to decrease memory consumption by
+ * deleting as soon as possible the web sessions created mainly for login process.
  *
  * @author Jerome Leleu
  * @author Marvin S. Addison
@@ -40,33 +40,36 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class TerminateWebSessionListener extends FlowExecutionListenerAdapter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TerminateWebSessionListener.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TerminateWebSessionListener.class);
 
-    @Min(0)
-    private int timeToDieInSeconds = 2;
+	@Min(0)
+	private int timeToDieInSeconds = 2;
 
-    @Override
-    public void sessionEnded(final RequestContext context, final FlowSession session, final String outcome,
-                             final AttributeMap output) {
+	@Override
+	public void sessionEnded(
+			final RequestContext context,
+			final FlowSession session,
+			final String outcome,
+			final AttributeMap output) {
 
-        if ( session.isRoot() ) {
-            final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-            // get session but don't create it if it doesn't already exist
-            final HttpSession webSession = request.getSession(false);
+		if (session.isRoot()) {
+			final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+			// get session but don't create it if it doesn't already exist
+			final HttpSession webSession = request.getSession(false);
 
-            if (webSession != null) {
-                LOGGER.debug("Terminate web session {} in {} seconds", webSession.getId(), this.timeToDieInSeconds);
-                // set the web session to die in timeToDieInSeconds
-                webSession.setMaxInactiveInterval(this.timeToDieInSeconds);
-            }
-        }
-    }
+			if (webSession != null) {
+				LOGGER.debug("Terminate web session {} in {} seconds", webSession.getId(), this.timeToDieInSeconds);
+				// set the web session to die in timeToDieInSeconds
+				webSession.setMaxInactiveInterval(this.timeToDieInSeconds);
+			}
+		}
+	}
 
-    public int getTimeToDieInSeconds() {
-        return this.timeToDieInSeconds;
-    }
+	public int getTimeToDieInSeconds() {
+		return this.timeToDieInSeconds;
+	}
 
-    public void setTimeToDieInSeconds(final int timeToDieInSeconds) {
-        this.timeToDieInSeconds = timeToDieInSeconds;
-    }
+	public void setTimeToDieInSeconds(final int timeToDieInSeconds) {
+		this.timeToDieInSeconds = timeToDieInSeconds;
+	}
 }

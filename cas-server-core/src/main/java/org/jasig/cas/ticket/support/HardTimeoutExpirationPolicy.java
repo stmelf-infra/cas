@@ -24,32 +24,32 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 
 /**
- * Ticket expiration policy based on a hard timeout from ticket creation time rather than the
- * "idle" timeout provided by {@link org.jasig.cas.ticket.support.TimeoutExpirationPolicy}.
+ * Ticket expiration policy based on a hard timeout from ticket creation time rather than the "idle" timeout provided by
+ * {@link org.jasig.cas.ticket.support.TimeoutExpirationPolicy}.
  *
  * @author Andrew Feller
-
+ * 
  * @since 3.1.2
  */
 public final class HardTimeoutExpirationPolicy implements ExpirationPolicy, Serializable {
 
-    /** Serialization support. */
-    private static final long serialVersionUID = 6728077010285422290L;
+	/** Serialization support. */
+	private static final long serialVersionUID = 6728077010285422290L;
 
-    /** The time to kill in milliseconds. */
-    private final long timeToKillInMilliSeconds;
+	/** The time to kill in milliseconds. */
+	private final long timeToKillInMilliSeconds;
 
-    /** No-arg constructor for serialization support. */
-    private HardTimeoutExpirationPolicy() {
-        this.timeToKillInMilliSeconds = 0;
-    }
+	/** No-arg constructor for serialization support. */
+	private HardTimeoutExpirationPolicy() {
+		this.timeToKillInMilliSeconds = 0;
+	}
 
-    public HardTimeoutExpirationPolicy(final long timeToKillInMilliSeconds) {
-        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
-    }
+	public HardTimeoutExpirationPolicy(final long timeToKillInMilliSeconds) {
+		this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
+	}
 
-    public boolean isExpired(final TicketState ticketState) {
-        return (ticketState == null)
-                || (System.currentTimeMillis() - ticketState.getCreationTime() >= this.timeToKillInMilliSeconds);
-    }
+	public boolean isExpired(final TicketState ticketState) {
+		return (ticketState == null)
+				|| (System.currentTimeMillis() - ticketState.getCreationTime() >= this.timeToKillInMilliSeconds);
+	}
 }

@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.mock;
 
+import java.util.Date;
+
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
@@ -26,67 +28,65 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 
-import java.util.Date;
-
 /**
  * Mock service ticket.
  *
  * @author Marvin S. Addison
  */
 public class MockServiceTicket implements ServiceTicket {
-    private static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
+	private static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
-    private final String id;
+	private final String id;
 
-    private final Date created;
+	private final Date created;
 
-    private final Service service;
+	private final Service service;
 
-    private final TicketGrantingTicket parent;
+	private final TicketGrantingTicket parent;
 
-    public MockServiceTicket(final String id, final Service service, final TicketGrantingTicket parent) {
-        this.service = service;
-        this.id = id;
-        this.parent = parent;
-        created = new Date();
-    }
+	public MockServiceTicket(final String id, final Service service, final TicketGrantingTicket parent) {
+		this.service = service;
+		this.id = id;
+		this.parent = parent;
+		created = new Date();
+	}
 
-    public Service getService() {
-        return service;
-    }
+	public Service getService() {
+		return service;
+	}
 
-    public boolean isFromNewLogin() {
-        return false;
-    }
+	public boolean isFromNewLogin() {
+		return false;
+	}
 
-    public boolean isValidFor(final Service service) {
-        return this.service.equals(service);
-    }
+	public boolean isValidFor(final Service service) {
+		return this.service.equals(service);
+	}
 
-    public TicketGrantingTicket grantTicketGrantingTicket(
-            final String id,
-            final Authentication authentication,
-            final ExpirationPolicy expirationPolicy) {
-        return null;
-    }
+	public TicketGrantingTicket grantTicketGrantingTicket(
+			final String id,
+			final Authentication authentication,
+			final ExpirationPolicy expirationPolicy) {
+		return null;
+	}
 
-    public String getId() {
-        return id;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public boolean isExpired() {
-        return false;
-    }
+	public boolean isExpired() {
+		return false;
+	}
 
-    public TicketGrantingTicket getGrantingTicket() {
-        return parent;
-    }
+	public TicketGrantingTicket getGrantingTicket() {
+		return parent;
+	}
 
-    public long getCreationTime() {
-        return created.getTime();
-    }
+	public long getCreationTime() {
+		return created.getTime();
+	}
 
-    public int getCountOfUses() {
-        return 0;
-    }
+	public int getCountOfUses() {
+		return 0;
+	}
 }

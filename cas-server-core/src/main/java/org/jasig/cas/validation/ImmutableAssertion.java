@@ -37,86 +37,91 @@ import org.springframework.util.Assert;
  */
 public final class ImmutableAssertion implements Assertion, Serializable {
 
-    /** Unique Id for Serialization. */
-    private static final long serialVersionUID = -3348826049921010423L;
+	/** Unique Id for Serialization. */
+	private static final long serialVersionUID = -3348826049921010423L;
 
-    /** Primary authentication. */
-    private final Authentication primaryAuthentication;
+	/** Primary authentication. */
+	private final Authentication primaryAuthentication;
 
-    /** Chained authentications. */
-    private final List<Authentication> chainedAuthentications;
+	/** Chained authentications. */
+	private final List<Authentication> chainedAuthentications;
 
-    /** Was this the result of a new login. */
-    private final boolean fromNewLogin;
+	/** Was this the result of a new login. */
+	private final boolean fromNewLogin;
 
-    /** The service we are asserting this ticket for. */
-    private final Service service;
+	/** The service we are asserting this ticket for. */
+	private final Service service;
 
-    /**
-     * Creates a new instance with required parameters.
-     *
-     * @param primary Primary authentication.
-     * @param chained Chained authentitications.
-     * @param service The service we are asserting this ticket for.
-     * @param fromNewLogin True if the ticket was issued as a result of authentication, false otherwise.
-     *
-     * @throws IllegalArgumentException If any of the given arguments do not meet requirements.
-     */
-    public ImmutableAssertion(
-            final Authentication primary,
-            final List<Authentication> chained,
-            final Service service,
-            final boolean fromNewLogin) {
+	/**
+	 * Creates a new instance with required parameters.
+	 *
+	 * @param primary
+	 *            Primary authentication.
+	 * @param chained
+	 *            Chained authentitications.
+	 * @param service
+	 *            The service we are asserting this ticket for.
+	 * @param fromNewLogin
+	 *            True if the ticket was issued as a result of authentication, false otherwise.
+	 *
+	 * @throws IllegalArgumentException
+	 *             If any of the given arguments do not meet requirements.
+	 */
+	public ImmutableAssertion(
+			final Authentication primary,
+			final List<Authentication> chained,
+			final Service service,
+			final boolean fromNewLogin) {
 
-        Assert.notNull(primary, "primary authentication cannot be null");
-        Assert.notNull(chained, "chained authentications cannot be null");
-        Assert.notNull(service, "service cannot be null");
-        Assert.notEmpty(chained, "chained authentications cannot be empty");
+		Assert.notNull(primary, "primary authentication cannot be null");
+		Assert.notNull(chained, "chained authentications cannot be null");
+		Assert.notNull(service, "service cannot be null");
+		Assert.notEmpty(chained, "chained authentications cannot be empty");
 
-        this.primaryAuthentication = primary;
-        this.chainedAuthentications = chained;
-        this.service = service;
-        this.fromNewLogin = fromNewLogin;
-    }
+		this.primaryAuthentication = primary;
+		this.chainedAuthentications = chained;
+		this.service = service;
+		this.fromNewLogin = fromNewLogin;
+	}
 
-    public Authentication getPrimaryAuthentication() {
-        return this.primaryAuthentication;
-    }
+	public Authentication getPrimaryAuthentication() {
+		return this.primaryAuthentication;
+	}
 
-    public List<Authentication> getChainedAuthentications() {
-        return Collections.unmodifiableList(this.chainedAuthentications);
-    }
+	public List<Authentication> getChainedAuthentications() {
+		return Collections.unmodifiableList(this.chainedAuthentications);
+	}
 
-    public boolean isFromNewLogin() {
-        return this.fromNewLogin;
-    }
+	public boolean isFromNewLogin() {
+		return this.fromNewLogin;
+	}
 
-    public Service getService() {
-        return this.service;
-    }
+	public Service getService() {
+		return this.service;
+	}
 
-    public boolean equals(final Object o) {
-        if (!(o instanceof Assertion)) {
-            return false;
-        }
+	public boolean equals(final Object o) {
+		if (!(o instanceof Assertion)) {
+			return false;
+		}
 
-        final Assertion a = (Assertion) o;
-        return this.primaryAuthentication.equals(a.getPrimaryAuthentication())
-                && this.chainedAuthentications.equals(a.getChainedAuthentications())
-                && this.service.equals(a.getService())
-                && this.fromNewLogin == a.isFromNewLogin();
-    }
+		final Assertion a = (Assertion) o;
+		return this.primaryAuthentication.equals(a.getPrimaryAuthentication())
+				&& this.chainedAuthentications.equals(a.getChainedAuthentications())
+				&& this.service.equals(a.getService())
+				&& this.fromNewLogin == a.isFromNewLogin();
+	}
 
-    public int hashCode() {
-        final HashCodeBuilder builder = new HashCodeBuilder(15, 11);
-        builder.append(this.primaryAuthentication);
-        builder.append(this.chainedAuthentications);
-        builder.append(this.service);
-        builder.append(this.fromNewLogin);
-        return builder.toHashCode();
-    }
+	public int hashCode() {
+		final HashCodeBuilder builder = new HashCodeBuilder(15, 11);
+		builder.append(this.primaryAuthentication);
+		builder.append(this.chainedAuthentications);
+		builder.append(this.service);
+		builder.append(this.fromNewLogin);
+		return builder.toHashCode();
+	}
 
-    public String toString() {
-        return this.primaryAuthentication + ":" + this.service;
-    }
+	public String toString() {
+		return this.primaryAuthentication + ":" + this.service;
+	}
 }

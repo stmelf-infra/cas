@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication.handler;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -28,17 +28,17 @@ import org.junit.Test;
  */
 public final class PlainTextPasswordEncoderTests {
 
-    private static final String CONST_TO_ENCODE = "CAS IS COOL";
+	private static final String CONST_TO_ENCODE = "CAS IS COOL";
 
-    private final PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
+	private final PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
-    @Test
-    public void testNullValueToTranslate() {
-        assertEquals(null, this.passwordEncoder.encode(null));
-    }
+	@Test
+	public void testNullValueToTranslate() {
+		assertEquals(null, this.passwordEncoder.encode(null));
+	}
 
-    @Test
-    public void testValueToTranslate() {
-        assertEquals(CONST_TO_ENCODE, this.passwordEncoder.encode(CONST_TO_ENCODE));
-    }
+	@Test
+	public void testValueToTranslate() {
+		assertEquals(CONST_TO_ENCODE, this.passwordEncoder.encode(CONST_TO_ENCODE));
+	}
 }

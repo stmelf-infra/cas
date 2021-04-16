@@ -19,6 +19,8 @@
 
 package org.jasig.cas.web.flow;
 
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -29,8 +31,6 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Performs an authorization check for the gateway request if there is no Ticket Granting Ticket.
  *
@@ -39,32 +39,36 @@ import javax.validation.constraints.NotNull;
  */
 public class GatewayServicesManagementCheck extends AbstractAction {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
-    @NotNull
-    private final ServicesManager servicesManager;
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * Initialize the component with an instance of the services manager.
-     * @param servicesManager the service registry instance.
-     */
-    public GatewayServicesManagementCheck(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
+	@NotNull
+	private final ServicesManager servicesManager;
 
-    @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
-        final Service service = WebUtils.getService(context);
+	/**
+	 * Initialize the component with an instance of the services manager.
+	 * 
+	 * @param servicesManager
+	 *            the service registry instance.
+	 */
+	public GatewayServicesManagementCheck(final ServicesManager servicesManager) {
+		this.servicesManager = servicesManager;
+	}
 
-        final boolean match = this.servicesManager.matchesExistingService(service);
+	@Override
+	protected Event doExecute(final RequestContext context) throws Exception {
+		final Service service = WebUtils.getService(context);
 
-        if (match) {
-            return success();
-        }
+		final boolean match = this.servicesManager.matchesExistingService(service);
 
-        final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                + "Service [%s] does not match entries in service registry.", service.getId());
-        logger.warn(msg);
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
-    }
+		if (match) {
+			return success();
+		}
+
+		final String msg = String.format(
+				"ServiceManagement: Unauthorized Service Access. "
+						+ "Service [%s] does not match entries in service registry.",
+				service.getId());
+		logger.warn(msg);
+		throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+	}
 }

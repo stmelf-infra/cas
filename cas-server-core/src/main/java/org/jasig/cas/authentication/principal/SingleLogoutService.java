@@ -26,17 +26,18 @@ package org.jasig.cas.authentication.principal;
  */
 public interface SingleLogoutService extends WebApplicationService {
 
-    /**
-     * Return if the service is already logged out.
-     *
-     * @return if the service is already logged out.
-     */
-    boolean isLoggedOutAlready();
+	/**
+	 * Return if the service is already logged out.
+	 *
+	 * @return if the service is already logged out.
+	 */
+	boolean isLoggedOutAlready();
 
-    /**
-     * Set if the service is already logged out.
-     *
-     * @param loggedOutAlready if the service is already logged out.
-     */
-    void setLoggedOutAlready(boolean loggedOutAlready);
+	/**
+	 * Set if the service is already logged out.
+	 *
+	 * @param loggedOutAlready
+	 *            if the service is already logged out.
+	 */
+	void setLoggedOutAlready(boolean loggedOutAlready);
 }

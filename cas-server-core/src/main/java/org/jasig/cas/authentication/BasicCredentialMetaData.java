@@ -32,58 +32,59 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class BasicCredentialMetaData implements CredentialMetaData, Serializable {
 
-    /** Serialization version marker. */
-    private static final long serialVersionUID = 4929579849241505377L;
+	/** Serialization version marker. */
+	private static final long serialVersionUID = 4929579849241505377L;
 
-    /** Credential type unique identifier. */
-    private final String id;
+	/** Credential type unique identifier. */
+	private final String id;
 
-    /** Type of original credential. */
-    private Class<? extends Credential> credentialClass;
+	/** Type of original credential. */
+	private Class<? extends Credential> credentialClass;
 
-    /** No-arg constructor for serialization support. */
-    private BasicCredentialMetaData() {
-        this.id = null;
-    }
+	/** No-arg constructor for serialization support. */
+	private BasicCredentialMetaData() {
+		this.id = null;
+	}
 
-    /**
-     * Creates a new instance from the given credential.
-     *
-     * @param credential Credential for which metadata should be created.
-     */
-    public BasicCredentialMetaData(final Credential credential) {
-        this.id = credential.getId();
-        this.credentialClass = credential.getClass();
-    }
+	/**
+	 * Creates a new instance from the given credential.
+	 *
+	 * @param credential
+	 *            Credential for which metadata should be created.
+	 */
+	public BasicCredentialMetaData(final Credential credential) {
+		this.id = credential.getId();
+		this.credentialClass = credential.getClass();
+	}
 
-    @Override
-    public String getId() {
-        return this.id;
-    }
+	@Override
+	public String getId() {
+		return this.id;
+	}
 
-    /**
-     * Gets the type of the original credential.
-     *
-     * @return Non-null credential class.
-     */
-    public Class<? extends Credential> getCredentialClass() {
-        return this.credentialClass;
-    }
+	/**
+	 * Gets the type of the original credential.
+	 *
+	 * @return Non-null credential class.
+	 */
+	public Class<? extends Credential> getCredentialClass() {
+		return this.credentialClass;
+	}
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(19, 21).append(this.id).append(this.credentialClass).toHashCode();
-    }
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(19, 21).append(this.id).append(this.credentialClass).toHashCode();
+	}
 
-    @Override
-    public boolean equals(final Object other) {
-        if (!(other instanceof BasicCredentialMetaData)) {
-            return false;
-        }
-        final BasicCredentialMetaData md = (BasicCredentialMetaData) other;
-        final EqualsBuilder builder = new EqualsBuilder();
-        builder.append(this.id, md.id);
-        builder.append(this.credentialClass, md.credentialClass);
-        return builder.isEquals();
-    }
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof BasicCredentialMetaData)) {
+			return false;
+		}
+		final BasicCredentialMetaData md = (BasicCredentialMetaData) other;
+		final EqualsBuilder builder = new EqualsBuilder();
+		builder.append(this.id, md.id);
+		builder.append(this.credentialClass, md.credentialClass);
+		return builder.isEquals();
+	}
 }

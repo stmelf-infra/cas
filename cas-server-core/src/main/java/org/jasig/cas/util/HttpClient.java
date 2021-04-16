@@ -28,32 +28,36 @@ import java.net.URL;
  */
 public interface HttpClient {
 
-    /**
-     * Sends a message to a particular endpoint.  Option of sending it without
-     * waiting to ensure a response was returned.
-     * <p>
-     * This is useful when it doesn't matter about the response as you'll perform no action based on the response.
-     *
-     * @param url the url to send the message to
-     * @param message the message itself
-     * @param async true if you don't want to wait for the response, false otherwise.
-     * @return boolean if the message was sent, or async was used.  false if the message failed.
-     */
-    boolean sendMessageToEndPoint(String url, String message, boolean async);
+	/**
+	 * Sends a message to a particular endpoint. Option of sending it without waiting to ensure a response was returned.
+	 * <p>
+	 * This is useful when it doesn't matter about the response as you'll perform no action based on the response.
+	 *
+	 * @param url
+	 *            the url to send the message to
+	 * @param message
+	 *            the message itself
+	 * @param async
+	 *            true if you don't want to wait for the response, false otherwise.
+	 * @return boolean if the message was sent, or async was used. false if the message failed.
+	 */
+	boolean sendMessageToEndPoint(String url, String message, boolean async);
 
-    /**
-     * Make a synchronous HTTP(S) call to ensure that the url is reachable.
-     *
-     * @param url the url to call
-     * @return whether the url is valid
-     */
-    boolean isValidEndPoint(String url);
+	/**
+	 * Make a synchronous HTTP(S) call to ensure that the url is reachable.
+	 *
+	 * @param url
+	 *            the url to call
+	 * @return whether the url is valid
+	 */
+	boolean isValidEndPoint(String url);
 
-    /**
-     * Make a synchronous HTTP(S) call to ensure that the url is reachable.
-     *
-     * @param url the url to call
-     * @return whether the url is valid
-     */
-    boolean isValidEndPoint(URL url);
+	/**
+	 * Make a synchronous HTTP(S) call to ensure that the url is reachable.
+	 *
+	 * @param url
+	 *            the url to call
+	 * @return whether the url is valid
+	 */
+	boolean isValidEndPoint(URL url);
 }

@@ -18,13 +18,16 @@
  */
 package org.jasig.cas.services;
 
-import org.jasig.cas.authentication.principal.Service;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import org.jasig.cas.authentication.principal.Service;
+import org.junit.Test;
 
 /**
  * Unit test for {@link AbstractRegisteredService}.
@@ -33,77 +36,77 @@ import static org.junit.Assert.*;
  */
 public class AbstractRegisteredServiceTests {
 
-    private AbstractRegisteredService r = new AbstractRegisteredService() {
-        private static final long serialVersionUID = 1L;
+	private AbstractRegisteredService r = new AbstractRegisteredService() {
+		private static final long serialVersionUID = 1L;
 
-        public void setServiceId(final String id) {
-            serviceId = id;
-        }
+		public void setServiceId(final String id) {
+			serviceId = id;
+		}
 
-        protected AbstractRegisteredService newInstance() {
-            return this;
-        }
+		protected AbstractRegisteredService newInstance() {
+			return this;
+		}
 
-        public boolean matches(final Service service) {
-            return true;
-        }
-    };
+		public boolean matches(final Service service) {
+			return true;
+		}
+	};
 
-    @Test
-    public void testAllowToProxyIsFalseByDefault() {
-        RegexRegisteredService regexRegisteredService = new RegexRegisteredService();
-        assertFalse(regexRegisteredService.isAllowedToProxy());
-        RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
-        assertFalse(registeredServiceImpl.isAllowedToProxy());
-    }
+	@Test
+	public void testAllowToProxyIsFalseByDefault() {
+		RegexRegisteredService regexRegisteredService = new RegexRegisteredService();
+		assertFalse(regexRegisteredService.isAllowedToProxy());
+		RegisteredServiceImpl registeredServiceImpl = new RegisteredServiceImpl();
+		assertFalse(registeredServiceImpl.isAllowedToProxy());
+	}
 
-    @Test
-    public void testSettersAndGetters() {
-        final long ID = 1000;
-        final String DESCRIPTION = "test";
-        final String SERVICEID = "serviceId";
-        final String THEME = "theme";
-        final String NAME = "name";
-        final boolean ENABLED = false;
-        final boolean ALLOWED_TO_PROXY = false;
-        final boolean ANONYMOUS_ACCESS = true;
-        final boolean SSO_ENABLED = false;
-        final List<String> ALLOWED_ATTRIBUTES = Arrays.asList("Test");
+	@Test
+	public void testSettersAndGetters() {
+		final long ID = 1000;
+		final String DESCRIPTION = "test";
+		final String SERVICEID = "serviceId";
+		final String THEME = "theme";
+		final String NAME = "name";
+		final boolean ENABLED = false;
+		final boolean ALLOWED_TO_PROXY = false;
+		final boolean ANONYMOUS_ACCESS = true;
+		final boolean SSO_ENABLED = false;
+		final List<String> ALLOWED_ATTRIBUTES = Arrays.asList("Test");
 
-        this.r.setAllowedAttributes(ALLOWED_ATTRIBUTES);
-        this.r.setAllowedToProxy(ALLOWED_TO_PROXY);
-        this.r.setAnonymousAccess(ANONYMOUS_ACCESS);
-        this.r.setDescription(DESCRIPTION);
-        this.r.setEnabled(ENABLED);
-        this.r.setId(ID);
-        this.r.setName(NAME);
-        this.r.setServiceId(SERVICEID);
-        this.r.setSsoEnabled(SSO_ENABLED);
-        this.r.setTheme(THEME);
+		this.r.setAllowedAttributes(ALLOWED_ATTRIBUTES);
+		this.r.setAllowedToProxy(ALLOWED_TO_PROXY);
+		this.r.setAnonymousAccess(ANONYMOUS_ACCESS);
+		this.r.setDescription(DESCRIPTION);
+		this.r.setEnabled(ENABLED);
+		this.r.setId(ID);
+		this.r.setName(NAME);
+		this.r.setServiceId(SERVICEID);
+		this.r.setSsoEnabled(SSO_ENABLED);
+		this.r.setTheme(THEME);
 
-        assertEquals(ALLOWED_ATTRIBUTES, this.r.getAllowedAttributes());
-        assertEquals(ALLOWED_TO_PROXY, this.r.isAllowedToProxy());
-        assertEquals(ANONYMOUS_ACCESS, this.r.isAnonymousAccess());
-        assertEquals(DESCRIPTION, this.r.getDescription());
-        assertEquals(ENABLED, this.r.isEnabled());
-        assertEquals(ID, this.r.getId());
-        assertEquals(NAME, this.r.getName());
-        assertEquals(SERVICEID, this.r.getServiceId());
-        assertEquals(SSO_ENABLED, this.r.isSsoEnabled());
-        assertEquals(THEME, this.r.getTheme());
+		assertEquals(ALLOWED_ATTRIBUTES, this.r.getAllowedAttributes());
+		assertEquals(ALLOWED_TO_PROXY, this.r.isAllowedToProxy());
+		assertEquals(ANONYMOUS_ACCESS, this.r.isAnonymousAccess());
+		assertEquals(DESCRIPTION, this.r.getDescription());
+		assertEquals(ENABLED, this.r.isEnabled());
+		assertEquals(ID, this.r.getId());
+		assertEquals(NAME, this.r.getName());
+		assertEquals(SERVICEID, this.r.getServiceId());
+		assertEquals(SSO_ENABLED, this.r.isSsoEnabled());
+		assertEquals(THEME, this.r.getTheme());
 
-        assertFalse(this.r.equals(null));
-        assertFalse(this.r.equals(new Object()));
-        assertTrue(this.r.equals(this.r));
+		assertFalse(this.r.equals(null));
+		assertFalse(this.r.equals(new Object()));
+		assertTrue(this.r.equals(this.r));
 
-        this.r.setAllowedAttributes(null);
-        assertNotNull(this.r.getAllowedAttributes());
-    }
+		this.r.setAllowedAttributes(null);
+		assertNotNull(this.r.getAllowedAttributes());
+	}
 
-    @Test
-    public void testEquals() throws Exception {
-        assertTrue(r.equals(r.clone()));
-        assertFalse(new RegisteredServiceImpl().equals(null));
-        assertFalse(new RegisteredServiceImpl().equals(new Object()));
-    }
+	@Test
+	public void testEquals() throws Exception {
+		assertTrue(r.equals(r.clone()));
+		assertFalse(new RegisteredServiceImpl().equals(null));
+		assertFalse(new RegisteredServiceImpl().equals(new Object()));
+	}
 }

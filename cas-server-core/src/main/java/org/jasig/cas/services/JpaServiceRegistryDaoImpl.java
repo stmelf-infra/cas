@@ -32,37 +32,38 @@ import javax.validation.constraints.NotNull;
  */
 public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
 
-    @NotNull
-    @PersistenceContext
-    private EntityManager entityManager;
+	@NotNull
+	@PersistenceContext
+	private EntityManager entityManager;
 
-    public boolean delete(final RegisteredService registeredService) {
-        if (this.entityManager.contains(registeredService)) {
-            this.entityManager.remove(registeredService);
-        } else {
-            this.entityManager.remove(this.entityManager.merge(registeredService));
-        }
-        return true;
-    }
+	public boolean delete(final RegisteredService registeredService) {
+		if (this.entityManager.contains(registeredService)) {
+			this.entityManager.remove(registeredService);
+		}
+		else {
+			this.entityManager.remove(this.entityManager.merge(registeredService));
+		}
+		return true;
+	}
 
-    public List<RegisteredService> load() {
-        return this.entityManager.createQuery("select r from AbstractRegisteredService r", RegisteredService.class)
-                .getResultList();
-    }
+	public List<RegisteredService> load() {
+		return this.entityManager.createQuery("select r from AbstractRegisteredService r", RegisteredService.class)
+				.getResultList();
+	}
 
-    public RegisteredService save(final RegisteredService registeredService) {
-        final boolean isNew = registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE;
+	public RegisteredService save(final RegisteredService registeredService) {
+		final boolean isNew = registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
-        final RegisteredService r = this.entityManager.merge(registeredService);
+		final RegisteredService r = this.entityManager.merge(registeredService);
 
-        if (!isNew) {
-            this.entityManager.persist(r);
-        }
+		if (!isNew) {
+			this.entityManager.persist(r);
+		}
 
-        return r;
-    }
+		return r;
+	}
 
-    public RegisteredService findServiceById(final long id) {
-        return this.entityManager.find(AbstractRegisteredService.class, id);
-    }
+	public RegisteredService findServiceById(final long id) {
+		return this.entityManager.find(AbstractRegisteredService.class, id);
+	}
 }

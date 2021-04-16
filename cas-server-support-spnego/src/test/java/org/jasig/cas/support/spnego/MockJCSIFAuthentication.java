@@ -30,35 +30,35 @@ import jcifs.spnego.AuthenticationException;
  * @since 3.1
  */
 public class MockJCSIFAuthentication extends Authentication {
-    private final Principal principal;
+	private final Principal principal;
 
-    private final boolean valid;
+	private final boolean valid;
 
-    private final byte[] outToken = new byte[] {4, 5, 6};
+	private final byte[] outToken = new byte[] { 4, 5, 6 };
 
-    public MockJCSIFAuthentication(final boolean valid) {
-        this.principal = new MockPrincipal("test");
-        this.valid = valid;
+	public MockJCSIFAuthentication(final boolean valid) {
+		this.principal = new MockPrincipal("test");
+		this.valid = valid;
 
-    }
+	}
 
-    @Override
-    public byte[] getNextToken() {
+	@Override
+	public byte[] getNextToken() {
 
-        return this.valid ? this.outToken : null;
-    }
+		return this.valid ? this.outToken : null;
+	}
 
-    @Override
-    public java.security.Principal getPrincipal() {
+	@Override
+	public java.security.Principal getPrincipal() {
 
-        return this.valid ? this.principal : null;
-    }
+		return this.valid ? this.principal : null;
+	}
 
-    @Override
-    public void process(final byte[] arg0) throws AuthenticationException {
-        if (!this.valid) {
-            throw new AuthenticationException("not valid");
-        }
-    }
+	@Override
+	public void process(final byte[] arg0) throws AuthenticationException {
+		if (!this.valid) {
+			throw new AuthenticationException("not valid");
+		}
+	}
 
 }

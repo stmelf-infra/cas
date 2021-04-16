@@ -18,7 +18,10 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,106 +44,119 @@ import org.junit.Test;
  */
 public class DistributedTicketRegistryTests {
 
-    private TestDistributedTicketRegistry ticketRegistry;
+	private TestDistributedTicketRegistry ticketRegistry;
 
-    private boolean wasTicketUpdated = false;
+	private boolean wasTicketUpdated = false;
 
-    @Before
-    public void setUp() throws Exception {
-        this.ticketRegistry = new TestDistributedTicketRegistry();
-        this.wasTicketUpdated = false;
-    }
+	@Before
+	public void setUp() throws Exception {
+		this.ticketRegistry = new TestDistributedTicketRegistry();
+		this.wasTicketUpdated = false;
+	}
 
-    @Test
-    public void testProxiedInstancesEqual() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy());
-        this.ticketRegistry.addTicket(t);
+	@Test
+	public void testProxiedInstancesEqual() {
+		final TicketGrantingTicket t = new TicketGrantingTicketImpl(
+				"test",
+				TestUtils.getAuthentication(),
+				new NeverExpiresExpirationPolicy());
+		this.ticketRegistry.addTicket(t);
 
-        final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket("test");
-        assertEquals(t, returned);
-        assertEquals(returned, t);
+		final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket("test");
+		assertEquals(t, returned);
+		assertEquals(returned, t);
 
-        assertEquals(t.getCreationTime(), returned.getCreationTime());
-        assertEquals(t.getAuthentication(), returned.getAuthentication());
-        assertEquals(t.getCountOfUses(), returned.getCountOfUses());
-        assertEquals(t.getGrantingTicket(), returned.getGrantingTicket());
-        assertEquals(t.getId(), returned.getId());
-        assertEquals(t.getChainedAuthentications(), returned.getChainedAuthentications());
-        assertEquals(t.isExpired(), returned.isExpired());
-        assertEquals(t.isRoot(), returned.isRoot());
+		assertEquals(t.getCreationTime(), returned.getCreationTime());
+		assertEquals(t.getAuthentication(), returned.getAuthentication());
+		assertEquals(t.getCountOfUses(), returned.getCountOfUses());
+		assertEquals(t.getGrantingTicket(), returned.getGrantingTicket());
+		assertEquals(t.getId(), returned.getId());
+		assertEquals(t.getChainedAuthentications(), returned.getChainedAuthentications());
+		assertEquals(t.isExpired(), returned.isExpired());
+		assertEquals(t.isRoot(), returned.isRoot());
 
-        final ServiceTicket s = t.grantServiceTicket("stest", TestUtils.getService(),
-                new NeverExpiresExpirationPolicy(), false);
-        this.ticketRegistry.addTicket(s);
+		final ServiceTicket s = t.grantServiceTicket(
+				"stest",
+				TestUtils.getService(),
+				new NeverExpiresExpirationPolicy(),
+				false);
+		this.ticketRegistry.addTicket(s);
 
-        final ServiceTicket sreturned = (ServiceTicket) this.ticketRegistry.getTicket("stest");
-        assertEquals(s, sreturned);
-        assertEquals(sreturned, s);
+		final ServiceTicket sreturned = (ServiceTicket) this.ticketRegistry.getTicket("stest");
+		assertEquals(s, sreturned);
+		assertEquals(sreturned, s);
 
-        assertEquals(s.getCreationTime(), sreturned.getCreationTime());
-        assertEquals(s.getCountOfUses(), sreturned.getCountOfUses());
-        assertEquals(s.getGrantingTicket(), sreturned.getGrantingTicket());
-        assertEquals(s.getId(), sreturned.getId());
-        assertEquals(s.isExpired(), sreturned.isExpired());
-        assertEquals(s.getService(), sreturned.getService());
-        assertEquals(s.isFromNewLogin(), sreturned.isFromNewLogin());
-    }
+		assertEquals(s.getCreationTime(), sreturned.getCreationTime());
+		assertEquals(s.getCountOfUses(), sreturned.getCountOfUses());
+		assertEquals(s.getGrantingTicket(), sreturned.getGrantingTicket());
+		assertEquals(s.getId(), sreturned.getId());
+		assertEquals(s.isExpired(), sreturned.isExpired());
+		assertEquals(s.getService(), sreturned.getService());
+		assertEquals(s.isFromNewLogin(), sreturned.isFromNewLogin());
+	}
 
-    @Test
-    public void testUpdateOfRegistry() {
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy());
-        this.ticketRegistry.addTicket(t);
-        final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket("test");
+	@Test
+	public void testUpdateOfRegistry() {
+		final TicketGrantingTicket t = new TicketGrantingTicketImpl(
+				"test",
+				TestUtils.getAuthentication(),
+				new NeverExpiresExpirationPolicy());
+		this.ticketRegistry.addTicket(t);
+		final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket("test");
 
-        final ServiceTicket s = returned.grantServiceTicket("test2", TestUtils.getService(),
-                new NeverExpiresExpirationPolicy(), true);
+		final ServiceTicket s = returned.grantServiceTicket(
+				"test2",
+				TestUtils.getService(),
+				new NeverExpiresExpirationPolicy(),
+				true);
 
-        this.ticketRegistry.addTicket(s);
-        final ServiceTicket s2 = (ServiceTicket) this.ticketRegistry.getTicket("test2");
-        assertNotNull(s2.grantTicketGrantingTicket("ff", TestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy()));
+		this.ticketRegistry.addTicket(s);
+		final ServiceTicket s2 = (ServiceTicket) this.ticketRegistry.getTicket("test2");
+		assertNotNull(
+				s2.grantTicketGrantingTicket(
+						"ff",
+						TestUtils.getAuthentication(),
+						new NeverExpiresExpirationPolicy()));
 
-        assertTrue(s2.isValidFor(TestUtils.getService()));
-        assertTrue(this.wasTicketUpdated);
+		assertTrue(s2.isValidFor(TestUtils.getService()));
+		assertTrue(this.wasTicketUpdated);
 
-        returned.markTicketExpired();
-        assertTrue(t.isExpired());
-    }
+		returned.markTicketExpired();
+		assertTrue(t.isExpired());
+	}
 
-    @Test
-    public void testTicketDoesntExist() {
-        assertNull(this.ticketRegistry.getTicket("fdfas"));
-    }
+	@Test
+	public void testTicketDoesntExist() {
+		assertNull(this.ticketRegistry.getTicket("fdfas"));
+	}
 
-    protected class TestDistributedTicketRegistry extends AbstractDistributedTicketRegistry {
+	protected class TestDistributedTicketRegistry extends AbstractDistributedTicketRegistry {
 
-        private Map<String, Ticket> tickets = new HashMap<String, Ticket>();
+		private Map<String, Ticket> tickets = new HashMap<String, Ticket>();
 
-        protected void updateTicket(final Ticket ticket) {
-            DistributedTicketRegistryTests.this.wasTicketUpdated = true;
-        }
+		protected void updateTicket(final Ticket ticket) {
+			DistributedTicketRegistryTests.this.wasTicketUpdated = true;
+		}
 
-        public void addTicket(final Ticket ticket) {
-            this.tickets.put(ticket.getId(), ticket);
-        }
+		public void addTicket(final Ticket ticket) {
+			this.tickets.put(ticket.getId(), ticket);
+		}
 
-        public boolean deleteTicket(final String ticketId) {
-            return this.tickets.remove(ticketId) != null;
-        }
+		public boolean deleteTicket(final String ticketId) {
+			return this.tickets.remove(ticketId) != null;
+		}
 
-        public Ticket getTicket(final String ticketId) {
-            return getProxiedTicketInstance(this.tickets.get(ticketId));
-        }
+		public Ticket getTicket(final String ticketId) {
+			return getProxiedTicketInstance(this.tickets.get(ticketId));
+		}
 
-        public Collection<Ticket> getTickets() {
-            return this.tickets.values();
-        }
+		public Collection<Ticket> getTickets() {
+			return this.tickets.values();
+		}
 
-        @Override
-        protected boolean needsCallback() {
-            return true;
-        }
-    }
+		@Override
+		protected boolean needsCallback() {
+			return true;
+		}
+	}
 }

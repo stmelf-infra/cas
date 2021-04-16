@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,52 +40,56 @@ import org.slf4j.LoggerFactory;
  * @since 3.0
  */
 public class ImmutableAuthenticationTests {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Test
-    public void testImmutable() {
-        final AuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        final CredentialMetaData credential1 = new BasicCredentialMetaData(new UsernamePasswordCredential());
-        final CredentialMetaData credential2 = new BasicCredentialMetaData(new UsernamePasswordCredential());
-        final List<CredentialMetaData> credentials = new ArrayList<CredentialMetaData>();
-        credentials.add(credential1);
-        credentials.add(credential2);
-        final Map<String, Object> attributes = new HashMap<String, Object>();
-        attributes.put("authenticationMethod", "password");
-        final Map<String, HandlerResult> successes = new HashMap<String, HandlerResult>();
-        successes.put("handler1", new HandlerResult(authenticationHandler, credential1));
-        final Map<String, Class<? extends Exception>> failures = new HashMap<String, Class<? extends Exception>>();
-        failures.put("handler2", FailedLoginException.class);
-        final ImmutableAuthentication auth = new ImmutableAuthentication(
-                new Date(),
-                credentials,
-                new SimplePrincipal("test"),
-                attributes,
-                successes,
-                failures);
-        try {
-            auth.getAuthenticatedDate().setTime(100);
-            fail("Should have failed");
-        } catch (final RuntimeException e) {
-            logger.debug("Setting authenticate date/time failed correctly");
-        }
-        try {
-            auth.getCredentials().add(new BasicCredentialMetaData(new UsernamePasswordCredential()));
-            fail("Should have failed");
-        } catch (final RuntimeException e) {
-            logger.debug("Adding authentication credential metadata failed correctly");
-        }
-        try {
-            auth.getSuccesses().put("test", new HandlerResult(authenticationHandler, credential1));
-            fail("Should have failed");
-        } catch (final RuntimeException e) {
-            logger.debug("Adding authentication success event failed correctly");
-        }
-        try {
-            auth.getFailures().put("test", FailedLoginException.class);
-            fail("Should have failed");
-        } catch (final RuntimeException e) {
-            logger.debug("Adding authentication failure event failed correctly");
-        }
-    }
+	@Test
+	public void testImmutable() {
+		final AuthenticationHandler authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
+		final CredentialMetaData credential1 = new BasicCredentialMetaData(new UsernamePasswordCredential());
+		final CredentialMetaData credential2 = new BasicCredentialMetaData(new UsernamePasswordCredential());
+		final List<CredentialMetaData> credentials = new ArrayList<CredentialMetaData>();
+		credentials.add(credential1);
+		credentials.add(credential2);
+		final Map<String, Object> attributes = new HashMap<String, Object>();
+		attributes.put("authenticationMethod", "password");
+		final Map<String, HandlerResult> successes = new HashMap<String, HandlerResult>();
+		successes.put("handler1", new HandlerResult(authenticationHandler, credential1));
+		final Map<String, Class<? extends Exception>> failures = new HashMap<String, Class<? extends Exception>>();
+		failures.put("handler2", FailedLoginException.class);
+		final ImmutableAuthentication auth = new ImmutableAuthentication(
+				new Date(),
+				credentials,
+				new SimplePrincipal("test"),
+				attributes,
+				successes,
+				failures);
+		try {
+			auth.getAuthenticatedDate().setTime(100);
+			fail("Should have failed");
+		}
+		catch (final RuntimeException e) {
+			logger.debug("Setting authenticate date/time failed correctly");
+		}
+		try {
+			auth.getCredentials().add(new BasicCredentialMetaData(new UsernamePasswordCredential()));
+			fail("Should have failed");
+		}
+		catch (final RuntimeException e) {
+			logger.debug("Adding authentication credential metadata failed correctly");
+		}
+		try {
+			auth.getSuccesses().put("test", new HandlerResult(authenticationHandler, credential1));
+			fail("Should have failed");
+		}
+		catch (final RuntimeException e) {
+			logger.debug("Adding authentication success event failed correctly");
+		}
+		try {
+			auth.getFailures().put("test", FailedLoginException.class);
+			fail("Should have failed");
+		}
+		catch (final RuntimeException e) {
+			logger.debug("Adding authentication failure event failed correctly");
+		}
+	}
 }

@@ -1,7 +1,6 @@
 apply plugin: 'java'
 
 ext {
-
 	springversion = '5.3.3'
 	springsecurityversion = '5.4.4'
 	springldapcoreversion = '2.3.3.RELEASE'
@@ -11,15 +10,19 @@ ext {
 	commonslangversion = '2.6'
 	commonsioversion = '2.8.0'
 	servletapiversion = '4.0.1'
-	quartzversion = '1.8.6'
+	quartzversion = '2.3.2'
 	jcifsversion = '1.3.17'
 	jcifsextversion = '0.9.4'
 	junitversion = '4.13.2'
 	mockitoversion = '1.10.19'
-	casclientversion = '3.6.2' 
+	casclientversion = '3.6.2'
+	javaxelversion = '3.0.0'
 }
 
 ext.libraries = [
+	hsqldb: [
+		'org.hsqldb:hsqldb:2.3.2'
+	],
 	perf4j: [
 		'org.perf4j:perf4j:0.9.16'
 	],
@@ -62,5 +65,9 @@ ext.libraries = [
 		'junit:junit:' + junitversion
 	],
 	mockito: 'org.mockito:mockito-core:' + mockitoversion,
-	spring_test: 'org.springframework:spring-test:' + springversion
+	spring_test: 'org.springframework:spring-test:' + springversion,
+	javax_el: [
+		'javax.el:javax.el-api:' + javaxelversion,
+		'org.glassfish:javax.el:' + javaxelversion
+	]
 ]

@@ -21,41 +21,42 @@ package org.jasig.cas.authentication;
 import javax.validation.constraints.NotNull;
 
 /**
- * Authentication security policy that is satisfied iff a specified authentication handler successfully authenticates
- * at least one credential.
+ * Authentication security policy that is satisfied iff a specified authentication handler successfully authenticates at
+ * least one credential.
  *
  * @author Marvin S. Addison
  */
 public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
 
-    /** Authentication handler name that is required to satisfy policy. */
-    @NotNull
-    private final String requiredHandlerName;
+	/** Authentication handler name that is required to satisfy policy. */
+	@NotNull
+	private final String requiredHandlerName;
 
-    /** Flag to try all credentials before policy is satisfied. */
-    private boolean tryAll = false;
+	/** Flag to try all credentials before policy is satisfied. */
+	private boolean tryAll = false;
 
-    public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName) {
-        this.requiredHandlerName = requiredHandlerName;
-    }
+	public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName) {
+		this.requiredHandlerName = requiredHandlerName;
+	}
 
-    /**
-     * Sets the flag to try all credentials before the policy is satisfied.
-     * This flag is disabled by default such that the policy is satisfied immediately upon the first
-     * credential that is successfully authenticated by the required handler.
-     *
-     * @param tryAll True to force all credentials to be authenticated, false otherwise.
-     */
-    public void setTryAll(final boolean tryAll) {
-        this.tryAll = tryAll;
-    }
+	/**
+	 * Sets the flag to try all credentials before the policy is satisfied. This flag is disabled by default such that
+	 * the policy is satisfied immediately upon the first credential that is successfully authenticated by the required
+	 * handler.
+	 *
+	 * @param tryAll
+	 *            True to force all credentials to be authenticated, false otherwise.
+	 */
+	public void setTryAll(final boolean tryAll) {
+		this.tryAll = tryAll;
+	}
 
-    @Override
-    public boolean isSatisfiedBy(final Authentication authn) {
-        boolean credsOk = true;
-        if (this.tryAll) {
-            credsOk = authn.getCredentials().size() == authn.getSuccesses().size() + authn.getFailures().size();
-        }
-        return credsOk && authn.getSuccesses().containsKey(this.requiredHandlerName);
-    }
+	@Override
+	public boolean isSatisfiedBy(final Authentication authn) {
+		boolean credsOk = true;
+		if (this.tryAll) {
+			credsOk = authn.getCredentials().size() == authn.getSuccesses().size() + authn.getFailures().size();
+		}
+		return credsOk && authn.getSuccesses().containsKey(this.requiredHandlerName);
+	}
 }

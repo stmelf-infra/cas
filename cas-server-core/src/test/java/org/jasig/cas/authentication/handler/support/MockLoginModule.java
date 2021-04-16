@@ -29,40 +29,44 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 public class MockLoginModule implements LoginModule {
-    private CallbackHandler callbackHandler;
+	private CallbackHandler callbackHandler;
 
-    public void initialize(final Subject subject, final CallbackHandler handler, final Map<String, ?> arg2,
-            final Map<String, ?> arg3) {
-        this.callbackHandler = handler;
-    }
+	public void initialize(
+			final Subject subject,
+			final CallbackHandler handler,
+			final Map<String, ?> arg2,
+			final Map<String, ?> arg3) {
+		this.callbackHandler = handler;
+	}
 
-    public boolean login() throws LoginException {
-        final Callback[] callbacks = new Callback[] {new NameCallback("f"), new PasswordCallback("f", false)};
-        try {
-            this.callbackHandler.handle(callbacks);
-        } catch (final Exception e) {
-            throw new LoginException();
-        }
+	public boolean login() throws LoginException {
+		final Callback[] callbacks = new Callback[] { new NameCallback("f"), new PasswordCallback("f", false) };
+		try {
+			this.callbackHandler.handle(callbacks);
+		}
+		catch (final Exception e) {
+			throw new LoginException();
+		}
 
-        final String userName = ((NameCallback) callbacks[0]).getName();
-        final String password = new String(((PasswordCallback) callbacks[1]).getPassword());
+		final String userName = ((NameCallback) callbacks[0]).getName();
+		final String password = new String(((PasswordCallback) callbacks[1]).getPassword());
 
-        if (userName.equals("test") && password.equals("test")) {
-            return true;
-        }
+		if (userName.equals("test") && password.equals("test")) {
+			return true;
+		}
 
-        throw new LoginException();
-    }
+		throw new LoginException();
+	}
 
-    public boolean commit() throws LoginException {
-        return true;
-    }
+	public boolean commit() throws LoginException {
+		return true;
+	}
 
-    public boolean abort() throws LoginException {
-        return true;
-    }
+	public boolean abort() throws LoginException {
+		return true;
+	}
 
-    public boolean logout() throws LoginException {
-        return true;
-    }
+	public boolean logout() throws LoginException {
+		return true;
+	}
 }

@@ -18,16 +18,20 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.jasig.cas.authentication.Credential;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link ChainingPrincipalResolver}.
@@ -36,46 +40,46 @@ import static org.mockito.Mockito.*;
  */
 public class ChainingPrincipalResolverTest {
 
-    @Test
-    public void testSupports() throws Exception {
-        final Credential credential = mock(Credential.class);
-        when(credential.getId()).thenReturn("a");
+	@Test
+	public void testSupports() throws Exception {
+		final Credential credential = mock(Credential.class);
+		when(credential.getId()).thenReturn("a");
 
-        final PrincipalResolver resolver1 = mock(PrincipalResolver.class);
-        when(resolver1.supports(eq(credential))).thenReturn(true);
+		final PrincipalResolver resolver1 = mock(PrincipalResolver.class);
+		when(resolver1.supports(eq(credential))).thenReturn(true);
 
-        final PrincipalResolver resolver2 = mock(PrincipalResolver.class);
-        when(resolver2.supports(eq(credential))).thenReturn(false);
+		final PrincipalResolver resolver2 = mock(PrincipalResolver.class);
+		when(resolver2.supports(eq(credential))).thenReturn(false);
 
-        final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
-        resolver.setChain(Arrays.asList(resolver1, resolver2));
-        assertTrue(resolver.supports(credential));
-    }
+		final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+		resolver.setChain(Arrays.asList(resolver1, resolver2));
+		assertTrue(resolver.supports(credential));
+	}
 
-    @Test
-    public void testResolve() throws Exception {
-        final Credential credential = mock(Credential.class);
-        when(credential.getId()).thenReturn("input");
+	@Test
+	public void testResolve() throws Exception {
+		final Credential credential = mock(Credential.class);
+		when(credential.getId()).thenReturn("input");
 
-        final PrincipalResolver resolver1 = mock(PrincipalResolver.class);
-        when(resolver1.supports(eq(credential))).thenReturn(true);
-        when(resolver1.resolve((eq(credential)))).thenReturn(new SimplePrincipal("output"));
+		final PrincipalResolver resolver1 = mock(PrincipalResolver.class);
+		when(resolver1.supports(eq(credential))).thenReturn(true);
+		when(resolver1.resolve((eq(credential)))).thenReturn(new SimplePrincipal("output"));
 
-        final PrincipalResolver resolver2 = mock(PrincipalResolver.class);
-        when(resolver2.supports(any(Credential.class))).thenReturn(false);
-        when(resolver2.resolve(argThat(new ArgumentMatcher<Credential>() {
-            @Override
-            public boolean matches(final Object o) {
-                return ((Credential) o).getId().equals("output");
-            }
-        }))).thenReturn(
-                new SimplePrincipal("final", Collections.<String, Object>singletonMap("mail", "final@example.com")));
+		final PrincipalResolver resolver2 = mock(PrincipalResolver.class);
+		when(resolver2.supports(any(Credential.class))).thenReturn(false);
+		when(resolver2.resolve(argThat(new ArgumentMatcher<Credential>() {
+			@Override
+			public boolean matches(final Object o) {
+				return ((Credential) o).getId().equals("output");
+			}
+		}))).thenReturn(
+				new SimplePrincipal("final", Collections.<String, Object> singletonMap("mail", "final@example.com")));
 
-        final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
-        resolver.setChain(Arrays.asList(resolver1, resolver2));
-        final Principal principal = resolver.resolve(credential);
-        assertEquals("final", principal.getId());
-        assertEquals("final@example.com", principal.getAttributes().get("mail"));
-    }
+		final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+		resolver.setChain(Arrays.asList(resolver1, resolver2));
+		final Principal principal = resolver.resolve(credential);
+		assertEquals("final", principal.getId());
+		assertEquals("final@example.com", principal.getAttributes().get("mail"));
+	}
 
 }

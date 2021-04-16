@@ -28,34 +28,34 @@ import org.springframework.webflow.mvc.servlet.FlowHandler;
 import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 
 /**
- * Selective extension of {@link FlowHandlerAdapter} that only supports {@link FlowHandler}s matching one or
- * more flow IDs.
+ * Selective extension of {@link FlowHandlerAdapter} that only supports {@link FlowHandler}s matching one or more flow
+ * IDs.
  *
  * @author Marvin S. Addison
  * @since 4.0
  */
 public class SelectiveFlowHandlerAdapter extends FlowHandlerAdapter {
 
-    /** List of supported flow IDs. */
-    @NotNull
-    private List<String> supportedFlowIds;
+	/** List of supported flow IDs. */
+	@NotNull
+	private List<String> supportedFlowIds;
 
-    public void setSupportedFlowIds(final List<String> flowIdList) {
-        this.supportedFlowIds = flowIdList;
-    }
+	public void setSupportedFlowIds(final List<String> flowIdList) {
+		this.supportedFlowIds = flowIdList;
+	}
 
-    public void setSupportedFlowId(final String flowId) {
-        this.supportedFlowIds = Collections.singletonList(flowId);
-    }
+	public void setSupportedFlowId(final String flowId) {
+		this.supportedFlowIds = Collections.singletonList(flowId);
+	}
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        super.afterPropertiesSet();
-        Assert.isTrue(!supportedFlowIds.isEmpty(), "Must specify at least one supported flow ID");
-    }
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		super.afterPropertiesSet();
+		Assert.isTrue(!supportedFlowIds.isEmpty(), "Must specify at least one supported flow ID");
+	}
 
-    @Override
-    public boolean supports(final Object handler) {
-        return handler instanceof FlowHandler && supportedFlowIds.contains(((FlowHandler) handler).getFlowId());
-    }
+	@Override
+	public boolean supports(final Object handler) {
+		return handler instanceof FlowHandler && supportedFlowIds.contains(((FlowHandler) handler).getFlowId());
+	}
 }

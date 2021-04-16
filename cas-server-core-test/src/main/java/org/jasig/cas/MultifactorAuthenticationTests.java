@@ -18,6 +18,10 @@
  */
 package org.jasig.cas;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator;
@@ -32,12 +36,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.*;
-
 /**
- * High-level MFA functionality tests that leverage registered service metadata
- * ala {@link org.jasig.cas.authentication.RequiredHandlerAuthenticationPolicyFactory} to drive
- * authentication policy.
+ * High-level MFA functionality tests that leverage registered service metadata ala
+ * {@link org.jasig.cas.authentication.RequiredHandlerAuthenticationPolicyFactory} to drive authentication policy.
  *
  * @author Marvin S. Addison
  * @since 4.0
@@ -46,93 +47,93 @@ import static org.junit.Assert.*;
 @ContextConfiguration(locations = { "/mfa-test-context.xml" })
 public class MultifactorAuthenticationTests {
 
-    @Autowired
-    private CentralAuthenticationService cas;
+	@Autowired
+	private CentralAuthenticationService cas;
 
-    @Test
-    public void testAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
-        final String tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
-        assertNotNull(tgt);
-        final String st = cas.grantServiceTicket(tgt, newService("https://example.com/normal/"));
-        assertNotNull(st);
-    }
+	@Test
+	public void testAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
+		final String tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
+		assertNotNull(tgt);
+		final String st = cas.grantServiceTicket(tgt, newService("https://example.com/normal/"));
+		assertNotNull(st);
+	}
 
-    @Test
-    public void testAllowsAccessToNormalSecurityServiceWithOTP() throws Exception {
-        final String tgt = cas.createTicketGrantingTicket(new OneTimePasswordCredential("alice", "31415"));
-        assertNotNull(tgt);
-        final String st = cas.grantServiceTicket(tgt, newService("https://example.com/normal/"));
-        assertNotNull(st);
-    }
+	@Test
+	public void testAllowsAccessToNormalSecurityServiceWithOTP() throws Exception {
+		final String tgt = cas.createTicketGrantingTicket(new OneTimePasswordCredential("alice", "31415"));
+		assertNotNull(tgt);
+		final String st = cas.grantServiceTicket(tgt, newService("https://example.com/normal/"));
+		assertNotNull(st);
+	}
 
-    @Test(expected = UnsatisfiedAuthenticationPolicyException.class)
-    public void testDeniesAccessToHighSecurityServiceWithPassword() throws Exception {
-        final String tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
-        assertNotNull(tgt);
-        cas.grantServiceTicket(tgt, newService("https://example.com/high/"));
-    }
+	@Test(expected = UnsatisfiedAuthenticationPolicyException.class)
+	public void testDeniesAccessToHighSecurityServiceWithPassword() throws Exception {
+		final String tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
+		assertNotNull(tgt);
+		cas.grantServiceTicket(tgt, newService("https://example.com/high/"));
+	}
 
-    @Test(expected = UnsatisfiedAuthenticationPolicyException.class)
-    public void testDeniesAccessToHighSecurityServiceWithOTP() throws Exception {
-        final String tgt = cas.createTicketGrantingTicket(new OneTimePasswordCredential("alice", "31415"));
-        assertNotNull(tgt);
-        final String st = cas.grantServiceTicket(tgt, newService("https://example.com/high/"));
-        assertNotNull(st);
-    }
+	@Test(expected = UnsatisfiedAuthenticationPolicyException.class)
+	public void testDeniesAccessToHighSecurityServiceWithOTP() throws Exception {
+		final String tgt = cas.createTicketGrantingTicket(new OneTimePasswordCredential("alice", "31415"));
+		assertNotNull(tgt);
+		final String st = cas.grantServiceTicket(tgt, newService("https://example.com/high/"));
+		assertNotNull(st);
+	}
 
-    @Test
-    public void testAllowsAccessToHighSecurityServiceWithPasswordAndOTP() throws Exception {
-        final String tgt = cas.createTicketGrantingTicket(
-                newUserPassCredentials("alice", "alice"),
-                new OneTimePasswordCredential("alice", "31415"));
-        assertNotNull(tgt);
-        final String st = cas.grantServiceTicket(tgt, newService("https://example.com/high/"));
-        assertNotNull(st);
-    }
+	@Test
+	public void testAllowsAccessToHighSecurityServiceWithPasswordAndOTP() throws Exception {
+		final String tgt = cas.createTicketGrantingTicket(
+				newUserPassCredentials("alice", "alice"),
+				new OneTimePasswordCredential("alice", "31415"));
+		assertNotNull(tgt);
+		final String st = cas.grantServiceTicket(tgt, newService("https://example.com/high/"));
+		assertNotNull(st);
+	}
 
-    @Test
-    public void testAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() throws Exception {
-        // Note the original credential used to start SSO session does not satisfy security policy
-        final String tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
-        assertNotNull(tgt);
-        final Service service = newService("https://example.com/high/");
-        final String st = cas.grantServiceTicket(
-                tgt,
-                service,
-                newUserPassCredentials("alice", "alice"),
-                new OneTimePasswordCredential("alice", "31415"));
-        assertNotNull(st);
-        // Confirm the authentication in the assertion is the one that satisfies security policy
-        final Assertion assertion = cas.validateServiceTicket(st, service);
-        assertEquals(2, assertion.getPrimaryAuthentication().getSuccesses().size());
-        assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey("passwordHandler"));
-        assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey("oneTimePasswordHandler"));
-        assertTrue(assertion.getPrimaryAuthentication().getAttributes().containsKey(
-                SuccessfulHandlerMetaDataPopulator.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-    }
+	@Test
+	public void testAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() throws Exception {
+		// Note the original credential used to start SSO session does not satisfy security policy
+		final String tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
+		assertNotNull(tgt);
+		final Service service = newService("https://example.com/high/");
+		final String st = cas.grantServiceTicket(
+				tgt,
+				service,
+				newUserPassCredentials("alice", "alice"),
+				new OneTimePasswordCredential("alice", "31415"));
+		assertNotNull(st);
+		// Confirm the authentication in the assertion is the one that satisfies security policy
+		final Assertion assertion = cas.validateServiceTicket(st, service);
+		assertEquals(2, assertion.getPrimaryAuthentication().getSuccesses().size());
+		assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey("passwordHandler"));
+		assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey("oneTimePasswordHandler"));
+		assertTrue(
+				assertion.getPrimaryAuthentication().getAttributes().containsKey(
+						SuccessfulHandlerMetaDataPopulator.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+	}
 
+	@Test(expected = MixedPrincipalException.class)
+	public void testThrowsMixedPrincipalExceptionOnRenewWithDifferentPrincipal() throws Exception {
+		// Note the original credential used to start SSO session does not satisfy security policy
+		final String tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
+		assertNotNull(tgt);
+		final Service service = newService("https://example.com/high/");
+		cas.grantServiceTicket(
+				tgt,
+				service,
+				newUserPassCredentials("bob", "bob"),
+				new OneTimePasswordCredential("bob", "62831"));
+	}
 
-    @Test(expected = MixedPrincipalException.class)
-    public void testThrowsMixedPrincipalExceptionOnRenewWithDifferentPrincipal() throws Exception {
-        // Note the original credential used to start SSO session does not satisfy security policy
-        final String tgt = cas.createTicketGrantingTicket(newUserPassCredentials("alice", "alice"));
-        assertNotNull(tgt);
-        final Service service = newService("https://example.com/high/");
-        cas.grantServiceTicket(
-                tgt,
-                service,
-                newUserPassCredentials("bob", "bob"),
-                new OneTimePasswordCredential("bob", "62831"));
-    }
+	private static UsernamePasswordCredential newUserPassCredentials(final String user, final String pass) {
+		final UsernamePasswordCredential userpass = new UsernamePasswordCredential();
+		userpass.setUsername(user);
+		userpass.setPassword(pass);
+		return userpass;
+	}
 
-    private static UsernamePasswordCredential newUserPassCredentials(final String user, final String pass) {
-        final UsernamePasswordCredential userpass = new UsernamePasswordCredential();
-        userpass.setUsername(user);
-        userpass.setPassword(pass);
-        return userpass;
-    }
-
-    private static Service newService(final String id) {
-        return new SimpleWebApplicationServiceImpl(id);
-    }
+	private static Service newService(final String id) {
+		return new SimpleWebApplicationServiceImpl(id);
+	}
 }

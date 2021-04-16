@@ -21,12 +21,12 @@
 <html>
 <body>
 
-  In the Servlet API, the WEB-INF/web.xml deployment descriptor maps
-  various URL values to Java classes. In Spring, the web.xml maps all
-  URL program requests to a single generic handler. The mapping of
-  particular URL values to particular classes is then part of the Spring
-  configuration, specifically in the cas-servlet.xml file:
-  <pre>&lt;!-- Handler Mapping --&gt;
+In the Servlet API, the WEB-INF/web.xml deployment descriptor maps
+various URL values to Java classes. In Spring, the web.xml maps all
+URL program requests to a single generic handler. The mapping of
+particular URL values to particular classes is then part of the Spring
+configuration, specifically in the cas-servlet.xml file:
+<pre>&lt;!-- Handler Mapping --&gt;
 &lt;bean id=&quot;handlerMapping&quot; class=&quot;org.springframework.web.servlet.handler.SimpleUrlHandlerMapping&quot;&gt;
  &lt;property name=&quot;mappings&quot;&gt;
   &lt;props&gt;
@@ -41,7 +41,7 @@
 &lt;/bean&gt;</pre>
 <p>Each named service is then configured as a bean. For example,
     the /login processing is defined as</p>
-  <pre>&lt;bean id=&quot;loginController&quot; class=&quot;org.jasig.cas.web.LoginController&quot; autowire=&quot;byType&quot;&gt;
+<pre>&lt;bean id=&quot;loginController&quot; class=&quot;org.jasig.cas.web.LoginController&quot; autowire=&quot;byType&quot;&gt;
 &lt;property name=&quot;loginTokens&quot; ref=&quot;loginTokens&quot; /&gt;
 &lt;property name=&quot;centralAuthenticationService&quot; ref=&quot;centralAuthenticationService&quot; /&gt;
 &lt;/bean&gt;</pre>

@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
-
 /**
  * Generates the login ticket parameter as described in section 3.5 of the
  * <a href="http://www.jasig.org/cas/protocol">CAS protocol</a>.
@@ -36,23 +35,23 @@ import org.springframework.webflow.execution.RequestContext;
  *
  */
 public class GenerateLoginTicketAction {
-    /** 3.5.1 - Login tickets SHOULD begin with characters "LT-". */
-    private static final String PREFIX = "LT";
+	/** 3.5.1 - Login tickets SHOULD begin with characters "LT-". */
+	private static final String PREFIX = "LT";
 
-    /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	/** Logger instance. */
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @NotNull
-    private UniqueTicketIdGenerator ticketIdGenerator;
+	@NotNull
+	private UniqueTicketIdGenerator ticketIdGenerator;
 
-    public final String generate(final RequestContext context) {
-        final String loginTicket = this.ticketIdGenerator.getNewTicketId(PREFIX);
-        logger.debug("Generated login ticket {}", loginTicket);
-        WebUtils.putLoginTicket(context, loginTicket);
-        return "generated";
-    }
+	public final String generate(final RequestContext context) {
+		final String loginTicket = this.ticketIdGenerator.getNewTicketId(PREFIX);
+		logger.debug("Generated login ticket {}", loginTicket);
+		WebUtils.putLoginTicket(context, loginTicket);
+		return "generated";
+	}
 
-    public void setTicketIdGenerator(final UniqueTicketIdGenerator generator) {
-        this.ticketIdGenerator = generator;
-    }
+	public void setTicketIdGenerator(final UniqueTicketIdGenerator generator) {
+		this.ticketIdGenerator = generator;
+	}
 }

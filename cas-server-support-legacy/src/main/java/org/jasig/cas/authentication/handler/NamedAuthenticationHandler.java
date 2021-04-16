@@ -24,12 +24,12 @@ package org.jasig.cas.authentication.handler;
  *
  * @author Scott Battaglia
  * @deprecated The CAS 4.0 {@link org.jasig.cas.authentication.AuthenticationHandler} provides support for named
- * handlers, which makes this interface redundant.
+ *             handlers, which makes this interface redundant.
  * @since 3.2.1
  *
  */
 @Deprecated
 public interface NamedAuthenticationHandler extends AuthenticationHandler {
 
-    String getName();
+	String getName();
 }

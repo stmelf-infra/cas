@@ -37,39 +37,46 @@ import org.springframework.web.util.CookieGenerator;
  */
 public class CookieRetrievingCookieGenerator extends CookieGenerator {
 
-    /** The maximum age the cookie should be remembered for.
-     * The default is three months (7889231 in seconds, according to Google) */
-    private int rememberMeMaxAge = 7889231;
+	/**
+	 * The maximum age the cookie should be remembered for. The default is three months (7889231 in seconds, according
+	 * to Google)
+	 */
+	private int rememberMeMaxAge = 7889231;
 
-    public void addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
+	public void addCookie(
+			final HttpServletRequest request,
+			final HttpServletResponse response,
+			final String cookieValue) {
 
-        if (!StringUtils.hasText(request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME))) {
-            super.addCookie(response, cookieValue);
-        } else {
-            final Cookie cookie = createCookie(cookieValue);
-            cookie.setMaxAge(this.rememberMeMaxAge);
-            if (isCookieSecure()) {
-                cookie.setSecure(true);
-            }
-            response.addCookie(cookie);
-        }
-    }
+		if (!StringUtils.hasText(request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME))) {
+			super.addCookie(response, cookieValue);
+		}
+		else {
+			final Cookie cookie = createCookie(cookieValue);
+			cookie.setMaxAge(this.rememberMeMaxAge);
+			if (isCookieSecure()) {
+				cookie.setSecure(true);
+			}
+			response.addCookie(cookie);
+		}
+	}
 
-    @Override
-    public void removeCookie(final HttpServletResponse response) {
-        final Cookie cookie = this.createCookie("");
-        cookie.setMaxAge(0);
-        super.addCookie(response, "");
-    }
+	@Override
+	public void removeCookie(final HttpServletResponse response) {
+		final Cookie cookie = this.createCookie("");
+		cookie.setMaxAge(0);
+		super.addCookie(response, "");
+	}
 
-    public String retrieveCookieValue(final HttpServletRequest request) {
-        final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(
-                request, getCookieName());
+	public String retrieveCookieValue(final HttpServletRequest request) {
+		final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(
+				request,
+				getCookieName());
 
-        return cookie == null ? null : cookie.getValue();
-    }
+		return cookie == null ? null : cookie.getValue();
+	}
 
-    public void setRememberMeMaxAge(final int maxAge) {
-        this.rememberMeMaxAge = maxAge;
-    }
+	public void setRememberMeMaxAge(final int maxAge) {
+		this.rememberMeMaxAge = maxAge;
+	}
 }

@@ -31,24 +31,25 @@ import org.springframework.util.Assert;
  */
 public abstract class AbstractNamedMonitor<S extends Status> implements Monitor<S> {
 
-    /** Logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+	/** Logger instance. */
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** Monitor name. */
-    protected String name;
+	/** Monitor name. */
+	protected String name;
 
-    /**
-     * @return Monitor name.
-     */
-    public String getName() {
-        return StringUtils.defaultIfEmpty(this.name, getClass().getSimpleName());
-    }
+	/**
+	 * @return Monitor name.
+	 */
+	public String getName() {
+		return StringUtils.defaultIfEmpty(this.name, getClass().getSimpleName());
+	}
 
-    /**
-     * @param n Monitor name.
-     */
-    public void setName(final String n) {
-        Assert.hasText(n, "Monitor name cannot be null or empty.");
-        this.name = n;
-    }
+	/**
+	 * @param n
+	 *            Monitor name.
+	 */
+	public void setName(final String n) {
+		Assert.hasText(n, "Monitor name cannot be null or empty.");
+		this.name = n;
+	}
 }

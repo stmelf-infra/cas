@@ -19,31 +19,34 @@
 
 package org.jasig.cas.web;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.mvc.AbstractController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
- * Abstract class to be extended by all controllers that may become a delegate.
- * All subclass must implement the canHandle method to say if they can handle a request or not.
+ * Abstract class to be extended by all controllers that may become a delegate. All subclass must implement the
+ * canHandle method to say if they can handle a request or not.
+ * 
  * @author Frederic Esnault
  * @since 3.5
  */
 public abstract class DelegateController extends AbstractController {
-    
-    /** The logger. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    
-    /**
-     * Determine if a DelegateController subclass can handle the current request.
-     * @param request the current request
-     * @param response the response
-     * @return true if the controller can handler the request, false otherwise
-     */
-    public abstract boolean canHandle(HttpServletRequest request, HttpServletResponse response);
 
+	/** The logger. */
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	/**
+	 * Determine if a DelegateController subclass can handle the current request.
+	 * 
+	 * @param request
+	 *            the current request
+	 * @param response
+	 *            the response
+	 * @return true if the controller can handler the request, false otherwise
+	 */
+	public abstract boolean canHandle(HttpServletRequest request, HttpServletResponse response);
 
 }

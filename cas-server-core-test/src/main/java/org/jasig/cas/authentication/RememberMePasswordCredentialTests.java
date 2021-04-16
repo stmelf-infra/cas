@@ -18,7 +18,8 @@
  */
 package org.jasig.cas.authentication;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -31,15 +32,15 @@ import org.junit.Test;
  */
 public final class RememberMePasswordCredentialTests {
 
-    @Test
-    public void testGettersAndSetters() {
-        final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
-        c.setPassword("password");
-        c.setUsername("username");
-        c.setRememberMe(true);
+	@Test
+	public void testGettersAndSetters() {
+		final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
+		c.setPassword("password");
+		c.setUsername("username");
+		c.setRememberMe(true);
 
-        assertEquals("username", c.getUsername());
-        assertEquals("password", c.getPassword());
-        assertTrue(c.isRememberMe());
-    }
+		assertEquals("username", c.getUsername());
+		assertEquals("password", c.getPassword());
+		assertTrue(c.isRememberMe());
+	}
 }

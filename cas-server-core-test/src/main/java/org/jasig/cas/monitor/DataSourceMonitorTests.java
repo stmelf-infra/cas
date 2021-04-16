@@ -18,7 +18,10 @@
  */
 package org.jasig.cas.monitor;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.concurrent.Executors;
+
 import javax.sql.DataSource;
 
 import org.junit.Test;
@@ -26,8 +29,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test for {@link DataSourceMonitor}.
@@ -39,15 +40,15 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration("/jpaTestApplicationContext.xml")
 public class DataSourceMonitorTests {
 
-    @Autowired
-    private DataSource dataSource;
+	@Autowired
+	private DataSource dataSource;
 
-    @Test
-    public void testObserve() throws Exception {
-        final DataSourceMonitor monitor = new DataSourceMonitor(this.dataSource);
-        monitor.setExecutor(Executors.newSingleThreadExecutor());
-        monitor.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
-        final PoolStatus status = monitor.observe();
-        assertEquals(StatusCode.OK, status.getCode());
-    }
+	@Test
+	public void testObserve() throws Exception {
+		final DataSourceMonitor monitor = new DataSourceMonitor(this.dataSource);
+		monitor.setExecutor(Executors.newSingleThreadExecutor());
+		monitor.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
+		final PoolStatus status = monitor.observe();
+		assertEquals(StatusCode.OK, status.getCode());
+	}
 }

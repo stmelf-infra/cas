@@ -41,48 +41,53 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class FrontChannelLogoutAction extends AbstractLogoutAction {
 
-    @NotNull
-    private final LogoutManager logoutManager;
+	@NotNull
+	private final LogoutManager logoutManager;
 
-    /**
-     * Build from the logout manager.
-     *
-     * @param logoutManager a logout manager.
-     */
-    public FrontChannelLogoutAction(final LogoutManager logoutManager) {
-        this.logoutManager = logoutManager;
-    }
+	/**
+	 * Build from the logout manager.
+	 *
+	 * @param logoutManager
+	 *            a logout manager.
+	 */
+	public FrontChannelLogoutAction(final LogoutManager logoutManager) {
+		this.logoutManager = logoutManager;
+	}
 
-    @Override
-    protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
-            final RequestContext context) throws Exception {
+	@Override
+	protected Event doInternalExecute(
+			final HttpServletRequest request,
+			final HttpServletResponse response,
+			final RequestContext context) throws Exception {
 
-        final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
-        final Integer startIndex = getLogoutIndex(context);
-        if (logoutRequests != null && startIndex != null) {
-            for (int i = startIndex; i < logoutRequests.size(); i++) {
-                final LogoutRequest logoutRequest = logoutRequests.get(i);
-                if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
-                    // assume it has been successful
-                    logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
+		final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
+		final Integer startIndex = getLogoutIndex(context);
+		if (logoutRequests != null && startIndex != null) {
+			for (int i = startIndex; i < logoutRequests.size(); i++) {
+				final LogoutRequest logoutRequest = logoutRequests.get(i);
+				if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
+					// assume it has been successful
+					logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
 
-                    // save updated index
-                    putLogoutIndex(context, i + 1);
+					// save updated index
+					putLogoutIndex(context, i + 1);
 
-                    // redirect to application with SAML logout message
-                    final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(logoutRequest.getService().getId());
-                    builder.queryParam("SAMLRequest",
-                            URLEncoder.encode(logoutManager.createFrontChannelLogoutMessage(logoutRequest), "UTF-8"));
-                    return result(REDIRECT_APP_EVENT, "logoutUrl", builder.build().toUriString());
-                }
-            }
-        }
+					// redirect to application with SAML logout message
+					final UriComponentsBuilder builder =
+							UriComponentsBuilder.fromHttpUrl(logoutRequest.getService().getId());
+					builder.queryParam(
+							"SAMLRequest",
+							URLEncoder.encode(logoutManager.createFrontChannelLogoutMessage(logoutRequest), "UTF-8"));
+					return result(REDIRECT_APP_EVENT, "logoutUrl", builder.build().toUriString());
+				}
+			}
+		}
 
-        // no new service with front-channel logout -> finish logout
-        return new Event(this, FINISH_EVENT);
-    }
+		// no new service with front-channel logout -> finish logout
+		return new Event(this, FINISH_EVENT);
+	}
 
-    public LogoutManager getLogoutManager() {
-        return logoutManager;
-    }
+	public LogoutManager getLogoutManager() {
+		return logoutManager;
+	}
 }

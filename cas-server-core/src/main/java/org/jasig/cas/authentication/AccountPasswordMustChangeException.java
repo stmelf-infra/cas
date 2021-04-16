@@ -28,14 +28,14 @@ import javax.security.auth.login.CredentialExpiredException;
  */
 public class AccountPasswordMustChangeException extends CredentialExpiredException {
 
-    /** Serialization metadata. */
-    private static final long serialVersionUID = 7487835035108753209L;
+	/** Serialization metadata. */
+	private static final long serialVersionUID = 7487835035108753209L;
 
-    public AccountPasswordMustChangeException() {
-    }
+	public AccountPasswordMustChangeException() {
+	}
 
-    public AccountPasswordMustChangeException(final String msg) {
-        super(msg);
-    }
+	public AccountPasswordMustChangeException(final String msg) {
+		super(msg);
+	}
 
 }

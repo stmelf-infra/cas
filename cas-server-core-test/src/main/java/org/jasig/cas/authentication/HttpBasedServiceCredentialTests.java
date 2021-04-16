@@ -18,7 +18,9 @@
  */
 package org.jasig.cas.authentication;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 
@@ -31,34 +33,36 @@ import org.junit.Test;
  */
 public final class HttpBasedServiceCredentialTests {
 
-    @Test
-    public void testProperUrl() {
-        assertEquals(TestUtils.CONST_GOOD_URL, TestUtils.getHttpBasedServiceCredentials().getCallbackUrl()
-                .toExternalForm());
-    }
+	@Test
+	public void testProperUrl() {
+		assertEquals(
+				TestUtils.CONST_GOOD_URL,
+				TestUtils.getHttpBasedServiceCredentials().getCallbackUrl()
+						.toExternalForm());
+	}
 
-    @Test
-    public void testEqualsWithNull() throws Exception {
-        final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"));
+	@Test
+	public void testEqualsWithNull() throws Exception {
+		final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"));
 
-        assertFalse(c.equals(null));
-    }
+		assertFalse(c.equals(null));
+	}
 
-    @Test
-    public void testEqualsWithFalse() throws Exception {
-        final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"));
-        final HttpBasedServiceCredential c2 = new HttpBasedServiceCredential(new URL("http://www.msn.com"));
+	@Test
+	public void testEqualsWithFalse() throws Exception {
+		final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"));
+		final HttpBasedServiceCredential c2 = new HttpBasedServiceCredential(new URL("http://www.msn.com"));
 
-        assertFalse(c.equals(c2));
-        assertFalse(c.equals(new Object()));
-    }
+		assertFalse(c.equals(c2));
+		assertFalse(c.equals(new Object()));
+	}
 
-    @Test
-    public void testEqualsWithTrue() throws Exception {
-        final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"));
-        final HttpBasedServiceCredential c2 = new HttpBasedServiceCredential(new URL("http://www.cnn.com"));
+	@Test
+	public void testEqualsWithTrue() throws Exception {
+		final HttpBasedServiceCredential c = new HttpBasedServiceCredential(new URL("http://www.cnn.com"));
+		final HttpBasedServiceCredential c2 = new HttpBasedServiceCredential(new URL("http://www.cnn.com"));
 
-        assertTrue(c.equals(c2));
-        assertTrue(c2.equals(c));
-    }
+		assertTrue(c.equals(c2));
+		assertTrue(c2.equals(c));
+	}
 }

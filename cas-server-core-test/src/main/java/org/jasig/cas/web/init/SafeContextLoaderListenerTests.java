@@ -32,40 +32,36 @@ import org.springframework.mock.web.MockServletContext;
  */
 public class SafeContextLoaderListenerTests {
 
-    private MockServletContext servletContext;
+	private MockServletContext servletContext;
 
-    private ServletContextEvent servletContextEvent;
+	private ServletContextEvent servletContextEvent;
 
-    private SafeContextLoaderListener listener;
+	private SafeContextLoaderListener listener;
 
-    @Before
-    public void setUp() throws Exception {
-        this.listener = new SafeContextLoaderListener();
-        this.servletContext = new MockServletContext();
-        this.servletContextEvent = new ServletContextEvent(this.servletContext);
-    }
+	@Before
+	public void setUp() throws Exception {
+		this.listener = new SafeContextLoaderListener();
+		this.servletContext = new MockServletContext();
+		this.servletContextEvent = new ServletContextEvent(this.servletContext);
+	}
 
-    /**
-     * Test that SafeContextLoaderListener does not propagate exceptions thrown
-     * by its delegate in contextInitialized().
-     */
-    @Test
-    public void testContextInitialized() {
-        /*
-         * this testcase relies upon the fact that ContextLoaderListener()
-         * throws a FileNotFound exception when invoked in the context of this
-         * testcase because it does not find the resource
-         * /WEB-INF/applicationContext.xml if our SafeContextLoaderListener
-         * instance also throws the exception its delegate threw, this testcase
-         * will fail. If it catches the exception, this test method will return
-         * without having failed and so indicate success.
-         */
+	/**
+	 * Test that SafeContextLoaderListener does not propagate exceptions thrown by its delegate in contextInitialized().
+	 */
+	@Test
+	public void testContextInitialized() {
+		/*
+		 * this testcase relies upon the fact that ContextLoaderListener() throws a FileNotFound exception when invoked
+		 * in the context of this testcase because it does not find the resource /WEB-INF/applicationContext.xml if our
+		 * SafeContextLoaderListener instance also throws the exception its delegate threw, this testcase will fail. If
+		 * it catches the exception, this test method will return without having failed and so indicate success.
+		 */
 
-        this.listener.contextInitialized(this.servletContextEvent);
-    }
+		this.listener.contextInitialized(this.servletContextEvent);
+	}
 
-    @Test
-    public void testContextDestroy() {
-        this.listener.contextDestroyed(this.servletContextEvent);
-    }
+	@Test
+	public void testContextDestroy() {
+		this.listener.contextDestroyed(this.servletContextEvent);
+	}
 }

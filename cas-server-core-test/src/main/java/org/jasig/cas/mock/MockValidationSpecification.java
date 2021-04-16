@@ -22,21 +22,20 @@ import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ValidationSpecification;
 
 /**
- * Class to test the Runtime exception thrown when there is no default
- * constructor on a ValidationSpecification.
+ * Class to test the Runtime exception thrown when there is no default constructor on a ValidationSpecification.
  *
  * @author Scott Battaglia
  * @since 3.0
  */
 public class MockValidationSpecification implements ValidationSpecification {
 
-    private boolean test;
+	private boolean test;
 
-    public MockValidationSpecification(final boolean test) {
-        this.test = test;
-    }
+	public MockValidationSpecification(final boolean test) {
+		this.test = test;
+	}
 
-    public boolean isSatisfiedBy(final Assertion assertion) {
-        return this.test;
-    }
+	public boolean isSatisfiedBy(final Assertion assertion) {
+		return this.test;
+	}
 }

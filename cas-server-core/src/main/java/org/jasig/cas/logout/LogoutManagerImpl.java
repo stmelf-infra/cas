@@ -45,129 +45,142 @@ import org.slf4j.LoggerFactory;
  */
 public final class LogoutManagerImpl implements LogoutManager {
 
-    /** The logger. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
+	/** The logger. */
+	private static final Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.class);
 
-    /** ASCII character set. */
-    private static final Charset ASCII = Charset.forName("ASCII");
+	/** ASCII character set. */
+	private static final Charset ASCII = Charset.forName("ASCII");
 
-    /** The services manager. */
-    @NotNull
-    private final ServicesManager servicesManager;
+	/** The services manager. */
+	@NotNull
+	private final ServicesManager servicesManager;
 
-    /** An HTTP client. */
-    @NotNull
-    private final HttpClient httpClient;
+	/** An HTTP client. */
+	@NotNull
+	private final HttpClient httpClient;
 
-    @NotNull
-    private final LogoutMessageCreator logoutMessageBuilder;
-    
-    /** Whether single sign out is disabled or not. */
-    private boolean disableSingleSignOut = false;
+	@NotNull
+	private final LogoutMessageCreator logoutMessageBuilder;
 
-    /**
-     * Build the logout manager.
-     * @param servicesManager the services manager.
-     * @param httpClient an HTTP client.
-     * @param logoutMessageBuilder the builder to construct logout messages.
-     */
-    public LogoutManagerImpl(final ServicesManager servicesManager, final HttpClient httpClient,
-                             final LogoutMessageCreator logoutMessageBuilder) {
-        this.servicesManager = servicesManager;
-        this.httpClient = httpClient;
-        this.logoutMessageBuilder = logoutMessageBuilder;
-    }
+	/** Whether single sign out is disabled or not. */
+	private boolean disableSingleSignOut = false;
 
-    /**
-     * Perform a back channel logout for a given ticket granting ticket and returns all the logout requests.
-     *
-     * @param ticket a given ticket granting ticket.
-     * @return all logout requests.
-     */
-    @Override
-    public List<LogoutRequest> performLogout(final TicketGrantingTicket ticket) {
-        final Map<String, Service> services;
-        // synchronize the retrieval of the services and their cleaning for the TGT
-        // to avoid concurrent logout mess ups
-        synchronized (ticket) {
-            services = ticket.getServices();
-            ticket.removeAllServices();
-        }
-        ticket.markTicketExpired();
+	/**
+	 * Build the logout manager.
+	 * 
+	 * @param servicesManager
+	 *            the services manager.
+	 * @param httpClient
+	 *            an HTTP client.
+	 * @param logoutMessageBuilder
+	 *            the builder to construct logout messages.
+	 */
+	public LogoutManagerImpl(
+			final ServicesManager servicesManager,
+			final HttpClient httpClient,
+			final LogoutMessageCreator logoutMessageBuilder) {
+		this.servicesManager = servicesManager;
+		this.httpClient = httpClient;
+		this.logoutMessageBuilder = logoutMessageBuilder;
+	}
 
-        final List<LogoutRequest> logoutRequests = new ArrayList<LogoutRequest>();
-        // if SLO is not disabled
-        if (!disableSingleSignOut) {
-            // through all services
-            for (final String ticketId : services.keySet()) {
-                final Service service = services.get(ticketId);
-                // it's a SingleLogoutService, else ignore
-                if (service instanceof SingleLogoutService) {
-                    final SingleLogoutService singleLogoutService = (SingleLogoutService) service;
-                    // the logout has not performed already
-                    if (!singleLogoutService.isLoggedOutAlready()) {
-                        final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
-                        // always add the logout request
-                        logoutRequests.add(logoutRequest);
-                        final RegisteredService registeredService = servicesManager.findServiceBy(service);
-                        // the service is no more defined, or the logout type is not defined or is back channel
-                        if (registeredService == null || registeredService.getLogoutType() == null
-                                || registeredService.getLogoutType() == LogoutType.BACK_CHANNEL) {
-                            // perform back channel logout
-                            if (performBackChannelLogout(logoutRequest)) {
-                                logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-                            } else {
-                                logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
-                                LOGGER.warn("Logout message not sent to [{}]; Continuing processing...",
-                                        singleLogoutService.getId());
-                            }
-                        }
-                    }
-                }
-            }
-        }
+	/**
+	 * Perform a back channel logout for a given ticket granting ticket and returns all the logout requests.
+	 *
+	 * @param ticket
+	 *            a given ticket granting ticket.
+	 * @return all logout requests.
+	 */
+	@Override
+	public List<LogoutRequest> performLogout(final TicketGrantingTicket ticket) {
+		final Map<String, Service> services;
+		// synchronize the retrieval of the services and their cleaning for the TGT
+		// to avoid concurrent logout mess ups
+		synchronized (ticket) {
+			services = ticket.getServices();
+			ticket.removeAllServices();
+		}
+		ticket.markTicketExpired();
 
-        return logoutRequests;
-    }
+		final List<LogoutRequest> logoutRequests = new ArrayList<LogoutRequest>();
+		// if SLO is not disabled
+		if (!disableSingleSignOut) {
+			// through all services
+			for (final String ticketId : services.keySet()) {
+				final Service service = services.get(ticketId);
+				// it's a SingleLogoutService, else ignore
+				if (service instanceof SingleLogoutService) {
+					final SingleLogoutService singleLogoutService = (SingleLogoutService) service;
+					// the logout has not performed already
+					if (!singleLogoutService.isLoggedOutAlready()) {
+						final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService);
+						// always add the logout request
+						logoutRequests.add(logoutRequest);
+						final RegisteredService registeredService = servicesManager.findServiceBy(service);
+						// the service is no more defined, or the logout type is not defined or is back channel
+						if (registeredService == null
+								|| registeredService.getLogoutType() == null
+								|| registeredService.getLogoutType() == LogoutType.BACK_CHANNEL) {
+							// perform back channel logout
+							if (performBackChannelLogout(logoutRequest)) {
+								logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
+							}
+							else {
+								logoutRequest.setStatus(LogoutRequestStatus.FAILURE);
+								LOGGER.warn(
+										"Logout message not sent to [{}]; Continuing processing...",
+										singleLogoutService.getId());
+							}
+						}
+					}
+				}
+			}
+		}
 
-    /**
-     * Log out of a service through back channel.
-     *
-     * @param request the logout request.
-     * @return if the logout has been performed.
-     */
-    private boolean performBackChannelLogout(final LogoutRequest request) {
-        final String logoutRequest = this.logoutMessageBuilder.create(request);
-        request.getService().setLoggedOutAlready(true);
+		return logoutRequests;
+	}
 
-        LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
-        return this.httpClient.sendMessageToEndPoint(request.getService().getOriginalUrl(), logoutRequest, true);
-    }
+	/**
+	 * Log out of a service through back channel.
+	 *
+	 * @param request
+	 *            the logout request.
+	 * @return if the logout has been performed.
+	 */
+	private boolean performBackChannelLogout(final LogoutRequest request) {
+		final String logoutRequest = this.logoutMessageBuilder.create(request);
+		request.getService().setLoggedOutAlready(true);
 
-    /**
-     * Create a logout message for front channel logout.
-     *
-     * @param logoutRequest the logout request.
-     * @return a front SAML logout message.
-     */
-    public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
-        final String logoutMessage = this.logoutMessageBuilder.create(logoutRequest);
-        final Deflater deflater = new Deflater();
-        deflater.setInput(logoutMessage.getBytes(ASCII));
-        deflater.finish();
-        final byte[] buffer = new byte[logoutMessage.length()];
-        final int resultSize = deflater.deflate(buffer);
-        final byte[] output = new byte[resultSize];
-        System.arraycopy(buffer, 0, output, 0, resultSize);
-        return Base64.encodeBase64String(output);
-    }
+		LOGGER.debug("Sending logout request for: [{}]", request.getService().getId());
+		return this.httpClient.sendMessageToEndPoint(request.getService().getOriginalUrl(), logoutRequest, true);
+	}
 
-    /**
-     * Set if the logout is disabled.
-     *
-     * @param disableSingleSignOut if the logout is disabled.
-     */
-    public void setDisableSingleSignOut(final boolean disableSingleSignOut) {
-        this.disableSingleSignOut = disableSingleSignOut;
-    }
+	/**
+	 * Create a logout message for front channel logout.
+	 *
+	 * @param logoutRequest
+	 *            the logout request.
+	 * @return a front SAML logout message.
+	 */
+	public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
+		final String logoutMessage = this.logoutMessageBuilder.create(logoutRequest);
+		final Deflater deflater = new Deflater();
+		deflater.setInput(logoutMessage.getBytes(ASCII));
+		deflater.finish();
+		final byte[] buffer = new byte[logoutMessage.length()];
+		final int resultSize = deflater.deflate(buffer);
+		final byte[] output = new byte[resultSize];
+		System.arraycopy(buffer, 0, output, 0, resultSize);
+		return Base64.encodeBase64String(output);
+	}
+
+	/**
+	 * Set if the logout is disabled.
+	 *
+	 * @param disableSingleSignOut
+	 *            if the logout is disabled.
+	 */
+	public void setDisableSingleSignOut(final boolean disableSingleSignOut) {
+		this.disableSingleSignOut = disableSingleSignOut;
+	}
 }

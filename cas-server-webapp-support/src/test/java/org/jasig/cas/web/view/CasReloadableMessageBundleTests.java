@@ -18,7 +18,8 @@
  */
 package org.jasig.cas.web.view;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Locale;
 
@@ -30,38 +31,38 @@ import org.springframework.context.NoSuchMessageException;
 
 @RunWith(JUnit4.class)
 public class CasReloadableMessageBundleTests {
-    private CasReloadableMessageBundle loader;
-    
-    @Before
-    public void setup() {
-        this.loader  = new CasReloadableMessageBundle();
-        this.loader.setFallbackToSystemLocale(false);
-        this.loader.setDefaultEncoding("UTF-8");
-        this.loader.setBasenames("classpath:messages", "classpath:custom_messages");
-    }
-    
-    @Test
-    public void testGetMessageFromRequestedBundle() {
-        final String msg = this.loader.getMessage("screen.blocked.header", null, Locale.FRENCH);
-        assertNotNull(msg);
-    }
+	private CasReloadableMessageBundle loader;
 
-    @Test
-    public void testGetMessageFromDefaultBundle() {
-        final String msg = this.loader.getMessage("screen.other.message", null, Locale.FRENCH);
-        assertEquals(msg, "another");
-    }
-    
-    @Test
-    public void testUseCodeAsMessageItself() {
-        this.loader.setUseCodeAsDefaultMessage(true);
-        final String msg = this.loader.getMessage("does.not.exist", null, Locale.FRENCH);
-        assertEquals(msg, "does.not.exist");
-    }
-    
-    @Test(expected=NoSuchMessageException.class)
-    public void testExpectExceptionWhenCodeNotFound() {
-        this.loader.setUseCodeAsDefaultMessage(false);
-        this.loader.getMessage("does.not.exist", null, Locale.FRENCH);
-    }
+	@Before
+	public void setup() {
+		this.loader = new CasReloadableMessageBundle();
+		this.loader.setFallbackToSystemLocale(false);
+		this.loader.setDefaultEncoding("UTF-8");
+		this.loader.setBasenames("classpath:messages", "classpath:custom_messages");
+	}
+
+	@Test
+	public void testGetMessageFromRequestedBundle() {
+		final String msg = this.loader.getMessage("screen.blocked.header", null, Locale.FRENCH);
+		assertNotNull(msg);
+	}
+
+	@Test
+	public void testGetMessageFromDefaultBundle() {
+		final String msg = this.loader.getMessage("screen.other.message", null, Locale.FRENCH);
+		assertEquals(msg, "another");
+	}
+
+	@Test
+	public void testUseCodeAsMessageItself() {
+		this.loader.setUseCodeAsDefaultMessage(true);
+		final String msg = this.loader.getMessage("does.not.exist", null, Locale.FRENCH);
+		assertEquals(msg, "does.not.exist");
+	}
+
+	@Test(expected = NoSuchMessageException.class)
+	public void testExpectExceptionWhenCodeNotFound() {
+		this.loader.setUseCodeAsDefaultMessage(false);
+		this.loader.getMessage("does.not.exist", null, Locale.FRENCH);
+	}
 }

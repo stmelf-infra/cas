@@ -18,36 +18,39 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-
 
 /**
  * @author Scott Battaglia
  * @since 3.0
  */
-public final class SimplePrincipalTests  {
+public final class SimplePrincipalTests {
 
-    @Test
-    public void testProperId() {
-        final String id = "test";
-        assertEquals(id, new SimplePrincipal(id).getId());
-    }
+	@Test
+	public void testProperId() {
+		final String id = "test";
+		assertEquals(id, new SimplePrincipal(id).getId());
+	}
 
-    @Test
-    public void testEqualsWithNull() {
-        assertFalse(new SimplePrincipal("test").equals(null));
-    }
+	@Test
+	public void testEqualsWithNull() {
+		assertFalse(new SimplePrincipal("test").equals(null));
+	}
 
-    @Test
-    public void testEqualsWithBadClass() {
-        assertFalse(new SimplePrincipal("test").equals("test"));
-    }
+	@Test
+	public void testEqualsWithBadClass() {
+		assertFalse(new SimplePrincipal("test").equals("test"));
+	}
 
-    @Test
-    public void testEquals() {
-        assertTrue(new SimplePrincipal("test").equals(new SimplePrincipal(
-            "test")));
-    }
+	@Test
+	public void testEquals() {
+		assertTrue(
+				new SimplePrincipal("test").equals(
+						new SimplePrincipal(
+								"test")));
+	}
 }

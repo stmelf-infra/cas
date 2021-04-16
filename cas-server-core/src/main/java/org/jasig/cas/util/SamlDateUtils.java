@@ -30,19 +30,19 @@ import java.util.Date;
  */
 public final class SamlDateUtils {
 
-    private SamlDateUtils() {
-        // nothing to do
-    }
+	private SamlDateUtils() {
+		// nothing to do
+	}
 
-    public static String getCurrentDateAndTime() {
-        return getFormattedDateAndTime(new Date());
-    }
+	public static String getCurrentDateAndTime() {
+		return getFormattedDateAndTime(new Date());
+	}
 
-    public static String getFormattedDateAndTime(final Date date) {
-        final DateFormat dateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss'Z'");
-        // Google Does not set this.
-        // dateFormat.setTimeZone(UTC_TIME_ZONE);
-        return dateFormat.format(date);
-    }
+	public static String getFormattedDateAndTime(final Date date) {
+		final DateFormat dateFormat = new SimpleDateFormat(
+				"yyyy-MM-dd'T'HH:mm:ss'Z'");
+		// Google Does not set this.
+		// dateFormat.setTimeZone(UTC_TIME_ZONE);
+		return dateFormat.format(date);
+	}
 }

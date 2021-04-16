@@ -40,91 +40,90 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
  */
 public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
-    private static final long serialVersionUID = 6546995681334670659L;
+	private static final long serialVersionUID = 6546995681334670659L;
 
-    public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
+	public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
-    private final String id;
+	private final String id;
 
-    private final Authentication authentication;
+	private final Authentication authentication;
 
-    private final Date created;
+	private final Date created;
 
-    private int usageCount;
+	private int usageCount;
 
-    private boolean expired;
+	private boolean expired;
 
+	public MockTicketGrantingTicket(final String principal) {
+		id = ID_GENERATOR.getNewTicketId("TGT");
+		authentication = new AuthenticationBuilder(new SimplePrincipal(principal)).build();
+		created = new Date();
+	}
 
-    public MockTicketGrantingTicket(final String principal) {
-        id = ID_GENERATOR.getNewTicketId("TGT");
-        authentication = new AuthenticationBuilder(new SimplePrincipal(principal)).build();
-        created = new Date();
-    }
+	public Authentication getAuthentication() {
+		return authentication;
+	}
 
-    public Authentication getAuthentication() {
-        return authentication;
-    }
+	public ServiceTicket grantServiceTicket(final Service service) {
+		return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, true);
+	}
 
-    public ServiceTicket grantServiceTicket(final Service service) {
-        return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, true);
-    }
+	public ServiceTicket grantServiceTicket(
+			final String id,
+			final Service service,
+			final ExpirationPolicy expirationPolicy,
+			final boolean credentialsProvided) {
+		usageCount++;
+		return new MockServiceTicket(id, service, this);
+	}
 
-    public ServiceTicket grantServiceTicket(
-            final String id,
-            final Service service,
-            final ExpirationPolicy expirationPolicy,
-            final boolean credentialsProvided) {
-        usageCount++;
-        return new MockServiceTicket(id, service, this);
-    }
+	public boolean isRoot() {
+		return true;
+	}
 
-    public boolean isRoot() {
-        return true;
-    }
+	public TicketGrantingTicket getRoot() {
+		return this;
+	}
 
-    public TicketGrantingTicket getRoot() {
-        return this;
-    }
+	public List<Authentication> getSupplementalAuthentications() {
+		return Collections.emptyList();
+	}
 
-    public List<Authentication> getSupplementalAuthentications() {
-        return Collections.emptyList();
-    }
+	public List<Authentication> getChainedAuthentications() {
+		return Collections.emptyList();
+	}
 
-    public List<Authentication> getChainedAuthentications() {
-        return Collections.emptyList();
-    }
+	public String getId() {
+		return id;
+	}
 
-    public String getId() {
-        return id;
-    }
+	public boolean isExpired() {
+		return expired;
+	}
 
-    public boolean isExpired() {
-        return expired;
-    }
+	public TicketGrantingTicket getGrantingTicket() {
+		return this;
+	}
 
-    public TicketGrantingTicket getGrantingTicket() {
-        return this;
-    }
+	public long getCreationTime() {
+		return created.getTime();
+	}
 
-    public long getCreationTime() {
-        return created.getTime();
-    }
+	public int getCountOfUses() {
+		return usageCount;
+	}
 
-    public int getCountOfUses() {
-        return usageCount;
-    }
+	@Override
+	public Map<String, Service> getServices() {
+		return Collections.emptyMap();
+	}
 
-    @Override
-    public Map<String, Service> getServices() {
-        return Collections.emptyMap();
-    }
+	@Override
+	public void removeAllServices() {
+	}
 
-    @Override
-    public void removeAllServices() {
-    }
-
-    @Override
-    public void markTicketExpired() {
-        expired = true;
-    }
+	@Override
+	public void markTicketExpired() {
+		expired = true;
+	}
 }

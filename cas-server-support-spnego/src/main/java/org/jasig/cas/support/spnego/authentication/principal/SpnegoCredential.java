@@ -35,98 +35,99 @@ import org.springframework.util.Assert;
  */
 public final class SpnegoCredential implements Credential, Serializable {
 
-    /**
-     * Unique id for serialization.
-     */
-    private static final long serialVersionUID = 84084596791289548L;
+	/**
+	 * Unique id for serialization.
+	 */
+	private static final long serialVersionUID = 84084596791289548L;
 
-    /**
-     * The Spnego Init Token.
-     */
-    private final byte[] initToken;
+	/**
+	 * The Spnego Init Token.
+	 */
+	private final byte[] initToken;
 
-    /**
-     * The Spnego Next Token.
-     */
-    private byte[] nextToken;
+	/**
+	 * The Spnego Next Token.
+	 */
+	private byte[] nextToken;
 
-    /**
-     * The Principal.
-     */
-    private Principal principal;
+	/**
+	 * The Principal.
+	 */
+	private Principal principal;
 
-    /**
-     * The authentication type should be Kerberos or NTLM.
-     */
-    private final boolean isNtlm;
+	/**
+	 * The authentication type should be Kerberos or NTLM.
+	 */
+	private final boolean isNtlm;
 
-    public SpnegoCredential(final byte[] initToken) {
-        Assert.notNull(initToken, "The initToken cannot be null.");
-        this.initToken = initToken;
-        this.isNtlm = isTokenNtlm(this.initToken);
-    }
+	public SpnegoCredential(final byte[] initToken) {
+		Assert.notNull(initToken, "The initToken cannot be null.");
+		this.initToken = initToken;
+		this.isNtlm = isTokenNtlm(this.initToken);
+	}
 
-    public byte[] getInitToken() {
-        return this.initToken;
-    }
+	public byte[] getInitToken() {
+		return this.initToken;
+	}
 
-    public byte[] getNextToken() {
-        return this.nextToken;
-    }
+	public byte[] getNextToken() {
+		return this.nextToken;
+	}
 
-    public void setNextToken(final byte[] nextToken) {
-        this.nextToken = nextToken;
-    }
+	public void setNextToken(final byte[] nextToken) {
+		this.nextToken = nextToken;
+	}
 
-    public Principal getPrincipal() {
-        return this.principal;
-    }
+	public Principal getPrincipal() {
+		return this.principal;
+	}
 
-    public void setPrincipal(final Principal principal) {
-        this.principal = principal;
-    }
+	public void setPrincipal(final Principal principal) {
+		this.principal = principal;
+	}
 
-    public boolean isNtlm() {
-        return this.isNtlm;
-    }
+	public boolean isNtlm() {
+		return this.isNtlm;
+	}
 
-    @Override
-    public String getId() {
-        return this.principal != null ? this.principal.getId() : UNKNOWN_ID;
-    }
+	@Override
+	public String getId() {
+		return this.principal != null ? this.principal.getId() : UNKNOWN_ID;
+	}
 
-    @Override
-    public String toString() {
-        return getId();
-    }
+	@Override
+	public String toString() {
+		return getId();
+	}
 
-    private boolean isTokenNtlm(final byte[] token) {
-        if (token == null || token.length < 8) {
-            return false;
-        }
-        for (int i = 0; i < 8; i++) {
-            if (SpnegoConstants.NTLMSSP_SIGNATURE[i] != token[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
+	private boolean isTokenNtlm(final byte[] token) {
+		if (token == null || token.length < 8) {
+			return false;
+		}
+		for (int i = 0; i < 8; i++) {
+			if (SpnegoConstants.NTLMSSP_SIGNATURE[i] != token[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null || !obj.getClass().equals(this.getClass())) {
-            return false;
-        }
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == null || !obj.getClass().equals(this.getClass())) {
+			return false;
+		}
 
-        final SpnegoCredential c = (SpnegoCredential) obj;
+		final SpnegoCredential c = (SpnegoCredential) obj;
 
-        return Arrays.equals(this.initToken, c.getInitToken()) && this.principal.equals(c.getPrincipal())
-                && Arrays.equals(this.nextToken, c.getNextToken());
-    }
+		return Arrays.equals(this.initToken, c.getInitToken())
+				&& this.principal.equals(c.getPrincipal())
+				&& Arrays.equals(this.nextToken, c.getNextToken());
+	}
 
-    @Override
-    public int hashCode() {
-        return this.initToken.hashCode() ^ this.nextToken.hashCode() ^ this.principal.hashCode();
-    }
+	@Override
+	public int hashCode() {
+		return this.initToken.hashCode() ^ this.nextToken.hashCode() ^ this.principal.hashCode();
+	}
 
 }

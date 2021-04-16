@@ -26,10 +26,10 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.springframework.util.StringUtils;
 
@@ -41,48 +41,49 @@ import org.springframework.util.StringUtils;
  */
 public class TestOneTimePasswordAuthenticationHandler implements AuthenticationHandler {
 
-    @NotNull
-    private final Map<String, String> credentialMap;
+	@NotNull
+	private final Map<String, String> credentialMap;
 
-    /** Handler name. */
-    private String name;
+	/** Handler name. */
+	private String name;
 
+	/**
+	 * Creates a new instance with a map that defines the one-time passwords that can be authenticated.
+	 *
+	 * @param credentialMap
+	 *            Non-null map of one-time password identifiers to password values.
+	 */
+	public TestOneTimePasswordAuthenticationHandler(final Map<String, String> credentialMap) {
+		this.credentialMap = credentialMap;
+	}
 
-    /**
-     * Creates a new instance with a map that defines the one-time passwords that can be authenticated.
-     *
-     * @param credentialMap Non-null map of one-time password identifiers to password values.
-     */
-    public TestOneTimePasswordAuthenticationHandler(final Map<String, String> credentialMap) {
-        this.credentialMap = credentialMap;
-    }
+	@Override
+	public HandlerResult authenticate(final Credential credential)
+			throws GeneralSecurityException, PreventedException {
+		final OneTimePasswordCredential otp = (OneTimePasswordCredential) credential;
+		final String valueOnRecord = credentialMap.get(otp.getId());
+		if (otp.getPassword().equals(credentialMap.get(otp.getId()))) {
+			return new HandlerResult(this, new BasicCredentialMetaData(otp), new SimplePrincipal(otp.getId()));
+		}
+		throw new FailedLoginException();
+	}
 
-    @Override
-    public HandlerResult authenticate(final Credential credential)
-            throws GeneralSecurityException, PreventedException {
-        final OneTimePasswordCredential otp = (OneTimePasswordCredential) credential;
-        final String valueOnRecord = credentialMap.get(otp.getId());
-        if (otp.getPassword().equals(credentialMap.get(otp.getId()))) {
-            return new HandlerResult(this, new BasicCredentialMetaData(otp), new SimplePrincipal(otp.getId()));
-        }
-        throw new FailedLoginException();
-    }
+	@Override
+	public boolean supports(final Credential credential) {
+		return credential instanceof OneTimePasswordCredential;
+	}
 
-    @Override
-    public boolean supports(final Credential credential) {
-        return credential instanceof OneTimePasswordCredential;
-    }
+	@Override
+	public String getName() {
+		if (StringUtils.hasText(this.name)) {
+			return this.name;
+		}
+		else {
+			return getClass().getSimpleName();
+		}
+	}
 
-    @Override
-    public String getName() {
-        if (StringUtils.hasText(this.name)) {
-            return this.name;
-        } else {
-            return getClass().getSimpleName();
-        }
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
+	public void setName(final String name) {
+		this.name = name;
+	}
 }

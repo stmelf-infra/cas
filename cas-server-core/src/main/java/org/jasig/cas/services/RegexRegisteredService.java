@@ -18,11 +18,12 @@
  */
 package org.jasig.cas.services;
 
-import org.jasig.cas.authentication.principal.Service;
+import java.util.regex.Pattern;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import java.util.regex.Pattern;
+
+import org.jasig.cas.authentication.principal.Service;
 
 /**
  * Mutable registered service that uses Java regular expressions for service matching.
@@ -33,29 +34,29 @@ import java.util.regex.Pattern;
 @DiscriminatorValue("regex")
 public class RegexRegisteredService extends AbstractRegisteredService {
 
-    private static final long serialVersionUID = -8258660210826975771L;
+	private static final long serialVersionUID = -8258660210826975771L;
 
-    private transient Pattern servicePattern;
+	private transient Pattern servicePattern;
 
-    public void setServiceId(final String id) {
-        serviceId = id;
-    }
+	public void setServiceId(final String id) {
+		serviceId = id;
+	}
 
-    public boolean matches(final Service service) {
-        if (servicePattern == null) {
-            servicePattern = createPattern(serviceId);
-        }
-        return service != null && servicePattern.matcher(service.getId()).matches();
-    }
+	public boolean matches(final Service service) {
+		if (servicePattern == null) {
+			servicePattern = createPattern(serviceId);
+		}
+		return service != null && servicePattern.matcher(service.getId()).matches();
+	}
 
-    protected AbstractRegisteredService newInstance() {
-        return new RegexRegisteredService();
-    }
+	protected AbstractRegisteredService newInstance() {
+		return new RegexRegisteredService();
+	}
 
-    private Pattern createPattern(final String pattern) {
-        if (pattern == null) {
-            throw new IllegalArgumentException("Pattern cannot be null.");
-        }
-        return Pattern.compile(pattern);
-    }
+	private Pattern createPattern(final String pattern) {
+		if (pattern == null) {
+			throw new IllegalArgumentException("Pattern cannot be null.");
+		}
+		return Pattern.compile(pattern);
+	}
 }

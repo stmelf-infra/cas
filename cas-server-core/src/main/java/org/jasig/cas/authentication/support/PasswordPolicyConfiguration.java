@@ -30,40 +30,39 @@ import org.slf4j.LoggerFactory;
  */
 public class PasswordPolicyConfiguration {
 
-    /** Logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+	/** Logger instance. */
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** Disregard the warning period and warn all users of password expiration. */
-    private boolean alwaysDisplayPasswordExpirationWarning = false;
+	/** Disregard the warning period and warn all users of password expiration. */
+	private boolean alwaysDisplayPasswordExpirationWarning = false;
 
-    /** Threshold number of days till password expiration below which a warning is displayed. **/
-    private int passwordWarningNumberOfDays = 30;
+	/** Threshold number of days till password expiration below which a warning is displayed. **/
+	private int passwordWarningNumberOfDays = 30;
 
-    /** Url to the password policy application. **/
-    private String passwordPolicyUrl;
+	/** Url to the password policy application. **/
+	private String passwordPolicyUrl;
 
+	public boolean isAlwaysDisplayPasswordExpirationWarning() {
+		return this.alwaysDisplayPasswordExpirationWarning;
+	}
 
-    public boolean isAlwaysDisplayPasswordExpirationWarning() {
-        return this.alwaysDisplayPasswordExpirationWarning;
-    }
+	public void setAlwaysDisplayPasswordExpirationWarning(final boolean alwaysDisplayPasswordExpirationWarning) {
+		this.alwaysDisplayPasswordExpirationWarning = alwaysDisplayPasswordExpirationWarning;
+	}
 
-    public void setAlwaysDisplayPasswordExpirationWarning(final boolean alwaysDisplayPasswordExpirationWarning) {
-        this.alwaysDisplayPasswordExpirationWarning = alwaysDisplayPasswordExpirationWarning;
-    }
+	public String getPasswordPolicyUrl() {
+		return this.passwordPolicyUrl;
+	}
 
-    public String getPasswordPolicyUrl() {
-        return this.passwordPolicyUrl;
-    }
+	public void setPasswordPolicyUrl(final String passwordPolicyUrl) {
+		this.passwordPolicyUrl = passwordPolicyUrl;
+	}
 
-    public void setPasswordPolicyUrl(final String passwordPolicyUrl) {
-        this.passwordPolicyUrl = passwordPolicyUrl;
-    }
+	public int getPasswordWarningNumberOfDays() {
+		return passwordWarningNumberOfDays;
+	}
 
-    public int getPasswordWarningNumberOfDays() {
-        return passwordWarningNumberOfDays;
-    }
-
-    public void setPasswordWarningNumberOfDays(final int days) {
-        this.passwordWarningNumberOfDays = days;
-    }
+	public void setPasswordWarningNumberOfDays(final int days) {
+		this.passwordWarningNumberOfDays = days;
+	}
 }

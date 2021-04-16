@@ -27,50 +27,60 @@ import org.springframework.util.Assert;
 /**
  * @author Scott Battaglia
  * @since 3.0.4
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
+ *        <p>
+ *        This is a published and supported CAS Server 3 API.
+ *        </p>
  */
 public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRegistryState {
 
-    /** The Commons Logging logger instance. */
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+	/** The Commons Logging logger instance. */
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /**
-     * {@inheritDoc}
-     * @throws IllegalArgumentException if class is null.
-     * @throws ClassCastException if class does not match requested ticket
-     * class.
-     * @return specified ticket from the registry
-     */
-    @Override
-    public final <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz) {
-        Assert.notNull(clazz, "clazz cannot be null");
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if class is null.
+	 * @throws ClassCastException
+	 *             if class does not match requested ticket class.
+	 * @return specified ticket from the registry
+	 */
+	@Override
+	public final <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz) {
+		Assert.notNull(clazz, "clazz cannot be null");
 
-        final Ticket ticket = this.getTicket(ticketId);
+		final Ticket ticket = this.getTicket(ticketId);
 
-        if (ticket == null) {
-            return null;
-        }
+		if (ticket == null) {
+			return null;
+		}
 
-        if (!clazz.isAssignableFrom(ticket.getClass())) {
-            throw new ClassCastException("Ticket [" + ticket.getId()
-                + " is of type " + ticket.getClass()
-                + " when we were expecting " + clazz);
-        }
+		if (!clazz.isAssignableFrom(ticket.getClass())) {
+			throw new ClassCastException(
+					"Ticket ["
+							+ ticket.getId()
+							+ " is of type "
+							+ ticket.getClass()
+							+ " when we were expecting "
+							+ clazz);
+		}
 
-        return (T) ticket;
-    }
+		return (T) ticket;
+	}
 
-    public int sessionCount() {
-      logger.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
-                this.getClass().getName(), Integer.MIN_VALUE);
-      return Integer.MIN_VALUE;
-    }
+	public int sessionCount() {
+		logger.debug(
+				"sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
+				this.getClass().getName(),
+				Integer.MIN_VALUE);
+		return Integer.MIN_VALUE;
+	}
 
-    public int serviceTicketCount() {
-      logger.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
-                this.getClass().getName(), Integer.MIN_VALUE);
-      return Integer.MIN_VALUE;
-    }
+	public int serviceTicketCount() {
+		logger.debug(
+				"serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
+				this.getClass().getName(),
+				Integer.MIN_VALUE);
+		return Integer.MIN_VALUE;
+	}
 }

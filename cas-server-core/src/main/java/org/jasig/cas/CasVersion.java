@@ -20,28 +20,26 @@
 package org.jasig.cas;
 
 /**
- * Class that exposes the CAS version. Fetches the "Implementation-Version"
- * manifest attribute from the jar file.
+ * Class that exposes the CAS version. Fetches the "Implementation-Version" manifest attribute from the jar file.
  *
  * @author Dmitriy Kopylenko
-
+ * 
  * @since 3.0
  */
 public final class CasVersion {
 
-    /**
-     * Private constructor for CasVersion. You should not be able to instantiate
-     * this class.
-     */
-    private CasVersion() {
-        // this class is not instantiable
-    }
+	/**
+	 * Private constructor for CasVersion. You should not be able to instantiate this class.
+	 */
+	private CasVersion() {
+		// this class is not instantiable
+	}
 
-    /**
-     * @see java.lang.Package#getImplementationVersion
-     * @return Return the full CAS version string.
-     */
-    public static String getVersion() {
-        return CasVersion.class.getPackage().getImplementationVersion();
-    }
+	/**
+	 * @see java.lang.Package#getImplementationVersion
+	 * @return Return the full CAS version string.
+	 */
+	public static String getVersion() {
+		return CasVersion.class.getPackage().getImplementationVersion();
+	}
 }

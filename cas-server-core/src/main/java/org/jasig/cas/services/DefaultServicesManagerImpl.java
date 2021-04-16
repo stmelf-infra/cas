@@ -25,132 +25,134 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.github.inspektr.audit.annotation.Audit;
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.NotNull;
+import com.github.inspektr.audit.annotation.Audit;
 
 /**
- * Default implementation of the {@link ServicesManager} interface. If there are
- * no services registered with the server, it considers the ServicecsManager
- * disabled and will not prevent any service from using CAS.
+ * Default implementation of the {@link ServicesManager} interface. If there are no services registered with the server,
+ * it considers the ServicecsManager disabled and will not prevent any service from using CAS.
  *
  * @author Scott Battaglia
  * @since 3.1
  */
 public final class DefaultServicesManagerImpl implements ReloadableServicesManager {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** Instance of ServiceRegistryDao. */
-    @NotNull
-    private ServiceRegistryDao serviceRegistryDao;
+	/** Instance of ServiceRegistryDao. */
+	@NotNull
+	private ServiceRegistryDao serviceRegistryDao;
 
-    /** Map to store all services. */
-    private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<Long, RegisteredService>();
+	/** Map to store all services. */
+	private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<Long, RegisteredService>();
 
-    public DefaultServicesManagerImpl(
-        final ServiceRegistryDao serviceRegistryDao) {
-        this(serviceRegistryDao, new ArrayList<String>());
-    }
+	public DefaultServicesManagerImpl(
+			final ServiceRegistryDao serviceRegistryDao) {
+		this(serviceRegistryDao, new ArrayList<String>());
+	}
 
-    /**
-     * Constructs an instance of the {@link DefaultServicesManagerImpl} where the default RegisteredService
-     * can include a set of default attributes to use if no services are defined in the registry.
-     *
-     * @param serviceRegistryDao the Service Registry Dao.
-     * @param defaultAttributes the list of default attributes to use.
-     */
-    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao,
-            final List<String> defaultAttributes) {
-        this.serviceRegistryDao = serviceRegistryDao;
+	/**
+	 * Constructs an instance of the {@link DefaultServicesManagerImpl} where the default RegisteredService can include
+	 * a set of default attributes to use if no services are defined in the registry.
+	 *
+	 * @param serviceRegistryDao
+	 *            the Service Registry Dao.
+	 * @param defaultAttributes
+	 *            the list of default attributes to use.
+	 */
+	public DefaultServicesManagerImpl(
+			final ServiceRegistryDao serviceRegistryDao,
+			final List<String> defaultAttributes) {
+		this.serviceRegistryDao = serviceRegistryDao;
 
-        load();
-    }
+		load();
+	}
 
-    @Transactional(readOnly = false)
-    @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
-            resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
-    public synchronized RegisteredService delete(final long id) {
-        final RegisteredService r = findServiceBy(id);
-        if (r == null) {
-            return null;
-        }
+	@Transactional(readOnly = false)
+	@Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER", resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+	public synchronized RegisteredService delete(final long id) {
+		final RegisteredService r = findServiceBy(id);
+		if (r == null) {
+			return null;
+		}
 
-        this.serviceRegistryDao.delete(r);
-        this.services.remove(id);
+		this.serviceRegistryDao.delete(r);
+		this.services.remove(id);
 
-        return r;
-    }
+		return r;
+	}
 
-    /**
-     * {@inheritDoc}
-     * Note, if the repository is empty, this implementation will return a default service to grant all access.
-     * <p>
-     * This preserves default CAS behavior.
-     */
-    @Override
-    public RegisteredService findServiceBy(final Service service) {
-        final Collection<RegisteredService> c = convertToTreeSet();
+	/**
+	 * {@inheritDoc} Note, if the repository is empty, this implementation will return a default service to grant all
+	 * access.
+	 * <p>
+	 * This preserves default CAS behavior.
+	 */
+	@Override
+	public RegisteredService findServiceBy(final Service service) {
+		final Collection<RegisteredService> c = convertToTreeSet();
 
-        for (final RegisteredService r : c) {
-            if (r.matches(service)) {
-                return r;
-            }
-        }
+		for (final RegisteredService r : c) {
+			if (r.matches(service)) {
+				return r;
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    public RegisteredService findServiceBy(final long id) {
-        final RegisteredService r = this.services.get(id);
+	public RegisteredService findServiceBy(final long id) {
+		final RegisteredService r = this.services.get(id);
 
-        try {
-            return r == null ? null : r.clone();
-        } catch (final CloneNotSupportedException e) {
-            return r;
-        }
-    }
+		try {
+			return r == null ? null : r.clone();
+		}
+		catch (final CloneNotSupportedException e) {
+			return r;
+		}
+	}
 
-    protected TreeSet<RegisteredService> convertToTreeSet() {
-        return new TreeSet<RegisteredService>(this.services.values());
-    }
+	protected TreeSet<RegisteredService> convertToTreeSet() {
+		return new TreeSet<RegisteredService>(this.services.values());
+	}
 
-    public Collection<RegisteredService> getAllServices() {
-        return Collections.unmodifiableCollection(convertToTreeSet());
-    }
+	public Collection<RegisteredService> getAllServices() {
+		return Collections.unmodifiableCollection(convertToTreeSet());
+	}
 
-    public boolean matchesExistingService(final Service service) {
-        return findServiceBy(service) != null;
-    }
+	public boolean matchesExistingService(final Service service) {
+		return findServiceBy(service) != null;
+	}
 
-    @Transactional(readOnly = false)
-    @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
-            resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
-    public synchronized RegisteredService save(final RegisteredService registeredService) {
-        final RegisteredService r = this.serviceRegistryDao.save(registeredService);
-        this.services.put(r.getId(), r);
-        return r;
-    }
+	@Transactional(readOnly = false)
+	@Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER", resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+	public synchronized RegisteredService save(final RegisteredService registeredService) {
+		final RegisteredService r = this.serviceRegistryDao.save(registeredService);
+		this.services.put(r.getId(), r);
+		return r;
+	}
 
-    public void reload() {
-        logger.info("Reloading registered services.");
-        load();
-    }
+	public void reload() {
+		logger.info("Reloading registered services.");
+		load();
+	}
 
-    private void load() {
-        final ConcurrentHashMap<Long, RegisteredService> localServices =
-                new ConcurrentHashMap<Long, RegisteredService>();
+	private void load() {
+		final ConcurrentHashMap<Long, RegisteredService> localServices =
+				new ConcurrentHashMap<Long, RegisteredService>();
 
-        for (final RegisteredService r : this.serviceRegistryDao.load()) {
-            logger.debug("Adding registered service {}", r.getServiceId());
-            localServices.put(r.getId(), r);
-        }
+		for (final RegisteredService r : this.serviceRegistryDao.load()) {
+			logger.debug("Adding registered service {}", r.getServiceId());
+			localServices.put(r.getId(), r);
+		}
 
-        this.services = localServices;
-        logger.info(String.format("Loaded %s services.", this.services.size()));
-    }
+		this.services = localServices;
+		logger.info(String.format("Loaded %s services.", this.services.size()));
+	}
 }

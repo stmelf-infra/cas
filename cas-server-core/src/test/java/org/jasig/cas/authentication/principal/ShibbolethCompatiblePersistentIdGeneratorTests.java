@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import org.jasig.cas.TestUtils;
 import org.junit.Test;
@@ -29,17 +29,17 @@ import org.junit.Test;
  */
 public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
-    @Test
-    public void testGenerator() {
-        final ShibbolethCompatiblePersistentIdGenerator generator = new ShibbolethCompatiblePersistentIdGenerator();
-        generator.setSalt("scottssalt");
+	@Test
+	public void testGenerator() {
+		final ShibbolethCompatiblePersistentIdGenerator generator = new ShibbolethCompatiblePersistentIdGenerator();
+		generator.setSalt("scottssalt");
 
-        final Principal p = TestUtils.getPrincipal();
-        final Service s = TestUtils.getService();
+		final Principal p = TestUtils.getPrincipal();
+		final Service s = TestUtils.getService();
 
-        final String value = generator.generate(p, s);
+		final String value = generator.generate(p, s);
 
-        assertNotNull(value);
-    }
+		assertNotNull(value);
+	}
 
 }

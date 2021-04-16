@@ -20,14 +20,13 @@ package org.jasig.cas.support.spnego.authentication.principal;
 
 import java.util.Locale;
 
-import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
-import org.jasig.cas.authentication.Credential;
-
 import javax.validation.constraints.NotNull;
 
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
+
 /**
- * Implementation of a CredentialToPrincipalResolver that takes a
- * SpnegoCredential and returns a SimplePrincipal.
+ * Implementation of a CredentialToPrincipalResolver that takes a SpnegoCredential and returns a SimplePrincipal.
  *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
@@ -35,33 +34,35 @@ import javax.validation.constraints.NotNull;
  */
 public final class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    /** Tranformation types. **/
-    public static enum Transform {NONE, UPPERCASE, LOWERCASE}
+	/** Tranformation types. **/
+	public static enum Transform {
+		NONE, UPPERCASE, LOWERCASE
+	}
 
-    @NotNull
-    private Transform transformPrincipalId = Transform.NONE;
+	@NotNull
+	private Transform transformPrincipalId = Transform.NONE;
 
-    @Override
-    protected String extractPrincipalId(final Credential credential) {
-        final SpnegoCredential c = (SpnegoCredential) credential;
+	@Override
+	protected String extractPrincipalId(final Credential credential) {
+		final SpnegoCredential c = (SpnegoCredential) credential;
 
-        switch (this.transformPrincipalId) {
-        case UPPERCASE:
-            return c.getPrincipal().getId().toUpperCase(Locale.ENGLISH);
-        case LOWERCASE:
-            return c.getPrincipal().getId().toLowerCase(Locale.ENGLISH);
-        default:
-            return c.getPrincipal().getId();
-        }
-    }
+		switch (this.transformPrincipalId) {
+		case UPPERCASE:
+			return c.getPrincipal().getId().toUpperCase(Locale.ENGLISH);
+		case LOWERCASE:
+			return c.getPrincipal().getId().toLowerCase(Locale.ENGLISH);
+		default:
+			return c.getPrincipal().getId();
+		}
+	}
 
-    @Override
-    public boolean supports(final Credential credential) {
-        return credential != null
-                && SpnegoCredential.class.equals(credential.getClass());
-    }
+	@Override
+	public boolean supports(final Credential credential) {
+		return credential != null
+				&& SpnegoCredential.class.equals(credential.getClass());
+	}
 
-    public void setTransformPrincipalId(final Transform transform) {
-        this.transformPrincipalId = transform;
-    }
+	public void setTransformPrincipalId(final Transform transform) {
+		this.transformPrincipalId = transform;
+	}
 }

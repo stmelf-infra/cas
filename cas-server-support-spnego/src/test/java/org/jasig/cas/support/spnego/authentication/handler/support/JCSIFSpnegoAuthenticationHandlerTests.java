@@ -18,9 +18,14 @@
  */
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import static org.junit.Assert.*;
+import java.security.GeneralSecurityException;
 
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
@@ -36,73 +41,86 @@ import org.junit.Test;
  *
  */
 public class JCSIFSpnegoAuthenticationHandlerTests {
-    private JCIFSSpnegoAuthenticationHandler authenticationHandler;
+	private JCIFSSpnegoAuthenticationHandler authenticationHandler;
 
-    @Before
-    public void setUp() throws Exception {
-        this.authenticationHandler = new JCIFSSpnegoAuthenticationHandler();
-    }
+	@Before
+	public void setUp() throws Exception {
+		this.authenticationHandler = new JCIFSSpnegoAuthenticationHandler();
+	}
 
-    @Test
-    public void testSuccessfulAuthenticationWithDomainName() throws Exception {
-        final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
-        this.authenticationHandler.setPrincipalWithDomainName(true);
-        this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(true));
-        assertNotNull(this.authenticationHandler.authenticate(credentials));
-        assertEquals("test", credentials.getPrincipal().getId());
-        assertNotNull(credentials.getNextToken());
-    }
+	@Test
+	public void testSuccessfulAuthenticationWithDomainName() throws Exception {
+		final SpnegoCredential credentials = new SpnegoCredential(new byte[] { 0, 1, 2 });
+		this.authenticationHandler.setPrincipalWithDomainName(true);
+		this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(true));
+		assertNotNull(this.authenticationHandler.authenticate(credentials));
+		assertEquals("test", credentials.getPrincipal().getId());
+		assertNotNull(credentials.getNextToken());
+	}
 
-    @Test
-    public void testSuccessfulAuthenticationWithoutDomainName() throws Exception {
-        final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
-        this.authenticationHandler.setPrincipalWithDomainName(false);
-        this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(true));
-        assertNotNull(this.authenticationHandler.authenticate(credentials));
-        assertEquals("test", credentials.getPrincipal().getId());
-        assertNotNull(credentials.getNextToken());
-    }
+	@Test
+	public void testSuccessfulAuthenticationWithoutDomainName() throws Exception {
+		final SpnegoCredential credentials = new SpnegoCredential(new byte[] { 0, 1, 2 });
+		this.authenticationHandler.setPrincipalWithDomainName(false);
+		this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(true));
+		assertNotNull(this.authenticationHandler.authenticate(credentials));
+		assertEquals("test", credentials.getPrincipal().getId());
+		assertNotNull(credentials.getNextToken());
+	}
 
-    @Test
-    public void testUnsuccessfulAuthentication() throws Exception {
-        final SpnegoCredential credentials = new SpnegoCredential(new byte[] {0, 1, 2});
-        this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(false));
-        try {
-            this.authenticationHandler.authenticate(credentials);
-            fail("An AuthenticationException should have been thrown");
-        } catch (final GeneralSecurityException e) {
-            assertNull(credentials.getNextToken());
-            assertNull(credentials.getPrincipal());
-        }
-    }
+	@Test
+	public void testUnsuccessfulAuthentication() throws Exception {
+		final SpnegoCredential credentials = new SpnegoCredential(new byte[] { 0, 1, 2 });
+		this.authenticationHandler.setAuthentication(new MockJCSIFAuthentication(false));
+		try {
+			this.authenticationHandler.authenticate(credentials);
+			fail("An AuthenticationException should have been thrown");
+		}
+		catch (final GeneralSecurityException e) {
+			assertNull(credentials.getNextToken());
+			assertNull(credentials.getPrincipal());
+		}
+	}
 
-    @Test
-    public void testSupports() {
-        assertFalse(this.authenticationHandler.supports(null));
-        assertTrue(this.authenticationHandler.supports(new SpnegoCredential(new byte[] {0, 1, 2})));
-        assertFalse(this.authenticationHandler.supports(new UsernamePasswordCredential()));
-    }
+	@Test
+	public void testSupports() {
+		assertFalse(this.authenticationHandler.supports(null));
+		assertTrue(this.authenticationHandler.supports(new SpnegoCredential(new byte[] { 0, 1, 2 })));
+		assertFalse(this.authenticationHandler.supports(new UsernamePasswordCredential()));
+	}
 
-    @Test
-    public void testGetSimpleCredentials() {
-        String myNtlmUser = "DOMAIN\\Username";
-        String myNtlmUserWithNoDomain = "Username";
-        String myKerberosUser = "Username@DOMAIN.COM";
+	@Test
+	public void testGetSimpleCredentials() {
+		String myNtlmUser = "DOMAIN\\Username";
+		String myNtlmUserWithNoDomain = "Username";
+		String myKerberosUser = "Username@DOMAIN.COM";
 
-        this.authenticationHandler.setPrincipalWithDomainName(true);
-        assertEquals(new SimplePrincipal(myNtlmUser), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUser, true));
-        assertEquals(new SimplePrincipal(myNtlmUserWithNoDomain), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUserWithNoDomain, false));
-        assertEquals(new SimplePrincipal(myKerberosUser), this.authenticationHandler
-                .getSimplePrincipal(myKerberosUser, false));
+		this.authenticationHandler.setPrincipalWithDomainName(true);
+		assertEquals(
+				new SimplePrincipal(myNtlmUser),
+				this.authenticationHandler
+						.getSimplePrincipal(myNtlmUser, true));
+		assertEquals(
+				new SimplePrincipal(myNtlmUserWithNoDomain),
+				this.authenticationHandler
+						.getSimplePrincipal(myNtlmUserWithNoDomain, false));
+		assertEquals(
+				new SimplePrincipal(myKerberosUser),
+				this.authenticationHandler
+						.getSimplePrincipal(myKerberosUser, false));
 
-        this.authenticationHandler.setPrincipalWithDomainName(false);
-        assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUser, true));
-        assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
-                .getSimplePrincipal(myNtlmUserWithNoDomain, true));
-        assertEquals(new SimplePrincipal("Username"), this.authenticationHandler
-                .getSimplePrincipal(myKerberosUser, false));
-    }
+		this.authenticationHandler.setPrincipalWithDomainName(false);
+		assertEquals(
+				new SimplePrincipal("Username"),
+				this.authenticationHandler
+						.getSimplePrincipal(myNtlmUser, true));
+		assertEquals(
+				new SimplePrincipal("Username"),
+				this.authenticationHandler
+						.getSimplePrincipal(myNtlmUserWithNoDomain, true));
+		assertEquals(
+				new SimplePrincipal("Username"),
+				this.authenticationHandler
+						.getSimplePrincipal(myKerberosUser, false));
+	}
 }

@@ -18,7 +18,9 @@
  */
 package org.jasig.cas.authentication;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.jasig.cas.TestUtils;
 import org.junit.Test;
@@ -29,32 +31,34 @@ import org.junit.Test;
  */
 public class UsernamePasswordCredentialTests {
 
-    @Test
-    public void testSetGetUsername() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
-        final String userName = "test";
+	@Test
+	public void testSetGetUsername() {
+		final UsernamePasswordCredential c = new UsernamePasswordCredential();
+		final String userName = "test";
 
-        c.setUsername(userName);
+		c.setUsername(userName);
 
-        assertEquals(userName, c.getUsername());
-    }
+		assertEquals(userName, c.getUsername());
+	}
 
-    @Test
-    public void testSetGetPassword() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
-        final String password = "test";
+	@Test
+	public void testSetGetPassword() {
+		final UsernamePasswordCredential c = new UsernamePasswordCredential();
+		final String password = "test";
 
-        c.setPassword(password);
+		c.setPassword(password);
 
-        assertEquals(password, c.getPassword());
-    }
+		assertEquals(password, c.getPassword());
+	}
 
-    @Test
-    public void testEquals() {
-        assertFalse(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(null));
-        assertFalse(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(
-                TestUtils.getCredentialsWithSameUsernameAndPassword()));
-        assertTrue(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword()));
-    }
+	@Test
+	public void testEquals() {
+		assertFalse(TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(null));
+		assertFalse(
+				TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(
+						TestUtils.getCredentialsWithSameUsernameAndPassword()));
+		assertTrue(
+				TestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(
+						TestUtils.getCredentialsWithDifferentUsernameAndPassword()));
+	}
 }

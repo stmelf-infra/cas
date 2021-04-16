@@ -34,59 +34,65 @@ import org.springframework.util.StringUtils;
  */
 public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicationService {
 
-    private static final String CONST_PARAM_SERVICE = "service";
+	private static final String CONST_PARAM_SERVICE = "service";
 
-    private static final String CONST_PARAM_TARGET_SERVICE = "targetService";
+	private static final String CONST_PARAM_TARGET_SERVICE = "targetService";
 
-    private static final String CONST_PARAM_TICKET = "ticket";
+	private static final String CONST_PARAM_TICKET = "ticket";
 
-    private static final String CONST_PARAM_METHOD = "method";
+	private static final String CONST_PARAM_METHOD = "method";
 
-    private final ResponseType responseType;
+	private final ResponseType responseType;
 
-    private static final long serialVersionUID = 8334068957483758042L;
+	private static final long serialVersionUID = 8334068957483758042L;
 
-    public SimpleWebApplicationServiceImpl(final String id) {
-        this(id, id, null, null);
-    }
+	public SimpleWebApplicationServiceImpl(final String id) {
+		this(id, id, null, null);
+	}
 
-    private SimpleWebApplicationServiceImpl(final String id,
-        final String originalUrl, final String artifactId,
-        final ResponseType responseType) {
-        super(id, originalUrl, artifactId);
-        this.responseType = responseType;
-    }
+	private SimpleWebApplicationServiceImpl(
+			final String id,
+			final String originalUrl,
+			final String artifactId,
+			final ResponseType responseType) {
+		super(id, originalUrl, artifactId);
+		this.responseType = responseType;
+	}
 
-    public static SimpleWebApplicationServiceImpl createServiceFrom(
-        final HttpServletRequest request) {
-        final String targetService = request
-            .getParameter(CONST_PARAM_TARGET_SERVICE);
-        final String method = request.getParameter(CONST_PARAM_METHOD);
-        final String serviceToUse = StringUtils.hasText(targetService)
-            ? targetService : request.getParameter(CONST_PARAM_SERVICE);
+	public static SimpleWebApplicationServiceImpl createServiceFrom(
+			final HttpServletRequest request) {
+		final String targetService = request
+				.getParameter(CONST_PARAM_TARGET_SERVICE);
+		final String method = request.getParameter(CONST_PARAM_METHOD);
+		final String serviceToUse = StringUtils.hasText(targetService)
+				? targetService
+				: request.getParameter(CONST_PARAM_SERVICE);
 
-        if (!StringUtils.hasText(serviceToUse)) {
-            return null;
-        }
+		if (!StringUtils.hasText(serviceToUse)) {
+			return null;
+		}
 
-        final String id = cleanupUrl(serviceToUse);
-        final String artifactId = request.getParameter(CONST_PARAM_TICKET);
+		final String id = cleanupUrl(serviceToUse);
+		final String artifactId = request.getParameter(CONST_PARAM_TICKET);
 
-        return new SimpleWebApplicationServiceImpl(id, serviceToUse,
-            artifactId, "POST".equals(method) ? ResponseType.POST
-                : ResponseType.REDIRECT);
-    }
+		return new SimpleWebApplicationServiceImpl(
+				id,
+				serviceToUse,
+				artifactId,
+				"POST".equals(method) ? ResponseType.POST
+						: ResponseType.REDIRECT);
+	}
 
-    public Response getResponse(final String ticketId) {
-        final Map<String, String> parameters = new HashMap<String, String>();
+	public Response getResponse(final String ticketId) {
+		final Map<String, String> parameters = new HashMap<String, String>();
 
-        if (StringUtils.hasText(ticketId)) {
-            parameters.put(CONST_PARAM_TICKET, ticketId);
-        }
+		if (StringUtils.hasText(ticketId)) {
+			parameters.put(CONST_PARAM_TICKET, ticketId);
+		}
 
-        if (ResponseType.POST == this.responseType) {
-            return Response.getPostResponse(getOriginalUrl(), parameters);
-        }
-        return Response.getRedirectResponse(getOriginalUrl(), parameters);
-    }
+		if (ResponseType.POST == this.responseType) {
+			return Response.getPostResponse(getOriginalUrl(), parameters);
+		}
+		return Response.getRedirectResponse(getOriginalUrl(), parameters);
+	}
 }

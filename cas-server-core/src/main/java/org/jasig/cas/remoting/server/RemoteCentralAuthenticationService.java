@@ -36,11 +36,9 @@ import org.jasig.cas.validation.Assertion;
 import org.springframework.util.Assert;
 
 /**
- * Wrapper implementation around a CentralAuthenticationService that does
- * completes the marshalling of parameters from the web-service layer to the
- * service layer. Typically the only thing that is done is to validate the
- * parameters (as you would in the web tier) and then delegate to the service
- * layer.
+ * Wrapper implementation around a CentralAuthenticationService that does completes the marshalling of parameters from
+ * the web-service layer to the service layer. Typically the only thing that is done is to validate the parameters (as
+ * you would in the web tier) and then delegate to the service layer.
  * <p>
  * The following properties are required:
  * </p>
@@ -49,122 +47,132 @@ import org.springframework.util.Assert;
  * </ul>
  *
  * @author Scott Battaglia
-
+ * 
  * @since 3.0
  */
 public final class RemoteCentralAuthenticationService implements CentralAuthenticationService {
 
-    /** The CORE to delegate to. */
-    @NotNull
-    private CentralAuthenticationService centralAuthenticationService;
+	/** The CORE to delegate to. */
+	@NotNull
+	private CentralAuthenticationService centralAuthenticationService;
 
-    /** The validators to check the Credential. */
-    @NotNull
-    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+	/** The validators to check the Credential. */
+	@NotNull
+	private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    /**
-     * {@inheritDoc}
-     * @throws IllegalArgumentException if the Credentials are null or if given
-     * invalid credentials.
-     */
-    @Override
-    public String createTicketGrantingTicket(final Credential... credentials)
-            throws AuthenticationException, TicketException {
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the Credentials are null or if given invalid credentials.
+	 */
+	@Override
+	public String createTicketGrantingTicket(final Credential... credentials)
+			throws AuthenticationException, TicketException {
 
-        Assert.notNull(credentials, "credentials cannot be null");
-        checkForErrors(credentials);
+		Assert.notNull(credentials, "credentials cannot be null");
+		checkForErrors(credentials);
 
-        return this.centralAuthenticationService.createTicketGrantingTicket(credentials);
-    }
+		return this.centralAuthenticationService.createTicketGrantingTicket(credentials);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service)
-            throws TicketException {
-        return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String grantServiceTicket(final String ticketGrantingTicketId, final Service service)
+			throws TicketException {
+		return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
+	}
 
-    /**
-     * {@inheritDoc}
-     * @throws IllegalArgumentException if given invalid credentials
-     */
-    @Override
-    public String grantServiceTicket(
-            final String ticketGrantingTicketId, final Service service, final Credential... credentials)
-            throws AuthenticationException, TicketException {
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if given invalid credentials
+	 */
+	@Override
+	public String grantServiceTicket(
+			final String ticketGrantingTicketId,
+			final Service service,
+			final Credential... credentials)
+			throws AuthenticationException, TicketException {
 
-        checkForErrors(credentials);
+		checkForErrors(credentials);
 
-        return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
-    }
+		return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
-        return this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
+		return this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
+	}
 
-    /**
-     * {@inheritDoc}
-     * <p>Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any
-     * Ticket that was derived from the TicketGrantingTicket being destroyed. May throw an
-     * {@link IllegalArgumentException} if the TicketGrantingTicket ID is null.
-     *
-     * @param ticketGrantingTicketId the id of the ticket we want to destroy
-     * @return the logout requests.
-     */
-    @Override
-    public List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
-        return this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
-    }
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * Destroy a TicketGrantingTicket and perform back channel logout. This has the effect of invalidating any Ticket
+	 * that was derived from the TicketGrantingTicket being destroyed. May throw an {@link IllegalArgumentException} if
+	 * the TicketGrantingTicket ID is null.
+	 *
+	 * @param ticketGrantingTicketId
+	 *            the id of the ticket we want to destroy
+	 * @return the logout requests.
+	 */
+	@Override
+	public List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+		return this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
+	}
 
-    /**
-     * {@inheritDoc}
-     * @throws IllegalArgumentException if the credentials are invalid.
-     */
-    @Override
-    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
-            throws AuthenticationException, TicketException {
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the credentials are invalid.
+	 */
+	@Override
+	public String delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
+			throws AuthenticationException, TicketException {
 
-        checkForErrors(credentials);
+		checkForErrors(credentials);
 
-        return this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, credentials);
-    }
+		return this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, credentials);
+	}
 
-    private void checkForErrors(final Credential... credentials) {
-        if (credentials == null) {
-            return;
-        }
+	private void checkForErrors(final Credential... credentials) {
+		if (credentials == null) {
+			return;
+		}
 
-        for (final Credential c : credentials) {
-            final Set<ConstraintViolation<Credential>> errors = this.validator.validate(c);
-            if (!errors.isEmpty()) {
-                throw new IllegalArgumentException("Error validating credentials: " + errors.toString());
-            }
-        }
-    }
+		for (final Credential c : credentials) {
+			final Set<ConstraintViolation<Credential>> errors = this.validator.validate(c);
+			if (!errors.isEmpty()) {
+				throw new IllegalArgumentException("Error validating credentials: " + errors.toString());
+			}
+		}
+	}
 
-    /**
-     * Set the CentralAuthenticationService.
-     *
-     * @param centralAuthenticationService The CentralAuthenticationService to
-     * set.
-     */
-    public void setCentralAuthenticationService(
-        final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
+	/**
+	 * Set the CentralAuthenticationService.
+	 *
+	 * @param centralAuthenticationService
+	 *            The CentralAuthenticationService to set.
+	 */
+	public void setCentralAuthenticationService(
+			final CentralAuthenticationService centralAuthenticationService) {
+		this.centralAuthenticationService = centralAuthenticationService;
+	}
 
-    /**
-     * Set the list of validators.
-     *
-     * @param validator The array of validators to use.
-     */
-    public void setValidator(final Validator validator) {
-        this.validator = validator;
-    }
+	/**
+	 * Set the list of validators.
+	 *
+	 * @param validator
+	 *            The array of validators to use.
+	 */
+	public void setValidator(final Validator validator) {
+		this.validator = validator;
+	}
 }

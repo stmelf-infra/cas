@@ -28,15 +28,15 @@ import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
  * @since 4.0
  */
 public class UsernamePasswordCredentialsAdapter implements CredentialsAdapter {
-    @Override
-    public Credentials convert(final Credential credential) {
-        if (!(credential instanceof UsernamePasswordCredential)) {
-            throw new IllegalArgumentException(credential + " not supported.");
-        }
-        final UsernamePasswordCredential original = (UsernamePasswordCredential) credential;
-        final UsernamePasswordCredentials old = new UsernamePasswordCredentials();
-        old.setUsername(original.getUsername());
-        old.setPassword(original.getPassword());
-        return old;
-    }
+	@Override
+	public Credentials convert(final Credential credential) {
+		if (!(credential instanceof UsernamePasswordCredential)) {
+			throw new IllegalArgumentException(credential + " not supported.");
+		}
+		final UsernamePasswordCredential original = (UsernamePasswordCredential) credential;
+		final UsernamePasswordCredentials old = new UsernamePasswordCredentials();
+		old.setUsername(original.getUsername());
+		old.setPassword(original.getPassword());
+		return old;
+	}
 }

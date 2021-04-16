@@ -28,19 +28,19 @@ import org.jasig.cas.services.ServiceContext;
  */
 public class AcceptAnyAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
 
-    @Override
-    public ContextualAuthenticationPolicy<ServiceContext> createPolicy(final ServiceContext context) {
-        return new ContextualAuthenticationPolicy<ServiceContext>() {
+	@Override
+	public ContextualAuthenticationPolicy<ServiceContext> createPolicy(final ServiceContext context) {
+		return new ContextualAuthenticationPolicy<ServiceContext>() {
 
-            @Override
-            public ServiceContext getContext() {
-                return context;
-            }
+			@Override
+			public ServiceContext getContext() {
+				return context;
+			}
 
-            @Override
-            public boolean isSatisfiedBy(final Authentication authentication) {
-                return true;
-            }
-        };
-    }
+			@Override
+			public boolean isSatisfiedBy(final Authentication authentication) {
+				return true;
+			}
+		};
+	}
 }

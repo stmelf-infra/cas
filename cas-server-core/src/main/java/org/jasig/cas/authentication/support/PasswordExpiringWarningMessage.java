@@ -28,28 +28,31 @@ import org.jasig.cas.Message;
  * @since 4.0
  */
 public class PasswordExpiringWarningMessage extends Message {
-    /** Serialization version marker. */
-    private static final long serialVersionUID = -5892600936676838470L;
+	/** Serialization version marker. */
+	private static final long serialVersionUID = -5892600936676838470L;
 
-    /** Message bundle code. */
-    private static final String CODE = "password.expiration.warning";
+	/** Message bundle code. */
+	private static final String CODE = "password.expiration.warning";
 
-    /**
-     * Creates a new instance.
-     *
-     * @param defaultMsg  Default warning message.
-     * @param days Days to password expiration.
-     * @param passwordChangeUrl Password change URL.
-     */
-    public PasswordExpiringWarningMessage(final String defaultMsg, final long days, final String passwordChangeUrl) {
-        super(CODE, defaultMsg, days, passwordChangeUrl);
-    }
+	/**
+	 * Creates a new instance.
+	 *
+	 * @param defaultMsg
+	 *            Default warning message.
+	 * @param days
+	 *            Days to password expiration.
+	 * @param passwordChangeUrl
+	 *            Password change URL.
+	 */
+	public PasswordExpiringWarningMessage(final String defaultMsg, final long days, final String passwordChangeUrl) {
+		super(CODE, defaultMsg, days, passwordChangeUrl);
+	}
 
-    public long getDaysToExpiration() {
-        return (Long) getParams()[0];
-    }
+	public long getDaysToExpiration() {
+		return (Long) getParams()[0];
+	}
 
-    public String getPasswordChangeUrl() {
-        return (String) getParams()[1];
-    }
+	public String getPasswordChangeUrl() {
+		return (String) getParams()[1];
+	}
 }

@@ -40,240 +40,274 @@ import org.springframework.webflow.test.MockRequestContext;
  * @since 3.0.4
  */
 public class AuthenticationViaFormActionTests extends
-    AbstractCentralAuthenticationServiceTest {
+		AbstractCentralAuthenticationServiceTest {
 
-    private AuthenticationViaFormAction action;
+	private AuthenticationViaFormAction action;
 
-    private CookieGenerator warnCookieGenerator;
+	private CookieGenerator warnCookieGenerator;
 
-    @Before
-    public void onSetUp() throws Exception {
-        this.action = new AuthenticationViaFormAction();
+	@Before
+	public void onSetUp() throws Exception {
+		this.action = new AuthenticationViaFormAction();
 
-        this.warnCookieGenerator = new CookieGenerator();
-        this.warnCookieGenerator.setCookieName("WARN");
-        this.warnCookieGenerator.setCookieName("TGT");
-        this.warnCookieGenerator.setCookieDomain("/");
-        this.warnCookieGenerator.setCookiePath("/");
+		this.warnCookieGenerator = new CookieGenerator();
+		this.warnCookieGenerator.setCookieName("WARN");
+		this.warnCookieGenerator.setCookieName("TGT");
+		this.warnCookieGenerator.setCookieDomain("/");
+		this.warnCookieGenerator.setCookiePath("/");
 
-        this.action
-            .setCentralAuthenticationService(getCentralAuthenticationService());
-        this.action.setWarnCookieGenerator(this.warnCookieGenerator);
- //       this.action.afterPropertiesSet();
-    }
+		this.action
+				.setCentralAuthenticationService(getCentralAuthenticationService());
+		this.action.setWarnCookieGenerator(this.warnCookieGenerator);
+		// this.action.afterPropertiesSet();
+	}
 
-    @Test
-    public void testSuccessfulAuthenticationWithNoService() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockRequestContext context = new MockRequestContext();
+	@Test
+	public void testSuccessfulAuthenticationWithNoService() throws Exception {
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		final MockRequestContext context = new MockRequestContext();
 
-        request.addParameter("username", "test");
-        request.addParameter("password", "test");
+		request.addParameter("username", "test");
+		request.addParameter("password", "test");
 
-        context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(), request, new MockHttpServletResponse()));
-        context.getRequestScope().put("credentials",
-            TestUtils.getCredentialsWithSameUsernameAndPassword());
-//        this.action.bind(context);
-//        assertEquals("success", this.action.submit(context).getId());
-    }
+		context.setExternalContext(
+				new ServletExternalContext(
+						new MockServletContext(),
+						request,
+						new MockHttpServletResponse()));
+		context.getRequestScope().put(
+				"credentials",
+				TestUtils.getCredentialsWithSameUsernameAndPassword());
+		// this.action.bind(context);
+		// assertEquals("success", this.action.submit(context).getId());
+	}
 
-    @Test
-    public void testSuccessfulAuthenticationWithNoServiceAndWarn()
-        throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockRequestContext context = new MockRequestContext();
+	@Test
+	public void testSuccessfulAuthenticationWithNoServiceAndWarn()
+			throws Exception {
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		final MockHttpServletResponse response = new MockHttpServletResponse();
+		final MockRequestContext context = new MockRequestContext();
 
-        request.addParameter("username", "test");
-        request.addParameter("password", "test");
-        request.addParameter("warn", "true");
+		request.addParameter("username", "test");
+		request.addParameter("password", "test");
+		request.addParameter("warn", "true");
 
-        context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(), request, response));
-        context.getRequestScope().put("credentials",
-            TestUtils.getCredentialsWithSameUsernameAndPassword());
-  //      this.action.bind(context);
-   //     assertEquals("success", this.action.submit(context).getId());
-//        assertNotNull(response.getCookie(this.warnCookieGenerator
-//            .getCookieName()));
-    }
+		context.setExternalContext(
+				new ServletExternalContext(
+						new MockServletContext(),
+						request,
+						response));
+		context.getRequestScope().put(
+				"credentials",
+				TestUtils.getCredentialsWithSameUsernameAndPassword());
+		// this.action.bind(context);
+		// assertEquals("success", this.action.submit(context).getId());
+		// assertNotNull(response.getCookie(this.warnCookieGenerator
+		// .getCookieName()));
+	}
 
-    @Test
-    public void testSuccessfulAuthenticationWithServiceAndWarn()
-        throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
-        final MockRequestContext context = new MockRequestContext();
+	@Test
+	public void testSuccessfulAuthenticationWithServiceAndWarn()
+			throws Exception {
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		final MockHttpServletResponse response = new MockHttpServletResponse();
+		final MockRequestContext context = new MockRequestContext();
 
-        request.addParameter("username", "test");
-        request.addParameter("password", "test");
-        request.addParameter("warn", "true");
-        request.addParameter("service", "test");
+		request.addParameter("username", "test");
+		request.addParameter("password", "test");
+		request.addParameter("warn", "true");
+		request.addParameter("service", "test");
 
-        context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(), request, response));
-        context.getRequestScope().put("credentials",
-            TestUtils.getCredentialsWithSameUsernameAndPassword());
- //       this.action.bind(context);
- //       assertEquals("success", this.action.submit(context).getId());
-//        assertNotNull(response.getCookie(this.warnCookieGenerator
-//            .getCookieName()));
-    }
+		context.setExternalContext(
+				new ServletExternalContext(
+						new MockServletContext(),
+						request,
+						response));
+		context.getRequestScope().put(
+				"credentials",
+				TestUtils.getCredentialsWithSameUsernameAndPassword());
+		// this.action.bind(context);
+		// assertEquals("success", this.action.submit(context).getId());
+		// assertNotNull(response.getCookie(this.warnCookieGenerator
+		// .getCookieName()));
+	}
 
-    @Test
-    public void testFailedAuthenticationWithNoService() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockRequestContext context = new MockRequestContext();
+	@Test
+	public void testFailedAuthenticationWithNoService() throws Exception {
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		final MockRequestContext context = new MockRequestContext();
 
-        request.addParameter("username", "test");
-        request.addParameter("password", "test2");
+		request.addParameter("username", "test");
+		request.addParameter("password", "test2");
 
-        context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(), request, new MockHttpServletResponse()));
+		context.setExternalContext(
+				new ServletExternalContext(
+						new MockServletContext(),
+						request,
+						new MockHttpServletResponse()));
 
-        context.getRequestScope().put("credentials",
-            TestUtils.getCredentialsWithDifferentUsernameAndPassword());
-        context.getRequestScope().put(
-            "org.springframework.validation.BindException.credentials",
-            new BindException(TestUtils
-                .getCredentialsWithDifferentUsernameAndPassword(),
-                "credentials"));
+		context.getRequestScope().put(
+				"credentials",
+				TestUtils.getCredentialsWithDifferentUsernameAndPassword());
+		context.getRequestScope().put(
+				"org.springframework.validation.BindException.credentials",
+				new BindException(
+						TestUtils
+								.getCredentialsWithDifferentUsernameAndPassword(),
+						"credentials"));
 
-    //    this.action.bind(context);
-//        assertEquals("error", this.action.submit(context).getId());
-    }
+		// this.action.bind(context);
+		// assertEquals("error", this.action.submit(context).getId());
+	}
 
-    @Test
-    public void testRenewWithServiceAndSameCredentials() throws Exception {
-        final String ticketGrantingTicket = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockRequestContext context = new MockRequestContext();
+	@Test
+	public void testRenewWithServiceAndSameCredentials() throws Exception {
+		final String ticketGrantingTicket = getCentralAuthenticationService()
+				.createTicketGrantingTicket(
+						TestUtils.getCredentialsWithSameUsernameAndPassword());
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		final MockRequestContext context = new MockRequestContext();
 
-        context.getFlowScope().put("ticketGrantingTicketId", ticketGrantingTicket);
-        request.addParameter("renew", "true");
-        request.addParameter("service", "test");
-        request.addParameter("username", "test");
-        request.addParameter("password", "test");
+		context.getFlowScope().put("ticketGrantingTicketId", ticketGrantingTicket);
+		request.addParameter("renew", "true");
+		request.addParameter("service", "test");
+		request.addParameter("username", "test");
+		request.addParameter("password", "test");
 
-        context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(), request, new MockHttpServletResponse()));
-        context.getFlowScope().put("service", TestUtils.getService("test"));
-    //    this.action.bind(context);
-     //   assertEquals("warn", this.action.submit(context).getId());
-    }
+		context.setExternalContext(
+				new ServletExternalContext(
+						new MockServletContext(),
+						request,
+						new MockHttpServletResponse()));
+		context.getFlowScope().put("service", TestUtils.getService("test"));
+		// this.action.bind(context);
+		// assertEquals("warn", this.action.submit(context).getId());
+	}
 
-    @Test
-    public void testRenewWithServiceAndDifferentCredentials() throws Exception {
-        final String ticketGrantingTicket = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockRequestContext context = new MockRequestContext();
+	@Test
+	public void testRenewWithServiceAndDifferentCredentials() throws Exception {
+		final String ticketGrantingTicket = getCentralAuthenticationService()
+				.createTicketGrantingTicket(
+						TestUtils.getCredentialsWithSameUsernameAndPassword());
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		final MockRequestContext context = new MockRequestContext();
 
-        context.getFlowScope().put("ticketGrantingTicketId", ticketGrantingTicket);
-        request.addParameter("renew", "true");
-        request.addParameter("service", "test");
-        request.addParameter("username", "test2");
-        request.addParameter("password", "test2");
+		context.getFlowScope().put("ticketGrantingTicketId", ticketGrantingTicket);
+		request.addParameter("renew", "true");
+		request.addParameter("service", "test");
+		request.addParameter("username", "test2");
+		request.addParameter("password", "test2");
 
-        context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(), request, new MockHttpServletResponse()));
-    //    this.action.bind(context);
+		context.setExternalContext(
+				new ServletExternalContext(
+						new MockServletContext(),
+						request,
+						new MockHttpServletResponse()));
+		// this.action.bind(context);
 
-    //    assertEquals("success", this.action.submit(context).getId());
-    }
+		// assertEquals("success", this.action.submit(context).getId());
+	}
 
-    @Test
-    public void testRenewWithServiceAndBadCredentials() throws Exception {
-        final String ticketGrantingTicket = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockRequestContext context = new MockRequestContext();
+	@Test
+	public void testRenewWithServiceAndBadCredentials() throws Exception {
+		final String ticketGrantingTicket = getCentralAuthenticationService()
+				.createTicketGrantingTicket(
+						TestUtils.getCredentialsWithSameUsernameAndPassword());
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		final MockRequestContext context = new MockRequestContext();
 
-        context.getFlowScope().put("ticketGrantingTicketId", ticketGrantingTicket);
-        request.addParameter("renew", "true");
-        request.addParameter("service", "test");
+		context.getFlowScope().put("ticketGrantingTicketId", ticketGrantingTicket);
+		request.addParameter("renew", "true");
+		request.addParameter("service", "test");
 
-        context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(), request, new MockHttpServletResponse()));
-        context.getRequestScope().put("credentials",
-            TestUtils.getCredentialsWithDifferentUsernameAndPassword());
-        context.getRequestScope().put(
-            "org.springframework.validation.BindException.credentials",
-            new BindException(TestUtils
-                .getCredentialsWithDifferentUsernameAndPassword(),
-                "credentials"));
-   //     this.action.bind(context);
-   //     assertEquals("error", this.action.submit(context).getId());
-    }
+		context.setExternalContext(
+				new ServletExternalContext(
+						new MockServletContext(),
+						request,
+						new MockHttpServletResponse()));
+		context.getRequestScope().put(
+				"credentials",
+				TestUtils.getCredentialsWithDifferentUsernameAndPassword());
+		context.getRequestScope().put(
+				"org.springframework.validation.BindException.credentials",
+				new BindException(
+						TestUtils
+								.getCredentialsWithDifferentUsernameAndPassword(),
+						"credentials"));
+		// this.action.bind(context);
+		// assertEquals("error", this.action.submit(context).getId());
+	}
 
-    @Test
-    public void testTestBindingWithoutCredentialsBinder() throws Exception {
-        final MockRequestContext context = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(), request, new MockHttpServletResponse()));
-    //    context.setLastEvent(new Event(this, "test"));
-        request.addParameter("username", "test");
-        request.addParameter("password", "test");
+	@Test
+	public void testTestBindingWithoutCredentialsBinder() throws Exception {
+		final MockRequestContext context = new MockRequestContext();
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		context.setExternalContext(
+				new ServletExternalContext(
+						new MockServletContext(),
+						request,
+						new MockHttpServletResponse()));
+		// context.setLastEvent(new Event(this, "test"));
+		request.addParameter("username", "test");
+		request.addParameter("password", "test");
 
-   //     this.action.bind(context);
-   //     assertEquals("success", this.action.bindAndValidate(context).getId());
+		// this.action.bind(context);
+		// assertEquals("success", this.action.bindAndValidate(context).getId());
 
-    }
+	}
 
-    @Test
-    public void testTestBindingWithCredentialsBinder() throws Exception {
-        final MockRequestContext context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(), new MockHttpServletRequest(),
-            new MockHttpServletResponse()));
-  //      context.setLastEvent(new Event(this, "test"));
+	@Test
+	public void testTestBindingWithCredentialsBinder() throws Exception {
+		final MockRequestContext context = new MockRequestContext();
+		context.setExternalContext(
+				new ServletExternalContext(
+						new MockServletContext(),
+						new MockHttpServletRequest(),
+						new MockHttpServletResponse()));
+		// context.setLastEvent(new Event(this, "test"));
 
-        final CredentialsBinder cb = new CredentialsBinder(){
+		final CredentialsBinder cb = new CredentialsBinder() {
 
-            public void bind(final HttpServletRequest request, final Credential credentials) {
-                ((UsernamePasswordCredential) credentials)
-                    .setUsername("test2");
-                ((UsernamePasswordCredential) credentials)
-                    .setPassword("test2");
-            }
+			public void bind(final HttpServletRequest request, final Credential credentials) {
+				((UsernamePasswordCredential) credentials)
+						.setUsername("test2");
+				((UsernamePasswordCredential) credentials)
+						.setPassword("test2");
+			}
 
-            public boolean supports(final Class<?> clazz) {
-                return true;
-            }
+			public boolean supports(final Class<?> clazz) {
+				return true;
+			}
 
-        };
-        this.action.setCredentialsBinder(cb);
-   //     this.action.bindAndValidate(context);
+		};
+		this.action.setCredentialsBinder(cb);
+		// this.action.bindAndValidate(context);
 
- //       assertEquals(
- //           "test2",
- //           ((UsernamePasswordCredential) context
- //               .getFlowScope().get(
- //                   "credentials")).getUsername());
+		// assertEquals(
+		// "test2",
+		// ((UsernamePasswordCredential) context
+		// .getFlowScope().get(
+		// "credentials")).getUsername());
 
-    }
+	}
 
-    @Test
-    public void testSetCredentialsBinderNoFailure() throws Exception {
-        final CredentialsBinder c = new CredentialsBinder(){
+	@Test
+	public void testSetCredentialsBinderNoFailure() throws Exception {
+		final CredentialsBinder c = new CredentialsBinder() {
 
-            public void bind(final HttpServletRequest request,
-                final Credential credentials) {
-                // nothing to do here
-            }
+			public void bind(
+					final HttpServletRequest request,
+					final Credential credentials) {
+				// nothing to do here
+			}
 
-            public boolean supports(final Class<?> clazz) {
-                return true;
-            }
-        };
+			public boolean supports(final Class<?> clazz) {
+				return true;
+			}
+		};
 
-        this.action.setCredentialsBinder(c);
-  //      this.action.afterPropertiesSet();
-    }
+		this.action.setCredentialsBinder(c);
+		// this.action.afterPropertiesSet();
+	}
 }

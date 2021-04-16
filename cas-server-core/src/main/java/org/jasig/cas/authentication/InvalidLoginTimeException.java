@@ -19,25 +19,26 @@
 package org.jasig.cas.authentication;
 
 import java.io.Serializable;
+
 import javax.security.auth.login.AccountException;
 
 /**
- * Describes an error condition where authentication occurs at a time that is disallowed by security policy
- * applied to the underlying user account.
+ * Describes an error condition where authentication occurs at a time that is disallowed by security policy applied to
+ * the underlying user account.
  *
  * @author Marvin S. Addison
  * @version 4.0
  */
 public class InvalidLoginTimeException extends AccountException implements Serializable {
 
-    private static final long serialVersionUID = -6699752791525619208L;
+	private static final long serialVersionUID = -6699752791525619208L;
 
-    public InvalidLoginTimeException() {
-        super();
-    }
+	public InvalidLoginTimeException() {
+		super();
+	}
 
-    public InvalidLoginTimeException(final String message) {
-        super(message);
-    }
+	public InvalidLoginTimeException(final String message) {
+		super(message);
+	}
 
 }

@@ -24,35 +24,34 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 
 /**
- * Expiration policy that is based on a certain time period for a ticket to
- * exist.
+ * Expiration policy that is based on a certain time period for a ticket to exist.
  * <p>
- * The expiration policy defined by this class is one of inactivity.  If you are inactive for the specified
- * amount of time, the ticket will be expired.
+ * The expiration policy defined by this class is one of inactivity. If you are inactive for the specified amount of
+ * time, the ticket will be expired.
  *
  * @author Scott Battaglia
-
+ * 
  * @since 3.0
  */
 public final class TimeoutExpirationPolicy implements ExpirationPolicy, Serializable {
 
-    /** Serialization support. */
-    private static final long serialVersionUID = -7636642464326939536L;
+	/** Serialization support. */
+	private static final long serialVersionUID = -7636642464326939536L;
 
-    /** The time to kill in milliseconds. */
-    private final long timeToKillInMilliSeconds;
+	/** The time to kill in milliseconds. */
+	private final long timeToKillInMilliSeconds;
 
-    /** No-arg constructor for serialization support. */
-    private TimeoutExpirationPolicy() {
-        this.timeToKillInMilliSeconds = 0;
-    }
+	/** No-arg constructor for serialization support. */
+	private TimeoutExpirationPolicy() {
+		this.timeToKillInMilliSeconds = 0;
+	}
 
-    public TimeoutExpirationPolicy(final long timeToKillInMilliSeconds) {
-        this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
-    }
+	public TimeoutExpirationPolicy(final long timeToKillInMilliSeconds) {
+		this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
+	}
 
-    public boolean isExpired(final TicketState ticketState) {
-        return (ticketState == null)
-            || (System.currentTimeMillis() - ticketState.getLastTimeUsed() >= this.timeToKillInMilliSeconds);
-    }
+	public boolean isExpired(final TicketState ticketState) {
+		return (ticketState == null)
+				|| (System.currentTimeMillis() - ticketState.getLastTimeUsed() >= this.timeToKillInMilliSeconds);
+	}
 }

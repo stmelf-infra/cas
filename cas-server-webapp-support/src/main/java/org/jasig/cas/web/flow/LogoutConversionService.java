@@ -28,11 +28,11 @@ import org.springframework.binding.convert.service.DefaultConversionService;
  */
 public class LogoutConversionService extends DefaultConversionService {
 
-    /**
-     * Build a new conversion service with a {@link CompositeFlowExecutionKeyConverter}.
-     */
-    public LogoutConversionService() {
-        super();
-        addConverter(new CompositeFlowExecutionKeyConverter());
-    }
+	/**
+	 * Build a new conversion service with a {@link CompositeFlowExecutionKeyConverter}.
+	 */
+	public LogoutConversionService() {
+		super();
+		addConverter(new CompositeFlowExecutionKeyConverter());
+	}
 }

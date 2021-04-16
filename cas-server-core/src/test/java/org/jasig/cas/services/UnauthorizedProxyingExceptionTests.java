@@ -18,33 +18,33 @@
  */
 package org.jasig.cas.services;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 public class UnauthorizedProxyingExceptionTests {
 
-    @Test
-    public void testGetCode() {
-        final UnauthorizedProxyingException e = new UnauthorizedProxyingException();
-        assertEquals(UnauthorizedProxyingException.CODE, e.getMessage());
-    }
+	@Test
+	public void testGetCode() {
+		final UnauthorizedProxyingException e = new UnauthorizedProxyingException();
+		assertEquals(UnauthorizedProxyingException.CODE, e.getMessage());
+	}
 
-    @Test
-    public void testCodeConstructor() {
-        final String MESSAGE = "GG";
-        final UnauthorizedProxyingException e = new UnauthorizedProxyingException(MESSAGE);
+	@Test
+	public void testCodeConstructor() {
+		final String MESSAGE = "GG";
+		final UnauthorizedProxyingException e = new UnauthorizedProxyingException(MESSAGE);
 
-        assertEquals(MESSAGE, e.getMessage());
-    }
+		assertEquals(MESSAGE, e.getMessage());
+	}
 
-    @Test
-    public void testThrowableConstructorWithCode() {
-        final String MESSAGE = "GG";
-        final RuntimeException r = new RuntimeException();
-        final UnauthorizedProxyingException e = new UnauthorizedProxyingException(MESSAGE, r);
+	@Test
+	public void testThrowableConstructorWithCode() {
+		final String MESSAGE = "GG";
+		final RuntimeException r = new RuntimeException();
+		final UnauthorizedProxyingException e = new UnauthorizedProxyingException(MESSAGE, r);
 
-        assertEquals(MESSAGE, e.getMessage());
-        assertEquals(r, e.getCause());
-    }
+		assertEquals(MESSAGE, e.getMessage());
+		assertEquals(r, e.getCause());
+	}
 }

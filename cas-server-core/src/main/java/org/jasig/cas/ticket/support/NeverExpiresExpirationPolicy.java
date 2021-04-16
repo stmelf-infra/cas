@@ -22,23 +22,23 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 
 /**
- * NeverExpiresExpirationPolicy always answers false when asked if a Ticket is
- * expired. Use this policy when you want a Ticket to live forever, or at least
- * as long as the particular CAS Universe exists.
+ * NeverExpiresExpirationPolicy always answers false when asked if a Ticket is expired. Use this policy when you want a
+ * Ticket to live forever, or at least as long as the particular CAS Universe exists.
  *
  * @author Scott Battaglia
-
+ * 
  * @since 3.0
  */
 public final class NeverExpiresExpirationPolicy implements ExpirationPolicy {
 
-    /** Serializable Unique ID. */
-    private static final long serialVersionUID = 3833747698242303540L;
+	/** Serializable Unique ID. */
+	private static final long serialVersionUID = 3833747698242303540L;
 
-    /** No-arg constructor used for serialization purposes. */
-    public NeverExpiresExpirationPolicy() {}
+	/** No-arg constructor used for serialization purposes. */
+	public NeverExpiresExpirationPolicy() {
+	}
 
-    public boolean isExpired(final TicketState ticketState) {
-        return false;
-    }
+	public boolean isExpired(final TicketState ticketState) {
+		return false;
+	}
 }

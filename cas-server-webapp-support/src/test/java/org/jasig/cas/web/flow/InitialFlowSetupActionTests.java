@@ -18,7 +18,9 @@
  */
 package org.jasig.cas.web.flow;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 
@@ -42,84 +44,90 @@ import org.springframework.webflow.test.MockRequestContext;
  *
  */
 public class InitialFlowSetupActionTests {
-    private final InitialFlowSetupAction action = new InitialFlowSetupAction();
+	private final InitialFlowSetupAction action = new InitialFlowSetupAction();
 
-    private CookieRetrievingCookieGenerator warnCookieGenerator;
+	private CookieRetrievingCookieGenerator warnCookieGenerator;
 
-    private CookieRetrievingCookieGenerator tgtCookieGenerator;
+	private CookieRetrievingCookieGenerator tgtCookieGenerator;
 
-    @Before
-    public void setUp() throws Exception {
-        this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
-        this.tgtCookieGenerator = new CookieRetrievingCookieGenerator();
-        this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
-        this.action.setWarnCookieGenerator(this.warnCookieGenerator);
-        final ArgumentExtractor[] argExtractors = new ArgumentExtractor[] {new CasArgumentExtractor()};
-        this.action.setArgumentExtractors(Arrays.asList(argExtractors));
-        this.action.afterPropertiesSet();
-        this.action.afterPropertiesSet();
-    }
+	@Before
+	public void setUp() throws Exception {
+		this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
+		this.tgtCookieGenerator = new CookieRetrievingCookieGenerator();
+		this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
+		this.action.setWarnCookieGenerator(this.warnCookieGenerator);
+		final ArgumentExtractor[] argExtractors = new ArgumentExtractor[] { new CasArgumentExtractor() };
+		this.action.setArgumentExtractors(Arrays.asList(argExtractors));
+		this.action.afterPropertiesSet();
+		this.action.afterPropertiesSet();
+	}
 
-    @Test
-    public void testSettingContextPath() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final String CONST_CONTEXT_PATH = "/test";
-        request.setContextPath(CONST_CONTEXT_PATH);
-        final MockRequestContext context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+	@Test
+	public void testSettingContextPath() throws Exception {
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		final String CONST_CONTEXT_PATH = "/test";
+		request.setContextPath(CONST_CONTEXT_PATH);
+		final MockRequestContext context = new MockRequestContext();
+		context.setExternalContext(
+				new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        this.action.doExecute(context);
+		this.action.doExecute(context);
 
-        assertEquals(CONST_CONTEXT_PATH + "/", this.warnCookieGenerator.getCookiePath());
-        assertEquals(CONST_CONTEXT_PATH + "/", this.tgtCookieGenerator.getCookiePath());
-    }
+		assertEquals(CONST_CONTEXT_PATH + "/", this.warnCookieGenerator.getCookiePath());
+		assertEquals(CONST_CONTEXT_PATH + "/", this.tgtCookieGenerator.getCookiePath());
+	}
 
-    @Test
-    public void testResettingContexPath() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final String CONST_CONTEXT_PATH = "/test";
-        final String CONST_CONTEXT_PATH_2 = "/test1";
-        request.setContextPath(CONST_CONTEXT_PATH);
-        final MockRequestContext context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+	@Test
+	public void testResettingContexPath() throws Exception {
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		final String CONST_CONTEXT_PATH = "/test";
+		final String CONST_CONTEXT_PATH_2 = "/test1";
+		request.setContextPath(CONST_CONTEXT_PATH);
+		final MockRequestContext context = new MockRequestContext();
+		context.setExternalContext(
+				new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        this.action.doExecute(context);
+		this.action.doExecute(context);
 
-        assertEquals(CONST_CONTEXT_PATH + "/", this.warnCookieGenerator.getCookiePath());
-        assertEquals(CONST_CONTEXT_PATH + "/", this.tgtCookieGenerator.getCookiePath());
+		assertEquals(CONST_CONTEXT_PATH + "/", this.warnCookieGenerator.getCookiePath());
+		assertEquals(CONST_CONTEXT_PATH + "/", this.tgtCookieGenerator.getCookiePath());
 
-        request.setContextPath(CONST_CONTEXT_PATH_2);
-        this.action.doExecute(context);
+		request.setContextPath(CONST_CONTEXT_PATH_2);
+		this.action.doExecute(context);
 
-        assertNotSame(CONST_CONTEXT_PATH_2 + "/", this.warnCookieGenerator.getCookiePath());
-        assertNotSame(CONST_CONTEXT_PATH_2 + "/", this.tgtCookieGenerator.getCookiePath());
-        assertEquals(CONST_CONTEXT_PATH + "/", this.warnCookieGenerator.getCookiePath());
-        assertEquals(CONST_CONTEXT_PATH + "/", this.tgtCookieGenerator.getCookiePath());
-    }
+		assertNotSame(CONST_CONTEXT_PATH_2 + "/", this.warnCookieGenerator.getCookiePath());
+		assertNotSame(CONST_CONTEXT_PATH_2 + "/", this.tgtCookieGenerator.getCookiePath());
+		assertEquals(CONST_CONTEXT_PATH + "/", this.warnCookieGenerator.getCookiePath());
+		assertEquals(CONST_CONTEXT_PATH + "/", this.tgtCookieGenerator.getCookiePath());
+	}
 
-    @Test
-    public void testNoServiceFound() throws Exception {
-        final MockRequestContext context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(),
-                new MockHttpServletResponse()));
+	@Test
+	public void testNoServiceFound() throws Exception {
+		final MockRequestContext context = new MockRequestContext();
+		context.setExternalContext(
+				new ServletExternalContext(
+						new MockServletContext(),
+						new MockHttpServletRequest(),
+						new MockHttpServletResponse()));
 
-        final Event event = this.action.execute(context);
+		final Event event = this.action.execute(context);
 
-        assertNull(WebUtils.getService(context));
+		assertNull(WebUtils.getService(context));
 
-        assertEquals("success", event.getId());
-    }
+		assertEquals("success", event.getId());
+	}
 
-    @Test
-    public void testServiceFound() throws Exception {
-        final MockRequestContext context = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "test");
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+	@Test
+	public void testServiceFound() throws Exception {
+		final MockRequestContext context = new MockRequestContext();
+		final MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setParameter("service", "test");
+		context.setExternalContext(
+				new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        final Event event = this.action.execute(context);
+		final Event event = this.action.execute(context);
 
-        assertEquals("test", WebUtils.getService(context).getId());
-        assertEquals("success", event.getId());
-    }
+		assertEquals("test", WebUtils.getService(context).getId());
+		assertEquals("success", event.getId());
+	}
 }

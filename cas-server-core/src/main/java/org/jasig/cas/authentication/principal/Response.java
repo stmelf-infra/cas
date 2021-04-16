@@ -34,102 +34,104 @@ import org.slf4j.LoggerFactory;
  * @since 3.1
  */
 public final class Response {
-    /** Pattern to detect unprintable ASCII characters. */
-    private static final Pattern NON_PRINTABLE =
-        Pattern.compile("[\\x00-\\x1F\\x7F]+");
+	/** Pattern to detect unprintable ASCII characters. */
+	private static final Pattern NON_PRINTABLE =
+			Pattern.compile("[\\x00-\\x1F\\x7F]+");
 
-    /** Log instance. */
-    protected static final Logger LOGGER = LoggerFactory.getLogger(Response.class);
+	/** Log instance. */
+	protected static final Logger LOGGER = LoggerFactory.getLogger(Response.class);
 
-    /** An enumeration of different response types. **/
-    public static enum ResponseType {
-        POST, REDIRECT
-    }
+	/** An enumeration of different response types. **/
+	public static enum ResponseType {
+		POST, REDIRECT
+	}
 
-    private final ResponseType responseType;
+	private final ResponseType responseType;
 
-    private final String url;
+	private final String url;
 
-    private final Map<String, String> attributes;
+	private final Map<String, String> attributes;
 
-    protected Response(final ResponseType responseType, final String url, final Map<String, String> attributes) {
-        this.responseType = responseType;
-        this.url = url;
-        this.attributes = attributes;
-    }
+	protected Response(final ResponseType responseType, final String url, final Map<String, String> attributes) {
+		this.responseType = responseType;
+		this.url = url;
+		this.attributes = attributes;
+	}
 
-    public static Response getPostResponse(final String url, final Map<String, String> attributes) {
-        return new Response(ResponseType.POST, url, attributes);
-    }
+	public static Response getPostResponse(final String url, final Map<String, String> attributes) {
+		return new Response(ResponseType.POST, url, attributes);
+	}
 
-    public static Response getRedirectResponse(final String url, final Map<String, String> parameters) {
-        final StringBuilder builder = new StringBuilder(parameters.size() * 40 + 100);
-        boolean isFirst = true;
-        final String[] fragmentSplit = sanitizeUrl(url).split("#");
+	public static Response getRedirectResponse(final String url, final Map<String, String> parameters) {
+		final StringBuilder builder = new StringBuilder(parameters.size() * 40 + 100);
+		boolean isFirst = true;
+		final String[] fragmentSplit = sanitizeUrl(url).split("#");
 
-        builder.append(fragmentSplit[0]);
+		builder.append(fragmentSplit[0]);
 
-        for (final Map.Entry<String, String> entry : parameters.entrySet()) {
-            if (entry.getValue() != null) {
-                if (isFirst) {
-                    builder.append(url.contains("?") ? "&" : "?");
-                    isFirst = false;
-                } else {
-                    builder.append("&");
-                }
-                builder.append(entry.getKey());
-                builder.append("=");
+		for (final Map.Entry<String, String> entry : parameters.entrySet()) {
+			if (entry.getValue() != null) {
+				if (isFirst) {
+					builder.append(url.contains("?") ? "&" : "?");
+					isFirst = false;
+				}
+				else {
+					builder.append("&");
+				}
+				builder.append(entry.getKey());
+				builder.append("=");
 
-                try {
-                    builder.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-                } catch (final Exception e) {
-                    builder.append(entry.getValue());
-                }
-            }
-        }
+				try {
+					builder.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+				}
+				catch (final Exception e) {
+					builder.append(entry.getValue());
+				}
+			}
+		}
 
-        if (fragmentSplit.length > 1) {
-            builder.append("#");
-            builder.append(fragmentSplit[1]);
-        }
+		if (fragmentSplit.length > 1) {
+			builder.append("#");
+			builder.append(fragmentSplit[1]);
+		}
 
-        return new Response(ResponseType.REDIRECT, builder.toString(), parameters);
-    }
+		return new Response(ResponseType.REDIRECT, builder.toString(), parameters);
+	}
 
-    public Map<String, String> getAttributes() {
-        return this.attributes;
-    }
+	public Map<String, String> getAttributes() {
+		return this.attributes;
+	}
 
-    public ResponseType getResponseType() {
-        return this.responseType;
-    }
+	public ResponseType getResponseType() {
+		return this.responseType;
+	}
 
-    public String getUrl() {
-        return this.url;
-    }
+	public String getUrl() {
+		return this.url;
+	}
 
-    /**
-     * Sanitize a URL provided by a relying party by normalizing non-printable
-     * ASCII character sequences into spaces.  This functionality protects
-     * against CRLF attacks and other similar attacks using invisible characters
-     * that could be abused to trick user agents.
-     *
-     * @param  url  URL to sanitize.
-     *
-     * @return  Sanitized URL string.
-     */
-    private static String sanitizeUrl(final String url) {
-        final Matcher m = NON_PRINTABLE.matcher(url);
-        final StringBuffer sb = new StringBuffer(url.length());
-        boolean hasNonPrintable = false;
-        while (m.find()) {
-            m.appendReplacement(sb, " ");
-            hasNonPrintable = true;
-        }
-        m.appendTail(sb);
-        if (hasNonPrintable) {
-            LOGGER.warn("The following redirect URL has been sanitized and may be sign of attack:\n{}", url);
-        }
-        return sb.toString();
-    }
+	/**
+	 * Sanitize a URL provided by a relying party by normalizing non-printable ASCII character sequences into spaces.
+	 * This functionality protects against CRLF attacks and other similar attacks using invisible characters that could
+	 * be abused to trick user agents.
+	 *
+	 * @param url
+	 *            URL to sanitize.
+	 *
+	 * @return Sanitized URL string.
+	 */
+	private static String sanitizeUrl(final String url) {
+		final Matcher m = NON_PRINTABLE.matcher(url);
+		final StringBuffer sb = new StringBuffer(url.length());
+		boolean hasNonPrintable = false;
+		while (m.find()) {
+			m.appendReplacement(sb, " ");
+			hasNonPrintable = true;
+		}
+		m.appendTail(sb);
+		if (hasNonPrintable) {
+			LOGGER.warn("The following redirect URL has been sanitized and may be sign of attack:\n{}", url);
+		}
+		return sb.toString();
+	}
 }

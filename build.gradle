@@ -19,14 +19,15 @@ subprojects {
 		implementation libraries.quartz
 		implementation libraries.log4j
 		implementation libraries.jcifs
+		implementation libraries.javax_el
 
 		testImplementation libraries.junit
 		testImplementation libraries.mockito
 		testImplementation libraries.spring_test
+		testImplementation libraries.hsqldb
 	}
 
-	test {
-    	exclude 'org/boo/**'
-    	exclude '**/*.class'
+	test {  
+    	// exclude '**/*.class'
 	}
 }

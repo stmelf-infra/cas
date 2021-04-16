@@ -26,26 +26,27 @@ package org.jasig.cas.authentication.principal;
  */
 public interface WebApplicationService extends Service {
 
-    /**
-     * Constructs the url to redirect the service back to.
-     *
-     * @param ticketId the service ticket to provide to the service.
-     * @return the redirect url.
-     */
-    Response getResponse(String ticketId);
+	/**
+	 * Constructs the url to redirect the service back to.
+	 *
+	 * @param ticketId
+	 *            the service ticket to provide to the service.
+	 * @return the redirect url.
+	 */
+	Response getResponse(String ticketId);
 
-    /**
-     * Retrieves the artifact supplied with the service. May be null.
-     *
-     * @return the artifact if it exists, null otherwise.
-     */
-    String getArtifactId();
+	/**
+	 * Retrieves the artifact supplied with the service. May be null.
+	 *
+	 * @return the artifact if it exists, null otherwise.
+	 */
+	String getArtifactId();
 
-    /**
-     * Return the original url provided (as <code>service</code> or <code>targetService</code> request parameter).
-     * Used to reconstruct the redirect url.
-     *
-     * @return the original url provided.
-     */
-    String getOriginalUrl();
+	/**
+	 * Return the original url provided (as <code>service</code> or <code>targetService</code> request parameter). Used
+	 * to reconstruct the redirect url.
+	 *
+	 * @return the original url provided.
+	 */
+	String getOriginalUrl();
 }

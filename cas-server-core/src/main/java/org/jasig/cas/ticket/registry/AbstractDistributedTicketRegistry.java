@@ -29,194 +29,209 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 
 /**
- * Abstract Implementation that handles some of the commonalities between
- * distributed ticket registries.
+ * Abstract Implementation that handles some of the commonalities between distributed ticket registries.
  *
  * @author Scott Battaglia
-
+ * 
  * @since 3.1
  */
 public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRegistry {
 
-    protected abstract void updateTicket(final Ticket ticket);
+	protected abstract void updateTicket(final Ticket ticket);
 
-    protected abstract boolean needsCallback();
+	protected abstract boolean needsCallback();
 
-    protected final Ticket getProxiedTicketInstance(final Ticket ticket) {
-        if (ticket == null) {
-            return null;
-        }
+	protected final Ticket getProxiedTicketInstance(final Ticket ticket) {
+		if (ticket == null) {
+			return null;
+		}
 
-        if (ticket instanceof TicketGrantingTicket) {
-            return new TicketGrantingTicketDelegator(this, (TicketGrantingTicket) ticket, needsCallback());
-        }
+		if (ticket instanceof TicketGrantingTicket) {
+			return new TicketGrantingTicketDelegator(this, (TicketGrantingTicket) ticket, needsCallback());
+		}
 
-        return new ServiceTicketDelegator(this, (ServiceTicket) ticket, needsCallback());
-    }
+		return new ServiceTicketDelegator(this, (ServiceTicket) ticket, needsCallback());
+	}
 
-    private static class TicketDelegator<T extends Ticket> implements Ticket {
+	private static class TicketDelegator<T extends Ticket> implements Ticket {
 
-        private static final long serialVersionUID = 1780193477774123440L;
+		private static final long serialVersionUID = 1780193477774123440L;
 
-        private final AbstractDistributedTicketRegistry ticketRegistry;
+		private final AbstractDistributedTicketRegistry ticketRegistry;
 
-        private final T ticket;
+		private final T ticket;
 
-        private final boolean callback;
+		private final boolean callback;
 
-        protected TicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
-                final T ticket, final boolean callback) {
-            this.ticketRegistry = ticketRegistry;
-            this.ticket = ticket;
-            this.callback = callback;
-        }
+		protected TicketDelegator(
+				final AbstractDistributedTicketRegistry ticketRegistry,
+				final T ticket,
+				final boolean callback) {
+			this.ticketRegistry = ticketRegistry;
+			this.ticket = ticket;
+			this.callback = callback;
+		}
 
-        protected void updateTicket() {
-            this.ticketRegistry.updateTicket(this.ticket);
-        }
+		protected void updateTicket() {
+			this.ticketRegistry.updateTicket(this.ticket);
+		}
 
-        protected T getTicket() {
-            return this.ticket;
-        }
+		protected T getTicket() {
+			return this.ticket;
+		}
 
-        public final String getId() {
-            return this.ticket.getId();
-        }
+		public final String getId() {
+			return this.ticket.getId();
+		}
 
-        public final boolean isExpired() {
-            if (!callback) {
-                return this.ticket.isExpired();
-            }
+		public final boolean isExpired() {
+			if (!callback) {
+				return this.ticket.isExpired();
+			}
 
-            final TicketGrantingTicket t = getGrantingTicket();
+			final TicketGrantingTicket t = getGrantingTicket();
 
-            return this.ticket.isExpired() || (t != null && t.isExpired());
-        }
+			return this.ticket.isExpired() || (t != null && t.isExpired());
+		}
 
-        public final TicketGrantingTicket getGrantingTicket() {
-            final TicketGrantingTicket old = this.ticket.getGrantingTicket();
+		public final TicketGrantingTicket getGrantingTicket() {
+			final TicketGrantingTicket old = this.ticket.getGrantingTicket();
 
-            if (old == null || !callback) {
-                return old;
-            }
+			if (old == null || !callback) {
+				return old;
+			}
 
-            return this.ticketRegistry.getTicket(old.getId(), Ticket.class);
-        }
+			return this.ticketRegistry.getTicket(old.getId(), Ticket.class);
+		}
 
-        public final long getCreationTime() {
-            return this.ticket.getCreationTime();
-        }
+		public final long getCreationTime() {
+			return this.ticket.getCreationTime();
+		}
 
-        public final int getCountOfUses() {
-            return this.ticket.getCountOfUses();
-        }
+		public final int getCountOfUses() {
+			return this.ticket.getCountOfUses();
+		}
 
-        @Override
-        public int hashCode() {
-            return this.ticket.hashCode();
-        }
+		@Override
+		public int hashCode() {
+			return this.ticket.hashCode();
+		}
 
-        @Override
-        public boolean equals(final Object o) {
-            return this.ticket.equals(o);
-        }
-    }
+		@Override
+		public boolean equals(final Object o) {
+			return this.ticket.equals(o);
+		}
+	}
 
-    private static final class ServiceTicketDelegator extends TicketDelegator<ServiceTicket>
-                           implements ServiceTicket {
+	private static final class ServiceTicketDelegator extends TicketDelegator<ServiceTicket>
+			implements ServiceTicket {
 
-        private static final long serialVersionUID = 8160636219307822967L;
+		private static final long serialVersionUID = 8160636219307822967L;
 
-        protected ServiceTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
-                final ServiceTicket serviceTicket, final boolean callback) {
-            super(ticketRegistry, serviceTicket, callback);
-        }
+		protected ServiceTicketDelegator(
+				final AbstractDistributedTicketRegistry ticketRegistry,
+				final ServiceTicket serviceTicket,
+				final boolean callback) {
+			super(ticketRegistry, serviceTicket, callback);
+		}
 
-        @Override
-        public Service getService() {
-            return getTicket().getService();
-        }
+		@Override
+		public Service getService() {
+			return getTicket().getService();
+		}
 
-        @Override
-        public boolean isFromNewLogin() {
-            return getTicket().isFromNewLogin();
-        }
+		@Override
+		public boolean isFromNewLogin() {
+			return getTicket().isFromNewLogin();
+		}
 
-        @Override
-        public boolean isValidFor(final Service service) {
-            final boolean b = this.getTicket().isValidFor(service);
-            updateTicket();
-            return b;
-        }
+		@Override
+		public boolean isValidFor(final Service service) {
+			final boolean b = this.getTicket().isValidFor(service);
+			updateTicket();
+			return b;
+		}
 
-        @Override
-        public TicketGrantingTicket grantTicketGrantingTicket(final String id,
-                final Authentication authentication, final ExpirationPolicy expirationPolicy) {
-            final TicketGrantingTicket t = this.getTicket().grantTicketGrantingTicket(id,
-                    authentication, expirationPolicy);
-            updateTicket();
-            return t;
-        }
-    }
+		@Override
+		public TicketGrantingTicket grantTicketGrantingTicket(
+				final String id,
+				final Authentication authentication,
+				final ExpirationPolicy expirationPolicy) {
+			final TicketGrantingTicket t = this.getTicket().grantTicketGrantingTicket(
+					id,
+					authentication,
+					expirationPolicy);
+			updateTicket();
+			return t;
+		}
+	}
 
-    private static final class TicketGrantingTicketDelegator extends TicketDelegator<TicketGrantingTicket>
-            implements TicketGrantingTicket {
+	private static final class TicketGrantingTicketDelegator extends TicketDelegator<TicketGrantingTicket>
+			implements TicketGrantingTicket {
 
-        private static final long serialVersionUID = 5312560061970601497L;
+		private static final long serialVersionUID = 5312560061970601497L;
 
-        protected TicketGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
-                final TicketGrantingTicket ticketGrantingTicket, final boolean callback) {
-            super(ticketRegistry, ticketGrantingTicket, callback);
-        }
+		protected TicketGrantingTicketDelegator(
+				final AbstractDistributedTicketRegistry ticketRegistry,
+				final TicketGrantingTicket ticketGrantingTicket,
+				final boolean callback) {
+			super(ticketRegistry, ticketGrantingTicket, callback);
+		}
 
-        @Override
-        public Authentication getAuthentication() {
-            return getTicket().getAuthentication();
-        }
+		@Override
+		public Authentication getAuthentication() {
+			return getTicket().getAuthentication();
+		}
 
-        @Override
-        public List<Authentication> getSupplementalAuthentications() {
-            return getTicket().getSupplementalAuthentications();
-        }
+		@Override
+		public List<Authentication> getSupplementalAuthentications() {
+			return getTicket().getSupplementalAuthentications();
+		}
 
-        @Override
-        public ServiceTicket grantServiceTicket(final String id, final Service service,
-                final ExpirationPolicy expirationPolicy, final boolean credentialsProvided) {
-            final ServiceTicket t = this.getTicket().grantServiceTicket(id, service,
-                    expirationPolicy, credentialsProvided);
-            updateTicket();
-            return t;
-        }
+		@Override
+		public ServiceTicket grantServiceTicket(
+				final String id,
+				final Service service,
+				final ExpirationPolicy expirationPolicy,
+				final boolean credentialsProvided) {
+			final ServiceTicket t = this.getTicket().grantServiceTicket(
+					id,
+					service,
+					expirationPolicy,
+					credentialsProvided);
+			updateTicket();
+			return t;
+		}
 
-        @Override
-        public void markTicketExpired() {
-            this.getTicket().markTicketExpired();
-            updateTicket();
-        }
+		@Override
+		public void markTicketExpired() {
+			this.getTicket().markTicketExpired();
+			updateTicket();
+		}
 
-        @Override
-        public boolean isRoot() {
-            return getTicket().isRoot();
-        }
+		@Override
+		public boolean isRoot() {
+			return getTicket().isRoot();
+		}
 
-        @Override
-        public TicketGrantingTicket getRoot() {
-            return getTicket().getRoot();
-        }
+		@Override
+		public TicketGrantingTicket getRoot() {
+			return getTicket().getRoot();
+		}
 
-        @Override
-        public List<Authentication> getChainedAuthentications() {
-            return getTicket().getChainedAuthentications();
-        }
+		@Override
+		public List<Authentication> getChainedAuthentications() {
+			return getTicket().getChainedAuthentications();
+		}
 
-        @Override
-        public Map<String, Service> getServices() {
-            return this.getTicket().getServices();
-        }
+		@Override
+		public Map<String, Service> getServices() {
+			return this.getTicket().getServices();
+		}
 
-        @Override
-        public void removeAllServices() {
-            this.getTicket().removeAllServices();
-        }
-    }
+		@Override
+		public void removeAllServices() {
+			this.getTicket().removeAllServices();
+		}
+	}
 }

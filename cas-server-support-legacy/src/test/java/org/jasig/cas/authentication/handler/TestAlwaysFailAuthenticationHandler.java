@@ -26,13 +26,13 @@ import org.jasig.cas.authentication.principal.Credentials;
  * @author Marvin S. Addison
  */
 public class TestAlwaysFailAuthenticationHandler implements AuthenticationHandler {
-    @Override
-    public boolean authenticate(final Credentials credential) throws AuthenticationException {
-        return false;
-    }
+	@Override
+	public boolean authenticate(final Credentials credential) throws AuthenticationException {
+		return false;
+	}
 
-    @Override
-    public boolean supports(final Credentials credential) {
-        return true;
-    }
+	@Override
+	public boolean supports(final Credentials credential) {
+		return true;
+	}
 }

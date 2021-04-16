@@ -34,10 +34,9 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Action to delete the TGT and the appropriate cookies.
- * It also performs the back-channel SLO on the services accessed by the user during its browsing.
- * After this back-channel SLO, a front-channel SLO can be started if some services require it.
- * The final logout page or a redirection url is also computed in this action.
+ * Action to delete the TGT and the appropriate cookies. It also performs the back-channel SLO on the services accessed
+ * by the user during its browsing. After this back-channel SLO, a front-channel SLO can be started if some services
+ * require it. The final logout page or a redirection url is also computed in this action.
  *
  * @author Scott Battaglia
  * @author Jerome Leleu
@@ -45,56 +44,59 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public final class LogoutAction extends AbstractLogoutAction {
 
-    /** The services manager. */
-    @NotNull
-    private ServicesManager servicesManager;
+	/** The services manager. */
+	@NotNull
+	private ServicesManager servicesManager;
 
-    /**
-     * Boolean to determine if we will redirect to any url provided in the
-     * service request parameter.
-     */
-    private boolean followServiceRedirects;
+	/**
+	 * Boolean to determine if we will redirect to any url provided in the service request parameter.
+	 */
+	private boolean followServiceRedirects;
 
-    @Override
-    protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
-            final RequestContext context) throws Exception {
+	@Override
+	protected Event doInternalExecute(
+			final HttpServletRequest request,
+			final HttpServletResponse response,
+			final RequestContext context) throws Exception {
 
-        boolean needFrontSlo = false;
-        putLogoutIndex(context, 0);
-        final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
-        if (logoutRequests != null) {
-            for (LogoutRequest logoutRequest : logoutRequests) {
-                // if some logout request must still be attempted
-                if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
-                    needFrontSlo = true;
-                    break;
-                }
-            }
-        }
+		boolean needFrontSlo = false;
+		putLogoutIndex(context, 0);
+		final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
+		if (logoutRequests != null) {
+			for (LogoutRequest logoutRequest : logoutRequests) {
+				// if some logout request must still be attempted
+				if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
+					needFrontSlo = true;
+					break;
+				}
+			}
+		}
 
-        final String service = request.getParameter("service");
-        if (this.followServiceRedirects && service != null) {
-            final RegisteredService rService = this.servicesManager.findServiceBy(new SimpleWebApplicationServiceImpl(service));
+		final String service = request.getParameter("service");
+		if (this.followServiceRedirects && service != null) {
+			final RegisteredService rService =
+					this.servicesManager.findServiceBy(new SimpleWebApplicationServiceImpl(service));
 
-            if (rService != null && rService.isEnabled()) {
-                context.getFlowScope().put("logoutRedirectUrl", service);
-            }
-        }
+			if (rService != null && rService.isEnabled()) {
+				context.getFlowScope().put("logoutRedirectUrl", service);
+			}
+		}
 
-        // there are some front services to logout, perform front SLO
-        if (needFrontSlo) {
-            return new Event(this, FRONT_EVENT);
-        } else {
-            // otherwise, finish the logout process
-            return new Event(this, FINISH_EVENT);
-        }
-    }
+		// there are some front services to logout, perform front SLO
+		if (needFrontSlo) {
+			return new Event(this, FRONT_EVENT);
+		}
+		else {
+			// otherwise, finish the logout process
+			return new Event(this, FINISH_EVENT);
+		}
+	}
 
-    public void setFollowServiceRedirects(final boolean followServiceRedirects) {
-        this.followServiceRedirects = followServiceRedirects;
-    }
+	public void setFollowServiceRedirects(final boolean followServiceRedirects) {
+		this.followServiceRedirects = followServiceRedirects;
+	}
 
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
+	public void setServicesManager(final ServicesManager servicesManager) {
+		this.servicesManager = servicesManager;
+	}
 }

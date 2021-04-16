@@ -18,27 +18,27 @@
  */
 package org.jasig.cas.services;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 public class UnauthorizedServiceExceptionTests {
 
-    @Test
-    public void testCodeConstructor() {
-        final String MESSAGE = "GG";
-        final UnauthorizedServiceException e = new UnauthorizedServiceException(MESSAGE);
+	@Test
+	public void testCodeConstructor() {
+		final String MESSAGE = "GG";
+		final UnauthorizedServiceException e = new UnauthorizedServiceException(MESSAGE);
 
-        assertEquals(MESSAGE, e.getMessage());
-    }
+		assertEquals(MESSAGE, e.getMessage());
+	}
 
-    @Test
-    public void testThrowableConstructorWithCode() {
-        final String MESSAGE = "GG";
-        final RuntimeException r = new RuntimeException();
-        final UnauthorizedServiceException e = new UnauthorizedServiceException(MESSAGE, r);
+	@Test
+	public void testThrowableConstructorWithCode() {
+		final String MESSAGE = "GG";
+		final RuntimeException r = new RuntimeException();
+		final UnauthorizedServiceException e = new UnauthorizedServiceException(MESSAGE, r);
 
-        assertEquals(MESSAGE, e.getMessage());
-        assertEquals(r, e.getCause());
-    }
+		assertEquals(MESSAGE, e.getMessage());
+		assertEquals(r, e.getCause());
+	}
 }

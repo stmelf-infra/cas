@@ -18,8 +18,10 @@
  */
 package org.jasig.cas.services.support;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,7 +33,6 @@ import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-
 import org.mockito.MockitoAnnotations;
 
 /**
@@ -40,71 +41,71 @@ import org.mockito.MockitoAnnotations;
  */
 public class RegisteredServiceRegexAttributeFilterTests {
 
-    private RegisteredServiceAttributeFilter filter;
-    private Map<String, Object> givenAttributesMap = null;
+	private RegisteredServiceAttributeFilter filter;
+	private Map<String, Object> givenAttributesMap = null;
 
-    @Mock
-    private RegisteredService registeredService;
+	@Mock
+	private RegisteredService registeredService;
 
-    public RegisteredServiceRegexAttributeFilterTests() {
+	public RegisteredServiceRegexAttributeFilterTests() {
 
-        this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
+		this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
 
-        this.givenAttributesMap = new HashMap<String, Object>();
-        this.givenAttributesMap.put("uid", "loggedInTestUid");
-        this.givenAttributesMap.put("phone", "1290");
-        this.givenAttributesMap.put("familyName", "Smith");
-        this.givenAttributesMap.put("givenName", "John");
-        this.givenAttributesMap.put("employeeId", "E1234");
-        this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry"));
-        this.givenAttributesMap.put("arrayAttribute", new String[] {"math", "science", "chemistry"});
-        this.givenAttributesMap.put("setAttribute", new HashSet<String>(Arrays.asList("math", "science", "chemistry")));
+		this.givenAttributesMap = new HashMap<String, Object>();
+		this.givenAttributesMap.put("uid", "loggedInTestUid");
+		this.givenAttributesMap.put("phone", "1290");
+		this.givenAttributesMap.put("familyName", "Smith");
+		this.givenAttributesMap.put("givenName", "John");
+		this.givenAttributesMap.put("employeeId", "E1234");
+		this.givenAttributesMap.put("memberOf", Arrays.asList("math", "science", "chemistry"));
+		this.givenAttributesMap.put("arrayAttribute", new String[] { "math", "science", "chemistry" });
+		this.givenAttributesMap.put("setAttribute", new HashSet<String>(Arrays.asList("math", "science", "chemistry")));
 
-        final Map<String, String> mapAttributes = new HashMap<String, String>();
-        mapAttributes.put("uid", "loggedInTestUid");
-        mapAttributes.put("phone", "890");
-        mapAttributes.put("familyName", "Smith");
-        this.givenAttributesMap.put("mapAttribute", mapAttributes);
-    }
+		final Map<String, String> mapAttributes = new HashMap<String, String>();
+		mapAttributes.put("uid", "loggedInTestUid");
+		mapAttributes.put("phone", "890");
+		mapAttributes.put("familyName", "Smith");
+		this.givenAttributesMap.put("mapAttribute", mapAttributes);
+	}
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+	@Before
+	public void setUp() throws Exception {
+		MockitoAnnotations.initMocks(this);
 
-        when(this.registeredService.getName()).thenReturn("sample test service");
-        when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
-        when(this.registeredService.getAllowedAttributes()).thenReturn(
-                Arrays.asList("givenName", "uid", "phone", "memberOf", "mapAttribute"));
-    }
+		when(this.registeredService.getName()).thenReturn("sample test service");
+		when(this.registeredService.getServiceId()).thenReturn("https://www.jasig.org");
+		when(this.registeredService.getAllowedAttributes()).thenReturn(
+				Arrays.asList("givenName", "uid", "phone", "memberOf", "mapAttribute"));
+	}
 
-    @Test
-    public void testIgnoreAttributeReleaseToolFilter() {
-        when(this.registeredService.isIgnoreAttributes()).thenReturn(true);
+	@Test
+	public void testIgnoreAttributeReleaseToolFilter() {
+		when(this.registeredService.isIgnoreAttributes()).thenReturn(true);
 
-        final Map<String, Object> attrs = this.filter.filter("test", this.givenAttributesMap, this.registeredService);
-        assertEquals(attrs.size(), 7);
-    }
+		final Map<String, Object> attrs = this.filter.filter("test", this.givenAttributesMap, this.registeredService);
+		assertEquals(attrs.size(), 7);
+	}
 
-    @Test
-    public void testPatternFilter() {
-        when(this.registeredService.isIgnoreAttributes()).thenReturn(false);
+	@Test
+	public void testPatternFilter() {
+		when(this.registeredService.isIgnoreAttributes()).thenReturn(false);
 
-        final Map<String, Object> attrs = this.filter.filter("test", this.givenAttributesMap, this.registeredService);
-        assertEquals(attrs.size(), 7);
+		final Map<String, Object> attrs = this.filter.filter("test", this.givenAttributesMap, this.registeredService);
+		assertEquals(attrs.size(), 7);
 
-        assertFalse(attrs.containsKey("phone"));
-        assertFalse(attrs.containsKey("givenName"));
+		assertFalse(attrs.containsKey("phone"));
+		assertFalse(attrs.containsKey("givenName"));
 
-        assertTrue(attrs.containsKey("uid"));
-        assertTrue(attrs.containsKey("memberOf"));
-        assertTrue(attrs.containsKey("mapAttribute"));
+		assertTrue(attrs.containsKey("uid"));
+		assertTrue(attrs.containsKey("memberOf"));
+		assertTrue(attrs.containsKey("mapAttribute"));
 
-        final Map<String, String> mapAttributes = (Map<String, String>) attrs.get("mapAttribute");
-        assertTrue(mapAttributes.containsKey("uid"));
-        assertTrue(mapAttributes.containsKey("familyName"));
-        assertFalse(mapAttributes.containsKey("phone"));
+		final Map<String, String> mapAttributes = (Map<String, String>) attrs.get("mapAttribute");
+		assertTrue(mapAttributes.containsKey("uid"));
+		assertTrue(mapAttributes.containsKey("familyName"));
+		assertFalse(mapAttributes.containsKey("phone"));
 
-        final String[] arrayAttrs = (String[]) attrs.get("memberOf");
-        assertEquals(arrayAttrs.length, 2);
-    }
+		final String[] arrayAttrs = (String[]) attrs.get("memberOf");
+		assertEquals(arrayAttrs.length, 2);
+	}
 }

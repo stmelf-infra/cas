@@ -42,77 +42,78 @@ import org.junit.Test;
  */
 public class LogoutManagerImplTests {
 
-    private static final String ID = "id";
+	private static final String ID = "id";
 
-    private static final String URL = "http://url";
+	private static final String URL = "http://url";
 
-    private LogoutManagerImpl logoutManager;
+	private LogoutManagerImpl logoutManager;
 
-    private TicketGrantingTicket tgt;
+	private TicketGrantingTicket tgt;
 
-    private Map<String, Service> services;
+	private Map<String, Service> services;
 
-    private SimpleWebApplicationServiceImpl simpleWebApplicationServiceImpl;
+	private SimpleWebApplicationServiceImpl simpleWebApplicationServiceImpl;
 
-    private RegisteredServiceImpl registeredService;
+	private RegisteredServiceImpl registeredService;
 
-    @Before
-    public void setUp() {
-        final ServicesManager servicesManager = mock(ServicesManager.class);
-        this.logoutManager = new LogoutManagerImpl(servicesManager, new SimpleHttpClient(), new SamlCompliantLogoutMessageCreator());
-        this.tgt = mock(TicketGrantingTicket.class);
-        this.services = new HashMap<String, Service>();
-        this.simpleWebApplicationServiceImpl = new SimpleWebApplicationServiceImpl(URL);
-        this.services.put(ID, this.simpleWebApplicationServiceImpl);
-        when(this.tgt.getServices()).thenReturn(this.services);
-        this.registeredService = new RegisteredServiceImpl();
-        when(servicesManager.findServiceBy(this.simpleWebApplicationServiceImpl)).thenReturn(this.registeredService);
-    }
+	@Before
+	public void setUp() {
+		final ServicesManager servicesManager = mock(ServicesManager.class);
+		this.logoutManager =
+				new LogoutManagerImpl(servicesManager, new SimpleHttpClient(), new SamlCompliantLogoutMessageCreator());
+		this.tgt = mock(TicketGrantingTicket.class);
+		this.services = new HashMap<String, Service>();
+		this.simpleWebApplicationServiceImpl = new SimpleWebApplicationServiceImpl(URL);
+		this.services.put(ID, this.simpleWebApplicationServiceImpl);
+		when(this.tgt.getServices()).thenReturn(this.services);
+		this.registeredService = new RegisteredServiceImpl();
+		when(servicesManager.findServiceBy(this.simpleWebApplicationServiceImpl)).thenReturn(this.registeredService);
+	}
 
-    @Test
-    public void testLogoutDisabled() {
-        this.logoutManager.setDisableSingleSignOut(true);
-        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
-        assertEquals(0, logoutRequests.size());
-    }
+	@Test
+	public void testLogoutDisabled() {
+		this.logoutManager.setDisableSingleSignOut(true);
+		final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+		assertEquals(0, logoutRequests.size());
+	}
 
-    @Test
-    public void testLogoutAlreadyLoggedOut() {
-        this.simpleWebApplicationServiceImpl.setLoggedOutAlready(true);
-        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
-        assertEquals(0, logoutRequests.size());
-    }
+	@Test
+	public void testLogoutAlreadyLoggedOut() {
+		this.simpleWebApplicationServiceImpl.setLoggedOutAlready(true);
+		final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+		assertEquals(0, logoutRequests.size());
+	}
 
-    @Test
-    public void testLogoutTypeNull() {
-        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
-        assertEquals(1, logoutRequests.size());
-        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
-        assertEquals(ID, logoutRequest.getTicketId());
-        assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
-        assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
-        
-    }
+	@Test
+	public void testLogoutTypeNull() {
+		final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+		assertEquals(1, logoutRequests.size());
+		final LogoutRequest logoutRequest = logoutRequests.iterator().next();
+		assertEquals(ID, logoutRequest.getTicketId());
+		assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
+		assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
 
-    @Test
-    public void testLogoutTypeBack() {
-        this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
-        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
-        assertEquals(1, logoutRequests.size());
-        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
-        assertEquals(ID, logoutRequest.getTicketId());
-        assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
-        assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
-    }
+	}
 
-    @Test
-    public void testLogoutTypeFront() {
-        this.registeredService.setLogoutType(LogoutType.FRONT_CHANNEL);
-        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
-        assertEquals(1, logoutRequests.size());
-        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
-        assertEquals(ID, logoutRequest.getTicketId());
-        assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
-        assertEquals(LogoutRequestStatus.NOT_ATTEMPTED, logoutRequest.getStatus());
-    }
+	@Test
+	public void testLogoutTypeBack() {
+		this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
+		final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+		assertEquals(1, logoutRequests.size());
+		final LogoutRequest logoutRequest = logoutRequests.iterator().next();
+		assertEquals(ID, logoutRequest.getTicketId());
+		assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
+		assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
+	}
+
+	@Test
+	public void testLogoutTypeFront() {
+		this.registeredService.setLogoutType(LogoutType.FRONT_CHANNEL);
+		final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+		assertEquals(1, logoutRequests.size());
+		final LogoutRequest logoutRequest = logoutRequests.iterator().next();
+		assertEquals(ID, logoutRequest.getTicketId());
+		assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
+		assertEquals(LogoutRequestStatus.NOT_ATTEMPTED, logoutRequest.getStatus());
+	}
 }

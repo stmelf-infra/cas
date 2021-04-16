@@ -36,75 +36,77 @@ import org.springframework.webflow.execution.RequestContext;
 /**
  * Class to automatically set the paths for the CookieGenerators.
  * <p>
- * Note: This is technically not threadsafe, but because its overriding with a
- * constant value it doesn't matter.
+ * Note: This is technically not threadsafe, but because its overriding with a constant value it doesn't matter.
  * <p>
- * Note: As of CAS 3.1, this is a required class that retrieves and exposes the
- * values in the two cookies for subclasses to use.
+ * Note: As of CAS 3.1, this is a required class that retrieves and exposes the values in the two cookies for subclasses
+ * to use.
  *
  * @author Scott Battaglia
  * @since 3.1
  */
 public final class InitialFlowSetupAction extends AbstractAction {
 
-    /** CookieGenerator for the Warnings. */
-    @NotNull
-    private CookieRetrievingCookieGenerator warnCookieGenerator;
+	/** CookieGenerator for the Warnings. */
+	@NotNull
+	private CookieRetrievingCookieGenerator warnCookieGenerator;
 
-    /** CookieGenerator for the TicketGrantingTickets. */
-    @NotNull
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+	/** CookieGenerator for the TicketGrantingTickets. */
+	@NotNull
+	private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
-    /** Extractors for finding the service. */
-    @NotNull
-    @Size(min=1)
-    private List<ArgumentExtractor> argumentExtractors;
+	/** Extractors for finding the service. */
+	@NotNull
+	@Size(min = 1)
+	private List<ArgumentExtractor> argumentExtractors;
 
-    /** Boolean to note whether we've set the values on the generators or not. */
-    private boolean pathPopulated = false;
+	/** Boolean to note whether we've set the values on the generators or not. */
+	private boolean pathPopulated = false;
 
-    @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        if (!this.pathPopulated) {
-            final String contextPath = context.getExternalContext().getContextPath();
-            final String cookiePath = StringUtils.hasText(contextPath) ? contextPath + "/" : "/";
-            logger.info("Setting path for cookies to: "
-                + cookiePath);
-            this.warnCookieGenerator.setCookiePath(cookiePath);
-            this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
-            this.pathPopulated = true;
-        }
+	@Override
+	protected Event doExecute(final RequestContext context) throws Exception {
+		final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+		if (!this.pathPopulated) {
+			final String contextPath = context.getExternalContext().getContextPath();
+			final String cookiePath = StringUtils.hasText(contextPath) ? contextPath + "/" : "/";
+			logger.info(
+					"Setting path for cookies to: "
+							+ cookiePath);
+			this.warnCookieGenerator.setCookiePath(cookiePath);
+			this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
+			this.pathPopulated = true;
+		}
 
-        context.getFlowScope().put(
-            "ticketGrantingTicketId", this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
-        context.getFlowScope().put(
-            "warnCookieValue",
-            Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
+		context.getFlowScope().put(
+				"ticketGrantingTicketId",
+				this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
+		context.getFlowScope().put(
+				"warnCookieValue",
+				Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
-        final Service service = WebUtils.getService(this.argumentExtractors,
-            context);
+		final Service service = WebUtils.getService(
+				this.argumentExtractors,
+				context);
 
-        if (service != null && logger.isDebugEnabled()) {
-            logger.debug("Placing service in FlowScope: " + service.getId());
-        }
+		if (service != null && logger.isDebugEnabled()) {
+			logger.debug("Placing service in FlowScope: " + service.getId());
+		}
 
-        context.getFlowScope().put("service", service);
+		context.getFlowScope().put("service", service);
 
-        return result("success");
-    }
+		return result("success");
+	}
 
-    public void setTicketGrantingTicketCookieGenerator(
-        final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-    }
+	public void setTicketGrantingTicketCookieGenerator(
+			final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
+		this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+	}
 
-    public void setWarnCookieGenerator(final CookieRetrievingCookieGenerator warnCookieGenerator) {
-        this.warnCookieGenerator = warnCookieGenerator;
-    }
+	public void setWarnCookieGenerator(final CookieRetrievingCookieGenerator warnCookieGenerator) {
+		this.warnCookieGenerator = warnCookieGenerator;
+	}
 
-    public void setArgumentExtractors(
-        final List<ArgumentExtractor> argumentExtractors) {
-        this.argumentExtractors = argumentExtractors;
-    }
+	public void setArgumentExtractors(
+			final List<ArgumentExtractor> argumentExtractors) {
+		this.argumentExtractors = argumentExtractors;
+	}
 }

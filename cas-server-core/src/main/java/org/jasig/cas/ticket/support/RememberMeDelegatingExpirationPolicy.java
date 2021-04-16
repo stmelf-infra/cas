@@ -20,15 +20,14 @@ package org.jasig.cas.ticket.support;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 
-import javax.validation.constraints.NotNull;
-
 /**
- * Delegates to different expiration policies depending on whether remember me
- * is true or not.
+ * Delegates to different expiration policies depending on whether remember me is true or not.
  *
  * @author Scott Battaglia
  * @since 3.2.1
@@ -36,36 +35,36 @@ import javax.validation.constraints.NotNull;
  */
 public final class RememberMeDelegatingExpirationPolicy implements ExpirationPolicy, Serializable {
 
-    /** Serialization support. */
-    private static final long serialVersionUID = -2735975347698196127L;
+	/** Serialization support. */
+	private static final long serialVersionUID = -2735975347698196127L;
 
-    @NotNull
-    private ExpirationPolicy rememberMeExpirationPolicy;
+	@NotNull
+	private ExpirationPolicy rememberMeExpirationPolicy;
 
-    @NotNull
-    private ExpirationPolicy sessionExpirationPolicy;
+	@NotNull
+	private ExpirationPolicy sessionExpirationPolicy;
 
+	/** No-arg constructor used for serialization purposes. */
+	public RememberMeDelegatingExpirationPolicy() {
+	}
 
-    /** No-arg constructor used for serialization purposes. */
-    public RememberMeDelegatingExpirationPolicy() {}
+	public boolean isExpired(final TicketState ticketState) {
+		final Boolean b = (Boolean) ticketState.getAuthentication().getAttributes()
+				.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
 
-    public boolean isExpired(final TicketState ticketState) {
-        final Boolean b = (Boolean) ticketState.getAuthentication().getAttributes().
-                get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+		if (b == null || b.equals(Boolean.FALSE)) {
+			return this.sessionExpirationPolicy.isExpired(ticketState);
+		}
 
-        if (b == null || b.equals(Boolean.FALSE)) {
-            return this.sessionExpirationPolicy.isExpired(ticketState);
-        }
+		return this.rememberMeExpirationPolicy.isExpired(ticketState);
+	}
 
-        return this.rememberMeExpirationPolicy.isExpired(ticketState);
-    }
+	public void setRememberMeExpirationPolicy(
+			final ExpirationPolicy rememberMeExpirationPolicy) {
+		this.rememberMeExpirationPolicy = rememberMeExpirationPolicy;
+	}
 
-    public void setRememberMeExpirationPolicy(
-        final ExpirationPolicy rememberMeExpirationPolicy) {
-        this.rememberMeExpirationPolicy = rememberMeExpirationPolicy;
-    }
-
-    public void setSessionExpirationPolicy(final ExpirationPolicy sessionExpirationPolicy) {
-        this.sessionExpirationPolicy = sessionExpirationPolicy;
-    }
+	public void setSessionExpirationPolicy(final ExpirationPolicy sessionExpirationPolicy) {
+		this.sessionExpirationPolicy = sessionExpirationPolicy;
+	}
 }

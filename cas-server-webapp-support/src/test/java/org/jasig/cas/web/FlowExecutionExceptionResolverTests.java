@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.web;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,84 +37,99 @@ import org.springframework.webflow.execution.repository.NoSuchFlowExecutionExcep
  */
 public class FlowExecutionExceptionResolverTests {
 
-    private FlowExecutionExceptionResolver resolver;
+	private FlowExecutionExceptionResolver resolver;
 
-    @Before
-    public void setUp() throws Exception {
-        this.resolver = new FlowExecutionExceptionResolver();
-    }
+	@Before
+	public void setUp() throws Exception {
+		this.resolver = new FlowExecutionExceptionResolver();
+	}
 
-    @Test
-    public void testNullPointerException() {
-        assertNull(this.resolver.resolveException(new MockHttpServletRequest(),
-                new MockHttpServletResponse(), null, new NullPointerException()));
-    }
+	@Test
+	public void testNullPointerException() {
+		assertNull(
+				this.resolver.resolveException(
+						new MockHttpServletRequest(),
+						new MockHttpServletResponse(),
+						null,
+						new NullPointerException()));
+	}
 
-    @Test
-    public void testNoSuchFlowExecutionException() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("test");
-        ModelAndView model = this.resolver.resolveException(request,
-                new MockHttpServletResponse(), null,
-                new NoSuchFlowExecutionException(new FlowExecutionKey(){
+	@Test
+	public void testNoSuchFlowExecutionException() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setRequestURI("test");
+		ModelAndView model = this.resolver.resolveException(
+				request,
+				new MockHttpServletResponse(),
+				null,
+				new NoSuchFlowExecutionException(new FlowExecutionKey() {
 
-                    private static final long serialVersionUID = 1443616250214416520L;
+					private static final long serialVersionUID = 1443616250214416520L;
 
-                    @Override
-                    public String toString() {
-                        return "test";
-                    }
+					@Override
+					public String toString() {
+						return "test";
+					}
 
-                    @Override
-                    public boolean equals(final Object o) {
-                        return true;
-                    }
+					@Override
+					public boolean equals(final Object o) {
+						return true;
+					}
 
-                    @Override
-                    public int hashCode() {
-                        return 0;
-                    }
-                }, new RuntimeException()));
+					@Override
+					public int hashCode() {
+						return 0;
+					}
+				}, new RuntimeException()));
 
-        assertEquals(request.getRequestURI(), ((RedirectView) model.getView())
-                .getUrl());
-    }
+		assertEquals(
+				request.getRequestURI(),
+				((RedirectView) model.getView())
+						.getUrl());
+	}
 
-    @Test
-    public void testBadlyFormattedExecutionException() {
-        assertNull(this.resolver.resolveException(new MockHttpServletRequest(),
-                new MockHttpServletResponse(), null,
-                new BadlyFormattedFlowExecutionKeyException("invalidKey", "e2s1")));
-    }
+	@Test
+	public void testBadlyFormattedExecutionException() {
+		assertNull(
+				this.resolver.resolveException(
+						new MockHttpServletRequest(),
+						new MockHttpServletResponse(),
+						null,
+						new BadlyFormattedFlowExecutionKeyException("invalidKey", "e2s1")));
+	}
 
-    @Test
-    public void testNoSuchFlowExecutionExeptionWithQueryString() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("test");
-        request.setQueryString("test=test");
-        ModelAndView model = this.resolver.resolveException(request,
-                new MockHttpServletResponse(), null,
-                new NoSuchFlowExecutionException(new FlowExecutionKey(){
+	@Test
+	public void testNoSuchFlowExecutionExeptionWithQueryString() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setRequestURI("test");
+		request.setQueryString("test=test");
+		ModelAndView model = this.resolver.resolveException(
+				request,
+				new MockHttpServletResponse(),
+				null,
+				new NoSuchFlowExecutionException(new FlowExecutionKey() {
 
-                    private static final long serialVersionUID = -4750073902540974152L;
+					private static final long serialVersionUID = -4750073902540974152L;
 
-                    @Override
-                    public String toString() {
-                        return "test";
-                    }
+					@Override
+					public String toString() {
+						return "test";
+					}
 
-                    @Override
-                    public boolean equals(final Object o) {
-                        return true;
-                    }
+					@Override
+					public boolean equals(final Object o) {
+						return true;
+					}
 
-                    @Override
-                    public int hashCode() {
-                        return 0;
-                    }
-                }, new RuntimeException()));
+					@Override
+					public int hashCode() {
+						return 0;
+					}
+				}, new RuntimeException()));
 
-        assertEquals(request.getRequestURI() + "?" + request.getQueryString(), ((RedirectView) model.getView())
-                .getUrl());
-    }
+		assertEquals(
+				request.getRequestURI() + "?" + request.getQueryString(),
+				((RedirectView) model.getView())
+						.getUrl());
+	}
 }

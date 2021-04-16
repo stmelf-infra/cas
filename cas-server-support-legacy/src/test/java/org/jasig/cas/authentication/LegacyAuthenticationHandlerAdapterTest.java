@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.authentication;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import javax.security.auth.login.FailedLoginException;
 
 import org.junit.Test;
@@ -26,9 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for {@link LegacyAuthenticationHandlerAdapter}.
@@ -39,34 +39,34 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(locations = { "/test-context.xml" })
 public class LegacyAuthenticationHandlerAdapterTest {
 
-    @Autowired
-    @Qualifier("alwaysPassHandler")
-    private AuthenticationHandler alwaysPassHandler;
+	@Autowired
+	@Qualifier("alwaysPassHandler")
+	private AuthenticationHandler alwaysPassHandler;
 
-    @Autowired
-    @Qualifier("alwaysFailHandler")
-    private AuthenticationHandler alwaysFailHandler;
+	@Autowired
+	@Qualifier("alwaysFailHandler")
+	private AuthenticationHandler alwaysFailHandler;
 
-    @Test
-    public void testAuthenticateSuccess() throws Exception {
-        final HandlerResult result = alwaysPassHandler.authenticate(new UsernamePasswordCredential("a", "b"));
-        assertEquals("TestAlwaysPassAuthenticationHandler", result.getHandlerName());
-    }
+	@Test
+	public void testAuthenticateSuccess() throws Exception {
+		final HandlerResult result = alwaysPassHandler.authenticate(new UsernamePasswordCredential("a", "b"));
+		assertEquals("TestAlwaysPassAuthenticationHandler", result.getHandlerName());
+	}
 
-    @Test(expected = FailedLoginException.class)
-    public void testAuthenticateFailure() throws Exception {
-        alwaysFailHandler.authenticate(new UsernamePasswordCredential("a", "b"));
-    }
+	@Test(expected = FailedLoginException.class)
+	public void testAuthenticateFailure() throws Exception {
+		alwaysFailHandler.authenticate(new UsernamePasswordCredential("a", "b"));
+	}
 
-    @Test
-    public void testSupports() throws Exception {
-        assertTrue(alwaysPassHandler.supports(new UsernamePasswordCredential("a", "b")));
-        assertTrue(alwaysFailHandler.supports(new UsernamePasswordCredential("a", "b")));
-    }
+	@Test
+	public void testSupports() throws Exception {
+		assertTrue(alwaysPassHandler.supports(new UsernamePasswordCredential("a", "b")));
+		assertTrue(alwaysFailHandler.supports(new UsernamePasswordCredential("a", "b")));
+	}
 
-    @Test
-    public void testGetName() throws Exception {
-        assertEquals("TestAlwaysPassAuthenticationHandler", alwaysPassHandler.getName());
-        assertEquals("TestAlwaysFailAuthenticationHandler", alwaysFailHandler.getName());
-    }
+	@Test
+	public void testGetName() throws Exception {
+		assertEquals("TestAlwaysPassAuthenticationHandler", alwaysPassHandler.getName());
+		assertEquals("TestAlwaysFailAuthenticationHandler", alwaysFailHandler.getName());
+	}
 }

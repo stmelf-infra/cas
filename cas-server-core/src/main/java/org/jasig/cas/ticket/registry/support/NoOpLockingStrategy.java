@@ -18,11 +18,9 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
-
 /**
- * No-Op locking strategy that allows the use of {@link DefaultTicketRegistryCleaner}
- * in environments where exclusive access to the registry for cleaning is either
- * unnecessary or not possible.
+ * No-Op locking strategy that allows the use of {@link DefaultTicketRegistryCleaner} in environments where exclusive
+ * access to the registry for cleaning is either unnecessary or not possible.
  *
  * @author Marvin Addison
  * @since 3.3.6
@@ -30,20 +28,21 @@ package org.jasig.cas.ticket.registry.support;
  */
 public class NoOpLockingStrategy implements LockingStrategy {
 
-    /**
-     * {@inheritDoc}
-     * @see org.jasig.cas.ticket.registry.support.LockingStrategy#acquire()
-     */
-    @Override
-    public boolean acquire() {
-        return true;
-    }
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see org.jasig.cas.ticket.registry.support.LockingStrategy#acquire()
+	 */
+	@Override
+	public boolean acquire() {
+		return true;
+	}
 
-    /**
-     * @see org.jasig.cas.ticket.registry.support.LockingStrategy#release()
-     */
-    public void release() {
-        // Nothing to release
-    }
+	/**
+	 * @see org.jasig.cas.ticket.registry.support.LockingStrategy#release()
+	 */
+	public void release() {
+		// Nothing to release
+	}
 
 }

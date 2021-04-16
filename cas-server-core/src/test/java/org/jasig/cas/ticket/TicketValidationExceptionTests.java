@@ -18,7 +18,8 @@
  */
 package org.jasig.cas.ticket;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
@@ -32,15 +33,15 @@ import org.junit.Test;
  */
 public class TicketValidationExceptionTests {
 
-    private static final String CODE = "INVALID_SERVICE";
+	private static final String CODE = "INVALID_SERVICE";
 
-    private Service service = TestUtils.getService();
+	private Service service = TestUtils.getService();
 
-    @Test
-    public void testThrowableConstructor() {
-        final TicketValidationException t = new TicketValidationException(this.service);
+	@Test
+	public void testThrowableConstructor() {
+		final TicketValidationException t = new TicketValidationException(this.service);
 
-        assertSame(CODE, t.getCode());
-        assertEquals(this.service, t.getOriginalService());
-    }
+		assertSame(CODE, t.getCode());
+		assertEquals(this.service, t.getOriginalService());
+	}
 }

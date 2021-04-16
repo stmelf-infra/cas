@@ -18,7 +18,11 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -36,7 +40,6 @@ import javax.sql.DataSource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -64,267 +67,280 @@ import org.springframework.transaction.support.TransactionTemplate;
 @ContextConfiguration("/jpaTestApplicationContext.xml")
 @ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaLockingStrategyTests implements InitializingBean {
-    /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+	/** Logger instance. */
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** Number of clients contending for lock in concurrent test. */
-    private static final int CONCURRENT_SIZE = 13;
+	/** Number of clients contending for lock in concurrent test. */
+	private static final int CONCURRENT_SIZE = 13;
 
-    @Autowired
-    private PlatformTransactionManager txManager;
+	@Autowired
+	private PlatformTransactionManager txManager;
 
-    @Autowired
-    private EntityManagerFactory factory;
+	@Autowired
+	private EntityManagerFactory factory;
 
-    private JdbcTemplate simpleJdbcTemplate;
+	private JdbcTemplate simpleJdbcTemplate;
 
-    /**
-     * Set the dataSource.
-     */
-    @Autowired
-    public void setDataSource(final DataSource dataSource) {
-        this.simpleJdbcTemplate = new JdbcTemplate(dataSource);
-    }
+	/**
+	 * Set the dataSource.
+	 */
+	@Autowired
+	public void setDataSource(final DataSource dataSource) {
+		this.simpleJdbcTemplate = new JdbcTemplate(dataSource);
+	}
 
-    /**
-     * One-time test initialization.
-     *
-     * @throws Exception On setup errors.
-     */
-    public void afterPropertiesSet() throws Exception {
-        JdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "locks");
-    }
+	/**
+	 * One-time test initialization.
+	 *
+	 * @throws Exception
+	 *             On setup errors.
+	 */
+	public void afterPropertiesSet() throws Exception {
+		JdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "locks");
+	}
 
-    /**
-     * Test basic acquire/release semantics.
-     *
-     * @throws Exception On errors.
-     */
-    @Test
-    public void testAcquireAndRelease() throws Exception {
-        final String appId = "basic";
-        final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
-        try {
-            assertTrue(lock.acquire());
-            assertEquals(uniqueId, getOwner(appId));
-            lock.release();
-            assertNull(getOwner(appId));
-        } catch (final Exception e) {
-            logger.debug("testAcquireAndRelease produced an error", e);
-            fail("testAcquireAndRelease failed");
-        }
-    }
+	/**
+	 * Test basic acquire/release semantics.
+	 *
+	 * @throws Exception
+	 *             On errors.
+	 */
+	@Test
+	public void testAcquireAndRelease() throws Exception {
+		final String appId = "basic";
+		final String uniqueId = appId + "-1";
+		final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
+		try {
+			assertTrue(lock.acquire());
+			assertEquals(uniqueId, getOwner(appId));
+			lock.release();
+			assertNull(getOwner(appId));
+		}
+		catch (final Exception e) {
+			logger.debug("testAcquireAndRelease produced an error", e);
+			fail("testAcquireAndRelease failed");
+		}
+	}
 
-    /**
-     * Test lock expiration.
-     *
-     * @throws Exception On errors.
-     */
-    @Test
-    public void testLockExpiration() throws Exception {
-        final String appId = "expquick";
-        final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, 1);
-        try {
-            assertTrue(lock.acquire());
-            assertEquals(uniqueId, getOwner(appId));
-            assertFalse(lock.acquire());
-            Thread.sleep(1500);
-            assertTrue(lock.acquire());
-            assertEquals(uniqueId, getOwner(appId));
-            lock.release();
-            assertNull(getOwner(appId));
-        } catch (final Exception e) {
-            logger.debug("testLockExpiration produced an error", e);
-            fail("testLockExpiration failed");
-        }
-    }
+	/**
+	 * Test lock expiration.
+	 *
+	 * @throws Exception
+	 *             On errors.
+	 */
+	@Test
+	public void testLockExpiration() throws Exception {
+		final String appId = "expquick";
+		final String uniqueId = appId + "-1";
+		final LockingStrategy lock = newLockTxProxy(appId, uniqueId, 1);
+		try {
+			assertTrue(lock.acquire());
+			assertEquals(uniqueId, getOwner(appId));
+			assertFalse(lock.acquire());
+			Thread.sleep(1500);
+			assertTrue(lock.acquire());
+			assertEquals(uniqueId, getOwner(appId));
+			lock.release();
+			assertNull(getOwner(appId));
+		}
+		catch (final Exception e) {
+			logger.debug("testLockExpiration produced an error", e);
+			fail("testLockExpiration failed");
+		}
+	}
 
-    /**
-     * Verify non-reentrant behavior.
-     */
-    @Test
-    public void testNonReentrantBehavior() {
-        final String appId = "reentrant";
-        final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
-        try {
-            assertTrue(lock.acquire());
-            assertEquals(uniqueId, getOwner(appId));
-            assertFalse(lock.acquire());
-            lock.release();
-            assertNull(getOwner(appId));
-        } catch (final Exception e) {
-            logger.debug("testNonReentrantBehavior produced an error", e);
-            fail("testNonReentrantBehavior failed.");
-        }
-    }
+	/**
+	 * Verify non-reentrant behavior.
+	 */
+	@Test
+	public void testNonReentrantBehavior() {
+		final String appId = "reentrant";
+		final String uniqueId = appId + "-1";
+		final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
+		try {
+			assertTrue(lock.acquire());
+			assertEquals(uniqueId, getOwner(appId));
+			assertFalse(lock.acquire());
+			lock.release();
+			assertNull(getOwner(appId));
+		}
+		catch (final Exception e) {
+			logger.debug("testNonReentrantBehavior produced an error", e);
+			fail("testNonReentrantBehavior failed.");
+		}
+	}
 
-    /**
-     * Test concurrent acquire/release semantics.
-     */
-    @Test
-    @IfProfileValue(name="cas.jpa.concurrent", value="true")
-    public void testConcurrentAcquireAndRelease() throws Exception {
-        final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
-        try {
-            testConcurrency(executor, getConcurrentLocks("concurrent-new"));
-        } catch (final Exception e) {
-            logger.debug("testConcurrentAcquireAndRelease produced an error", e);
-            fail("testConcurrentAcquireAndRelease failed.");
-        } finally {
-            executor.shutdownNow();
-        }
-    }
+	/**
+	 * Test concurrent acquire/release semantics.
+	 */
+	@Test
+	@IfProfileValue(name = "cas.jpa.concurrent", value = "true")
+	public void testConcurrentAcquireAndRelease() throws Exception {
+		final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
+		try {
+			testConcurrency(executor, getConcurrentLocks("concurrent-new"));
+		}
+		catch (final Exception e) {
+			logger.debug("testConcurrentAcquireAndRelease produced an error", e);
+			fail("testConcurrentAcquireAndRelease failed.");
+		}
+		finally {
+			executor.shutdownNow();
+		}
+	}
 
-    /**
-     * Test concurrent acquire/release semantics for existing lock.
-     */
-    @Test
-    @IfProfileValue(name="cas.jpa.concurrent", value="true")
-    public void testConcurrentAcquireAndReleaseOnExistingLock() throws Exception {
-        final LockingStrategy[] locks = getConcurrentLocks("concurrent-exists");
-        locks[0].acquire();
-        locks[0].release();
-        final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
-        try {
-            testConcurrency(executor, locks);
-        } catch (final Exception e) {
-            logger.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
-            fail("testConcurrentAcquireAndReleaseOnExistingLock failed.");
-        } finally {
-            executor.shutdownNow();
-        }
-    }
+	/**
+	 * Test concurrent acquire/release semantics for existing lock.
+	 */
+	@Test
+	@IfProfileValue(name = "cas.jpa.concurrent", value = "true")
+	public void testConcurrentAcquireAndReleaseOnExistingLock() throws Exception {
+		final LockingStrategy[] locks = getConcurrentLocks("concurrent-exists");
+		locks[0].acquire();
+		locks[0].release();
+		final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
+		try {
+			testConcurrency(executor, locks);
+		}
+		catch (final Exception e) {
+			logger.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
+			fail("testConcurrentAcquireAndReleaseOnExistingLock failed.");
+		}
+		finally {
+			executor.shutdownNow();
+		}
+	}
 
-    private LockingStrategy[] getConcurrentLocks(final String appId) {
-        final LockingStrategy[] locks = new LockingStrategy[CONCURRENT_SIZE];
-        for (int i = 1; i <= locks.length; i++) {
-            locks[i - 1] = newLockTxProxy(appId, appId + "-" + i, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
-        }
-        return locks;
-    }
+	private LockingStrategy[] getConcurrentLocks(final String appId) {
+		final LockingStrategy[] locks = new LockingStrategy[CONCURRENT_SIZE];
+		for (int i = 1; i <= locks.length; i++) {
+			locks[i - 1] = newLockTxProxy(appId, appId + "-" + i, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
+		}
+		return locks;
+	}
 
-    private LockingStrategy newLockTxProxy(final String appId, final String uniqueId, final int ttl) {
-        final JpaLockingStrategy lock = new JpaLockingStrategy();
-        lock.entityManager = SharedEntityManagerCreator.createSharedEntityManager(factory);
-        lock.setApplicationId(appId);
-        lock.setUniqueId(uniqueId);
-        lock.setLockTimeout(ttl);
-        return (LockingStrategy) Proxy.newProxyInstance(
-               JpaLockingStrategy.class.getClassLoader(),
-               new Class[] {LockingStrategy.class},
-               new TransactionalLockInvocationHandler(lock));
-    }
+	private LockingStrategy newLockTxProxy(final String appId, final String uniqueId, final int ttl) {
+		final JpaLockingStrategy lock = new JpaLockingStrategy();
+		lock.entityManager = SharedEntityManagerCreator.createSharedEntityManager(factory);
+		lock.setApplicationId(appId);
+		lock.setUniqueId(uniqueId);
+		lock.setLockTimeout(ttl);
+		return (LockingStrategy) Proxy.newProxyInstance(
+				JpaLockingStrategy.class.getClassLoader(),
+				new Class[] { LockingStrategy.class },
+				new TransactionalLockInvocationHandler(lock));
+	}
 
-    private String getOwner(final String appId) {
-        final List<Map<String, Object>> results = simpleJdbcTemplate.queryForList(
-                "SELECT unique_id FROM locks WHERE application_id=?", appId);
-        if (results.size() == 0) {
-            return null;
-        }
-        return (String) results.get(0).get("unique_id");
-    }
+	private String getOwner(final String appId) {
+		final List<Map<String, Object>> results = simpleJdbcTemplate.queryForList(
+				"SELECT unique_id FROM locks WHERE application_id=?",
+				appId);
+		if (results.size() == 0) {
+			return null;
+		}
+		return (String) results.get(0).get("unique_id");
+	}
 
-    private void testConcurrency(final ExecutorService executor, final LockingStrategy[] locks) throws Exception {
-        final List<Locker> lockers = new ArrayList<Locker>(locks.length);
-        for (int i = 0; i < locks.length; i++) {
-            lockers.add(new Locker(locks[i]));
-        }
+	private void testConcurrency(final ExecutorService executor, final LockingStrategy[] locks) throws Exception {
+		final List<Locker> lockers = new ArrayList<Locker>(locks.length);
+		for (int i = 0; i < locks.length; i++) {
+			lockers.add(new Locker(locks[i]));
+		}
 
-        int lockCount = 0;
-        for (Future<Boolean> result : executor.invokeAll(lockers)) {
-            if (result.get()) {
-                lockCount++;
-            }
-        }
-        assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
+		int lockCount = 0;
+		for (Future<Boolean> result : executor.invokeAll(lockers)) {
+			if (result.get()) {
+				lockCount++;
+			}
+		}
+		assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
 
-        final List<Releaser> releasers = new ArrayList<Releaser>(locks.length);
-        for (int i = 0; i < locks.length; i++) {
-            releasers.add(new Releaser(locks[i]));
-        }
-        int releaseCount = 0;
-        for (Future<Boolean> result : executor.invokeAll(lockers)) {
-            if (result.get()) {
-                releaseCount++;
-            }
-        }
-        assertTrue("Release count should be <= 1 but was " + releaseCount, releaseCount <= 1);
-    }
+		final List<Releaser> releasers = new ArrayList<Releaser>(locks.length);
+		for (int i = 0; i < locks.length; i++) {
+			releasers.add(new Releaser(locks[i]));
+		}
+		int releaseCount = 0;
+		for (Future<Boolean> result : executor.invokeAll(lockers)) {
+			if (result.get()) {
+				releaseCount++;
+			}
+		}
+		assertTrue("Release count should be <= 1 but was " + releaseCount, releaseCount <= 1);
+	}
 
-    class TransactionalLockInvocationHandler implements InvocationHandler {
-        private JpaLockingStrategy jpaLock;
+	class TransactionalLockInvocationHandler implements InvocationHandler {
+		private JpaLockingStrategy jpaLock;
 
-        public TransactionalLockInvocationHandler(final JpaLockingStrategy lock) {
-            jpaLock = lock;
-        }
+		public TransactionalLockInvocationHandler(final JpaLockingStrategy lock) {
+			jpaLock = lock;
+		}
 
-        public JpaLockingStrategy getLock() {
-            return jpaLock;
-        }
+		public JpaLockingStrategy getLock() {
+			return jpaLock;
+		}
 
-        /** {@inheritDoc} */
-        @Override
-        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-            return new TransactionTemplate(txManager).execute(new TransactionCallback<Object>() {
-                public Object doInTransaction(final TransactionStatus status) {
-                    try {
-                        final Object result = method.invoke(jpaLock, args);
-                        jpaLock.entityManager.flush();
-                        logger.debug("Performed {} on {}", method.getName(), jpaLock);
-                        return result;
-                        // Force result of transaction to database
-                    } catch (final Exception e) {
-                        throw new RuntimeException("Transactional method invocation failed.", e);
-                    }
-                }
-            });
-        }
+		/** {@inheritDoc} */
+		@Override
+		public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+			return new TransactionTemplate(txManager).execute(new TransactionCallback<Object>() {
+				public Object doInTransaction(final TransactionStatus status) {
+					try {
+						final Object result = method.invoke(jpaLock, args);
+						jpaLock.entityManager.flush();
+						logger.debug("Performed {} on {}", method.getName(), jpaLock);
+						return result;
+						// Force result of transaction to database
+					}
+					catch (final Exception e) {
+						throw new RuntimeException("Transactional method invocation failed.", e);
+					}
+				}
+			});
+		}
 
-    }
+	}
 
-    class Locker implements Callable<Boolean> {
+	class Locker implements Callable<Boolean> {
 
-        private LockingStrategy lock;
+		private LockingStrategy lock;
 
-        public Locker(final LockingStrategy l) {
-            lock = l;
-        }
+		public Locker(final LockingStrategy l) {
+			lock = l;
+		}
 
-        /** {@inheritDoc} */
-        @Override
-        public Boolean call() throws Exception {
-            try {
-                return lock.acquire();
-            } catch (final Exception e) {
-                logger.debug("{} failed to acquire lock", lock, e);
-                return false;
-            }
-        }
-    }
+		/** {@inheritDoc} */
+		@Override
+		public Boolean call() throws Exception {
+			try {
+				return lock.acquire();
+			}
+			catch (final Exception e) {
+				logger.debug("{} failed to acquire lock", lock, e);
+				return false;
+			}
+		}
+	}
 
+	class Releaser implements Callable<Boolean> {
 
-    class Releaser implements Callable<Boolean> {
+		private LockingStrategy lock;
 
-        private LockingStrategy lock;
+		public Releaser(final LockingStrategy l) {
+			lock = l;
+		}
 
-        public Releaser(final LockingStrategy l) {
-            lock = l;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Boolean call() throws Exception {
-            try {
-                lock.release();
-                return true;
-            } catch (final Exception e) {
-                logger.debug("{} failed to release lock", lock, e);
-                return false;
-            }
-        }
-    }
+		/** {@inheritDoc} */
+		@Override
+		public Boolean call() throws Exception {
+			try {
+				lock.release();
+				return true;
+			}
+			catch (final Exception e) {
+				logger.debug("{} failed to release lock", lock, e);
+				return false;
+			}
+		}
+	}
 
 }

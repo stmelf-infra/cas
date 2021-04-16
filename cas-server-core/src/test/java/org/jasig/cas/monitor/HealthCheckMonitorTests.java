@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.monitor;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,8 +27,6 @@ import java.util.Set;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test for {@link HealthCheckMonitor} class.
@@ -36,58 +36,58 @@ import static org.junit.Assert.assertEquals;
  */
 public class HealthCheckMonitorTests {
 
-    private HealthCheckMonitor monitor;
+	private HealthCheckMonitor monitor;
 
-    @Before
-    public void setUp() throws Exception {
-        this.monitor = new HealthCheckMonitor();
-    }
+	@Before
+	public void setUp() throws Exception {
+		this.monitor = new HealthCheckMonitor();
+	}
 
-    @Test
-    public void testObserveUnknown() throws Exception {
-        assertEquals(StatusCode.UNKNOWN, this.monitor.observe().getCode());
-    }
+	@Test
+	public void testObserveUnknown() throws Exception {
+		assertEquals(StatusCode.UNKNOWN, this.monitor.observe().getCode());
+	}
 
-    @Test
-    public void testObserveOk() throws Exception {
-        final Set<Monitor> monitors = new HashSet<Monitor>();
-        monitors.add(new MemoryMonitor());
-        monitors.add(newSessionMonitor());
-        this.monitor.setMonitors(monitors);
-        assertEquals(StatusCode.OK, this.monitor.observe().getCode());
-    }
+	@Test
+	public void testObserveOk() throws Exception {
+		final Set<Monitor> monitors = new HashSet<Monitor>();
+		monitors.add(new MemoryMonitor());
+		monitors.add(newSessionMonitor());
+		this.monitor.setMonitors(monitors);
+		assertEquals(StatusCode.OK, this.monitor.observe().getCode());
+	}
 
-    @Test
-    public void testObserveWarn() throws Exception {
-        final Set<Monitor> monitors = new HashSet<Monitor>();
-        final MemoryMonitor memoryMonitor = new MemoryMonitor();
-        memoryMonitor.setFreeMemoryWarnThreshold(100);
-        monitors.add(memoryMonitor);
-        monitors.add(newSessionMonitor());
-        this.monitor.setMonitors(monitors);
-        assertEquals(StatusCode.WARN, this.monitor.observe().getCode());
-    }
+	@Test
+	public void testObserveWarn() throws Exception {
+		final Set<Monitor> monitors = new HashSet<Monitor>();
+		final MemoryMonitor memoryMonitor = new MemoryMonitor();
+		memoryMonitor.setFreeMemoryWarnThreshold(100);
+		monitors.add(memoryMonitor);
+		monitors.add(newSessionMonitor());
+		this.monitor.setMonitors(monitors);
+		assertEquals(StatusCode.WARN, this.monitor.observe().getCode());
+	}
 
-    @Test
-    public void testThrowsUncheckedException() throws Exception {
-        final Monitor throwsUnchecked = new Monitor() {
-            @Override
-            public String getName() {
-                return "ThrowsUnchecked";
-            }
+	@Test
+	public void testThrowsUncheckedException() throws Exception {
+		final Monitor throwsUnchecked = new Monitor() {
+			@Override
+			public String getName() {
+				return "ThrowsUnchecked";
+			}
 
-            @Override
-            public Status observe() {
-                throw new IllegalStateException("Boogity!");
-            }
-        };
-        this.monitor.setMonitors(Collections.singleton(throwsUnchecked));
-        assertEquals(StatusCode.ERROR, this.monitor.observe().getCode());
-    }
+			@Override
+			public Status observe() {
+				throw new IllegalStateException("Boogity!");
+			}
+		};
+		this.monitor.setMonitors(Collections.singleton(throwsUnchecked));
+		assertEquals(StatusCode.ERROR, this.monitor.observe().getCode());
+	}
 
-    private SessionMonitor newSessionMonitor() {
-        final SessionMonitor sessionMonitor = new SessionMonitor();
-        sessionMonitor.setTicketRegistry(new DefaultTicketRegistry());
-        return sessionMonitor;
-    }
+	private SessionMonitor newSessionMonitor() {
+		final SessionMonitor sessionMonitor = new SessionMonitor();
+		sessionMonitor.setTicketRegistry(new DefaultTicketRegistry());
+		return sessionMonitor;
+	}
 }

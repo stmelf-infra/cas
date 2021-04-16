@@ -25,67 +25,67 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 
 /**
- * Simple parameterized message descriptor with a code that refers to a message bundle key and a default
- * message string to use if no message code can be resolved.
+ * Simple parameterized message descriptor with a code that refers to a message bundle key and a default message string
+ * to use if no message code can be resolved.
  *
  * @author Marvin S. Addison
  * @since 4.0
  */
 public class Message implements Serializable {
 
-    /** Serialization support. */
-    private static final long serialVersionUID = 1227390629186486032L;
+	/** Serialization support. */
+	private static final long serialVersionUID = 1227390629186486032L;
 
-    private String code;
+	private String code;
 
-    private String defaultMessage;
+	private String defaultMessage;
 
-    private Serializable[] params;
+	private Serializable[] params;
 
-    public Message(final String code) {
-        this(code, code);
-    }
+	public Message(final String code) {
+		this(code, code);
+	}
 
-    public Message(final String code, final String defaultMessage, final Serializable... params) {
-        Assert.hasText(code, "Code cannot be null or empty");
-        Assert.hasText(defaultMessage, "Default message cannot be null or empty");
-        this.code = code;
-        this.defaultMessage = defaultMessage;
-        this.params = params;
-    }
+	public Message(final String code, final String defaultMessage, final Serializable... params) {
+		Assert.hasText(code, "Code cannot be null or empty");
+		Assert.hasText(defaultMessage, "Default message cannot be null or empty");
+		this.code = code;
+		this.defaultMessage = defaultMessage;
+		this.params = params;
+	}
 
-    public String getCode() {
-        return this.code;
-    }
+	public String getCode() {
+		return this.code;
+	}
 
-    public String getDefaultMessage() {
-        return this.defaultMessage;
-    }
+	public String getDefaultMessage() {
+		return this.defaultMessage;
+	}
 
-    public Serializable[] getParams() {
-        return this.params;
-    }
+	public Serializable[] getParams() {
+		return this.params;
+	}
 
-    @Override
-    public int hashCode() {
-        final HashCodeBuilder builder = new HashCodeBuilder(99, 31);
-        builder.append(this.code);
-        builder.append(this.defaultMessage);
-        builder.append(this.params);
-        return builder.toHashCode();
-    }
+	@Override
+	public int hashCode() {
+		final HashCodeBuilder builder = new HashCodeBuilder(99, 31);
+		builder.append(this.code);
+		builder.append(this.defaultMessage);
+		builder.append(this.params);
+		return builder.toHashCode();
+	}
 
-    @Override
-    public boolean equals(final Object other) {
-        if (other == null || !(other instanceof Message)) {
-            return false;
-        }
-        if (other == this) {
-            return true;
-        }
-        final Message m = (Message) other;
-        return this.code.equals(m.getCode())
-                && this.defaultMessage.equals(m.getDefaultMessage())
-                && Arrays.equals(this.params, m.getParams());
-    }
+	@Override
+	public boolean equals(final Object other) {
+		if (other == null || !(other instanceof Message)) {
+			return false;
+		}
+		if (other == this) {
+			return true;
+		}
+		final Message m = (Message) other;
+		return this.code.equals(m.getCode())
+				&& this.defaultMessage.equals(m.getDefaultMessage())
+				&& Arrays.equals(this.params, m.getParams());
+	}
 }

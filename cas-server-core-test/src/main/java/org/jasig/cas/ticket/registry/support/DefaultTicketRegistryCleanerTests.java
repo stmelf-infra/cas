@@ -18,30 +18,30 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
+import static org.mockito.Mockito.mock;
+
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.registry.AbstractRegistryCleanerTests;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 
-import static org.mockito.Mockito.*;
-
 /**
  * @author Scott Battaglia
-
+ * 
  * @since 3.0
  */
 public class DefaultTicketRegistryCleanerTests extends AbstractRegistryCleanerTests {
 
-    public RegistryCleaner getNewRegistryCleaner(final TicketRegistry ticketRegistry) {
-        DefaultTicketRegistryCleaner cleaner = new DefaultTicketRegistryCleaner();
-        cleaner.setTicketRegistry(ticketRegistry);
-        LogoutManager logoutManager = mock(LogoutManager.class);
-        cleaner.setLogoutManager(logoutManager);
-        return cleaner;
-    }
+	public RegistryCleaner getNewRegistryCleaner(final TicketRegistry ticketRegistry) {
+		DefaultTicketRegistryCleaner cleaner = new DefaultTicketRegistryCleaner();
+		cleaner.setTicketRegistry(ticketRegistry);
+		LogoutManager logoutManager = mock(LogoutManager.class);
+		cleaner.setLogoutManager(logoutManager);
+		return cleaner;
+	}
 
-    public TicketRegistry getNewTicketRegistry() {
-        return new DefaultTicketRegistry();
-    }
+	public TicketRegistry getNewTicketRegistry() {
+		return new DefaultTicketRegistry();
+	}
 }
