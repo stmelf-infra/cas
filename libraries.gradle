@@ -1,0 +1,66 @@
+apply plugin: 'java'
+
+ext {
+
+	springversion = '5.3.3'
+	springsecurityversion = '5.4.4'
+	springldapcoreversion = '2.3.3.RELEASE'
+	springwebflowversion = '2.5.1.RELEASE'
+	hibernateversion = '5.4.28.Final'
+	hibernatevalidatorversion = '5.4.3.Final'
+	commonslangversion = '2.6'
+	commonsioversion = '2.8.0'
+	servletapiversion = '4.0.1'
+	quartzversion = '1.8.6'
+	jcifsversion = '1.3.17'
+	jcifsextversion = '0.9.4'
+	junitversion = '4.13.2'
+	mockitoversion = '1.10.19'
+	casclientversion = '3.6.2' 
+}
+
+ext.libraries = [
+	perf4j: [
+		'org.perf4j:perf4j:0.9.16'
+	],
+	inspektr: [
+		'com.github.inspektr:inspektr-audit:1.1.GA'
+	],
+	persondir: [
+		'org.jasig.service.persondir:person-directory-api:1.8.0',
+		'org.jasig.service.persondir:person-directory-impl:1.8.0'
+	],
+	log4j: [
+		'log4j:log4j:1.2.17'
+	],
+	spring: [
+		'org.springframework:spring-core:' + springversion,
+		'org.springframework:spring-context-support:' + springversion,
+		'org.springframework:spring-orm:' + springversion,
+		'org.jasig.cas.client:cas-client-core:' + casclientversion,
+		'org.springframework.security:spring-security-config:' + springsecurityversion,
+		'org.springframework.ldap:spring-ldap-core:' + springldapcoreversion			
+	],
+	spring_webflow: [
+			'org.springframework.webflow:spring-webflow:' + springwebflowversion
+	],
+	hibernate: [
+		'org.hibernate:hibernate-core:' + hibernateversion,
+		'org.hibernate:hibernate-validator:' + hibernatevalidatorversion
+	],
+	commons_lang: 'commons-lang:commons-lang:' + commonslangversion,
+	commons_io: 'commons-io:commons-io:' + commonsioversion,
+	servlet_api: 'javax.servlet:javax.servlet-api:' + servletapiversion,
+	quartz: [
+		'org.quartz-scheduler:quartz:' + quartzversion
+	],
+	jcifs: [
+		'org.samba.jcifs:jcifs:' + jcifsversion,
+		'org.samba.jcifs:jcifs-ext:' + jcifsextversion
+	],
+	junit: [
+		'junit:junit:' + junitversion
+	],
+	mockito: 'org.mockito:mockito-core:' + mockitoversion,
+	spring_test: 'org.springframework:spring-test:' + springversion
+]

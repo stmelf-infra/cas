@@ -1,0 +1,5 @@
+dependencies {
+	implementation project(':cas-server-core')
+
+	testImplementation project(':cas-server-core-test')	
+}

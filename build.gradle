@@ -1,0 +1,32 @@
+apply from: 'libraries.gradle'
+group = 'de.bayern.stmelf.cas'		
+
+subprojects {
+    apply plugin: 'java'			
+	sourceCompatibility = 11
+	compileJava.options.encoding = 'UTF-8'	
+	
+	dependencies {
+		implementation libraries.spring
+		implementation libraries.spring_webflow
+		implementation libraries.hibernate
+		implementation libraries.commons_lang
+		implementation libraries.perf4j
+		implementation libraries.inspektr
+		implementation libraries.commons_io
+		implementation libraries.servlet_api
+		implementation libraries.persondir
+		implementation libraries.quartz
+		implementation libraries.log4j
+		implementation libraries.jcifs
+
+		testImplementation libraries.junit
+		testImplementation libraries.mockito
+		testImplementation libraries.spring_test
+	}
+
+	test {
+    	exclude 'org/boo/**'
+    	exclude '**/*.class'
+	}
+}

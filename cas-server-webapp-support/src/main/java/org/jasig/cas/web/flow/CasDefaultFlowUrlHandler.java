@@ -62,7 +62,7 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
-        final StringBuffer builder = new StringBuffer();
+        final StringBuilder builder = new StringBuilder();
         builder.append(request.getRequestURI());
         builder.append("?");
         @SuppressWarnings("unchecked")
