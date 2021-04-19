@@ -19,7 +19,7 @@ ext {
 	javaxelversion = '3.0.0'
 }
 
-ext.libraries = [
+ext.caslibraries = [
 	hsqldb: [
 		'org.hsqldb:hsqldb:2.3.2'
 	],

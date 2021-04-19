@@ -1,7 +1,7 @@
 dependencies {
 	implementation project(':cas-server-core')
 	
-	implementation libraries.junit
-	implementation libraries.mockito
-	implementation libraries.spring_test
+	implementation caslibraries.junit
+	implementation caslibraries.mockito
+	implementation caslibraries.spring_test
 }

@@ -1,4 +1,5 @@
-apply from: 'libraries.gradle'
+apply from: 'caslibraries.gradle'
+
 group 'de.bayern.stmelf.cas'
 
 subprojects {
@@ -7,23 +8,23 @@ subprojects {
 	compileJava.options.encoding = 'UTF-8'	
 	
 	dependencies {
-		implementation libraries.spring
-		implementation libraries.spring_webflow
-		implementation libraries.hibernate
-		implementation libraries.commons_lang
-		implementation libraries.perf4j
-		implementation libraries.inspektr
-		implementation libraries.commons_io
-		implementation libraries.servlet_api
-		implementation libraries.persondir
-		implementation libraries.quartz
-		implementation libraries.log4j
-		implementation libraries.jcifs
-		implementation libraries.javax_el
+		implementation caslibraries.spring
+		implementation caslibraries.spring_webflow
+		implementation caslibraries.hibernate
+		implementation caslibraries.commons_lang
+		implementation caslibraries.perf4j
+		implementation caslibraries.inspektr
+		implementation caslibraries.commons_io
+		implementation caslibraries.servlet_api
+		implementation caslibraries.persondir
+		implementation caslibraries.quartz
+		implementation caslibraries.log4j
+		implementation caslibraries.jcifs
+		implementation caslibraries.javax_el
 
-		testImplementation libraries.junit
-		testImplementation libraries.mockito
-		testImplementation libraries.spring_test
-		testImplementation libraries.hsqldb
+		testImplementation caslibraries.junit
+		testImplementation caslibraries.mockito
+		testImplementation caslibraries.spring_test
+		testImplementation caslibraries.hsqldb
 	}
 }
