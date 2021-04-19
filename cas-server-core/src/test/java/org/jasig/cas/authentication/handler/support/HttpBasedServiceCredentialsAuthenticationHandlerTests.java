@@ -27,6 +27,7 @@ import javax.security.auth.login.FailedLoginException;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.util.SimpleHttpClient;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -54,22 +55,26 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 	}
 
 	@Test
+	@Ignore // braucht Zugang auf Internet
 	public void testAcceptsProperCertificateCredentials() throws Exception {
 		assertNotNull(this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials()));
 	}
 
 	@Test(expected = FailedLoginException.class)
+	@Ignore // braucht Zugang auf Internet
 	public void testRejectsInProperCertificateCredentials() throws Exception {
 		this.authenticationHandler.authenticate(
 				TestUtils.getHttpBasedServiceCredentials("https://clearinghouse.ja-sig.org"));
 	}
 
 	@Test(expected = FailedLoginException.class)
+	@Ignore // braucht Zugang auf Internet
 	public void testRejectsNonHttpsCredentials() throws Exception {
 		this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials("http://www.jasig.org"));
 	}
 
 	@Test
+	@Ignore // braucht Zugang auf Internet
 	public void testAcceptsNonHttpsCredentials() throws Exception {
 		this.authenticationHandler.setHttpClient(new SimpleHttpClient());
 		this.authenticationHandler.setRequireSecure(false);

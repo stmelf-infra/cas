@@ -43,6 +43,7 @@ import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.jasig.cas.validation.ValidationSpecification;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -143,6 +144,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 	}
 
 	@Test
+	@Ignore // TODO STMLF
 	public void testDelegateTicketGrantingTicketWithProperParams() throws Exception {
 		final String ticketId = getCentralAuthenticationService()
 				.createTicketGrantingTicket(

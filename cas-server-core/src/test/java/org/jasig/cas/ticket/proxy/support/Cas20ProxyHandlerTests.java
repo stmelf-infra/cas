@@ -27,6 +27,7 @@ import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.SimpleHttpClient;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -34,6 +35,7 @@ import org.junit.Test;
  * 
  * @since 3.0
  */
+@Ignore // braucht Zugang auf Internet
 public class Cas20ProxyHandlerTests {
 
 	private Cas20ProxyHandler handler;
