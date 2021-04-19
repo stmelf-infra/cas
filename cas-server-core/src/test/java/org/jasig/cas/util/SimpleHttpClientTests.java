@@ -48,6 +48,7 @@ public class SimpleHttpClientTests {
 	}
 
 	@Test
+	@Ignore // braucht Internet
 	public void testOkayUrl() {
 		assertTrue(this.getHttpClient().isValidEndPoint("http://www.jasig.org"));
 	}
