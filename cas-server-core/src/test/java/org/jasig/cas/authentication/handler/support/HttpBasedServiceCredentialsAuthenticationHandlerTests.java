@@ -55,26 +55,26 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 	}
 
 	@Test
-	@Ignore // braucht Zugang auf Internet
+	@Ignore // TODO STMLF
 	public void testAcceptsProperCertificateCredentials() throws Exception {
 		assertNotNull(this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials()));
 	}
 
 	@Test(expected = FailedLoginException.class)
-	@Ignore // braucht Zugang auf Internet
+	@Ignore // TODO STMLF
 	public void testRejectsInProperCertificateCredentials() throws Exception {
 		this.authenticationHandler.authenticate(
 				TestUtils.getHttpBasedServiceCredentials("https://clearinghouse.ja-sig.org"));
 	}
 
 	@Test(expected = FailedLoginException.class)
-	@Ignore // braucht Zugang auf Internet
+	@Ignore // TODO STMLF
 	public void testRejectsNonHttpsCredentials() throws Exception {
 		this.authenticationHandler.authenticate(TestUtils.getHttpBasedServiceCredentials("http://www.jasig.org"));
 	}
 
 	@Test
-	@Ignore // braucht Zugang auf Internet
+	@Ignore // TODO STMLF
 	public void testAcceptsNonHttpsCredentials() throws Exception {
 		this.authenticationHandler.setHttpClient(new SimpleHttpClient());
 		this.authenticationHandler.setRequireSecure(false);
