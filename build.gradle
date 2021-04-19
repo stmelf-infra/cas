@@ -1,5 +1,5 @@
 apply from: 'libraries.gradle'
-group = 'de.bayern.stmelf.cas'		
+group 'de.bayern.stmelf.cas'
 
 subprojects {
     apply plugin: 'java'			
@@ -25,9 +25,5 @@ subprojects {
 		testImplementation libraries.mockito
 		testImplementation libraries.spring_test
 		testImplementation libraries.hsqldb
-	}
-
-	test {  
-    	// exclude '**/*.class'
 	}
 }
