@@ -17,21 +17,26 @@ ext {
 	mockitoversion = '1.10.19'
 	casclientversion = '3.6.2'
 	javaxelversion = '3.0.0'
+	hsqldbversion = '2.3.2'
+	perf4jversion = '0.9.16'
+	inspektrversion = '1.1.GA'
+	persondirversion = '1.8.0'
+	junitversion = '5.7.1'
 }
 
 ext.caslibraries = [
 	hsqldb: [
-		'org.hsqldb:hsqldb:2.3.2'
+		'org.hsqldb:hsqldb:' + hsqldbversion
 	],
 	perf4j: [
-		'org.perf4j:perf4j:0.9.16'
+		'org.perf4j:perf4j:' + perf4jversion
 	],
 	inspektr: [
-		'com.github.inspektr:inspektr-audit:1.1.GA'
+		'com.github.inspektr:inspektr-audit:' + inspektrversion
 	],
 	persondir: [
-		'org.jasig.service.persondir:person-directory-api:1.8.0',
-		'org.jasig.service.persondir:person-directory-impl:1.8.0'
+		'org.jasig.service.persondir:person-directory-api:' + persondirversion,
+		'org.jasig.service.persondir:person-directory-impl:' + persondirversion
 	],
 	log4j: [
 		'log4j:log4j:1.2.17'
@@ -62,7 +67,10 @@ ext.caslibraries = [
 		'org.samba.jcifs:jcifs-ext:' + jcifsextversion
 	],
 	junit: [
-		'junit:junit:' + junitversion
+		'org.junit.jupiter:junit-jupiter-api:' + junitversion,
+		'org.junit.jupiter:junit-jupiter-params:' + junitversion,
+		'org.junit.jupiter:junit-jupiter-engine:' + junitversion,
+		'org.junit.vintage:junit-vintage-engine:' + junitversion
 	],
 	mockito: 'org.mockito:mockito-core:' + mockitoversion,
 	spring_test: 'org.springframework:spring-test:' + springversion,
