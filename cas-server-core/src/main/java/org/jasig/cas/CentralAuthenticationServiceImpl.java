@@ -94,7 +94,8 @@ import com.github.inspektr.audit.annotation.Audit;
  * @author Dmitry Kopylenko
  * @since 3.0
  */
-public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
+@SuppressWarnings("all")
+public class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
 
 	/** Log instance for logging events, info, warnings, errors, etc. */
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -157,6 +158,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 	private ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
 			new AcceptAnyAuthenticationPolicyFactory();
 
+	private final PrincipalIdSwapper principalIdSwapper;
+
 	/**
 	 * Build the central authentication service implementation.
 	 *
@@ -189,6 +192,53 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 			final ExpirationPolicy serviceTicketExpirationPolicy,
 			final ServicesManager servicesManager,
 			final LogoutManager logoutManager) {
+		this(
+				ticketRegistry,
+				serviceTicketRegistry,
+				authenticationManager,
+				ticketGrantingTicketUniqueTicketIdGenerator,
+				uniqueTicketIdGeneratorsForService,
+				ticketGrantingTicketExpirationPolicy,
+				serviceTicketExpirationPolicy,
+				servicesManager,
+				logoutManager,
+				null);
+
+	}
+
+	/**
+	 * Build the central authentication service implementation.
+	 *
+	 * @param ticketRegistry
+	 *            the tickets registry.
+	 * @param serviceTicketRegistry
+	 *            the service tickets registry.
+	 * @param authenticationManager
+	 *            the authentication manager.
+	 * @param ticketGrantingTicketUniqueTicketIdGenerator
+	 *            the TGT id generator.
+	 * @param uniqueTicketIdGeneratorsForService
+	 *            the map with service and ticket id generators.
+	 * @param ticketGrantingTicketExpirationPolicy
+	 *            the TGT expiration policy.
+	 * @param serviceTicketExpirationPolicy
+	 *            the service ticket expiration policy.
+	 * @param servicesManager
+	 *            the services manager.
+	 * @param logoutManager
+	 *            the logout manager.
+	 */
+	public CentralAuthenticationServiceImpl(
+			final TicketRegistry ticketRegistry,
+			final TicketRegistry serviceTicketRegistry,
+			final AuthenticationManager authenticationManager,
+			final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
+			final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
+			final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
+			final ExpirationPolicy serviceTicketExpirationPolicy,
+			final ServicesManager servicesManager,
+			final LogoutManager logoutManager,
+			final PrincipalIdSwapper principalIdSwapper) {
 		this.ticketRegistry = ticketRegistry;
 		if (serviceTicketRegistry == null) {
 			this.serviceTicketRegistry = ticketRegistry;
@@ -203,6 +253,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 		this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
 		this.servicesManager = servicesManager;
 		this.logoutManager = logoutManager;
+		this.principalIdSwapper = principalIdSwapper;
 	}
 
 	/**
@@ -470,17 +521,23 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 						registeredService);
 			}
 
-			final String principalId =
+			String principalId =
 					determinePrincipalIdForRegisteredService(principal, registeredService, serviceTicket);
+
+			if (principalIdSwapper != null) {
+				principalId = principalIdSwapper.determinePrincipalId(principal).orElse(principalId);
+				logger.debug("Accepting new Principal-ID: {} -> {}", principal.getId(), principal);
+			}
 			final Principal modifiedPrincipal = new SimplePrincipal(principalId, attributesToRelease);
 			final AuthenticationBuilder builder = AuthenticationBuilder.newInstance(authentication);
 			builder.setPrincipal(modifiedPrincipal);
 
-			return new ImmutableAssertion(
+			ImmutableAssertion immutableAssertion = new ImmutableAssertion(
 					builder.build(),
 					serviceTicket.getGrantingTicket().getChainedAuthentications(),
 					serviceTicket.getService(),
 					serviceTicket.isFromNewLogin());
+			return immutableAssertion;
 		}
 		finally {
 			if (serviceTicket.isExpired()) {
@@ -556,7 +613,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 	 */
 	@Audit(action = "TICKET_GRANTING_TICKET", actionResolverName = "CREATE_TICKET_GRANTING_TICKET_RESOLVER", resourceResolverName = "CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
 	@Profiled(tag = "CREATE_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
-	@Transactional(readOnly = false)
+	// @Transactional - sehe ZAD-274
 	public String createTicketGrantingTicket(final Credential... credentials)
 			throws AuthenticationException, TicketException {
 
@@ -619,7 +676,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
 	/**
 	 * Ensure that the service is found and enabled in the service registry.
-	 * 
+	 *
 	 * @param registeredService
 	 *            the located entry in the registry
 	 * @param service

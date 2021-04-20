@@ -27,6 +27,9 @@ import org.springframework.beans.factory.InitializingBean;
 import jcifs.Config;
 
 /**
+ * Die originale CAS Klasse wurde angepasst, so das "java.security.auth.login.config" nicht überschrieben wird, falls es
+ * bereits gesetzt ist!
+ *
  * Configuration helper for JCIFS and the Spring framework.
  *
  * @author Marc-Antoine Garrigue
@@ -34,6 +37,7 @@ import jcifs.Config;
  * @author Scott Battaglia
  * @since 3.1
  */
+@SuppressWarnings("all")
 public final class JCIFSConfig implements InitializingBean {
 
 	private static final String DEFAULT_LOGIN_CONFIG = "/login.conf";
@@ -81,6 +85,15 @@ public final class JCIFSConfig implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+
+		// Änderungen Start
+		if (System.getProperty(SYS_PROP_LOGIN_CONF) != null) {
+			this.loginConf = System.getProperty(SYS_PROP_LOGIN_CONF);
+			logger.info("JCIFSConfig#loginConf wird von System Property auf:" + this.loginConf + " gesetzt");
+			return;
+		}
+		// Änderungen End
+
 		if (System.getProperty(SYS_PROP_LOGIN_CONF) != null) {
 			logger.warn(
 					"found login config in system property, may overide : "

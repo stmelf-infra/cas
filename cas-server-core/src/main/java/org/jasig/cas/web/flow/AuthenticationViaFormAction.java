@@ -21,7 +21,6 @@ package org.jasig.cas.web.flow;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
@@ -53,22 +52,25 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Scott Battaglia
  * @since 3.0.4
  */
+@SuppressWarnings("all")
 public class AuthenticationViaFormAction {
 
 	/** Authentication success result. */
-	public static final String SUCCESS = "success";
+	private static final String SUCCESS = "success";
 
-	/** Authentication succeeded with warnings from authn subsystem that should be displayed to user. */
-	public static final String SUCCESS_WITH_WARNINGS = "successWithWarnings";
+	/**
+	 * Authentication succeeded with warnings from authn subsystem that should be displayed to user.
+	 */
+	private static final String SUCCESS_WITH_WARNINGS = "successWithWarnings";
 
 	/** Authentication success with "warn" enabled. */
-	public static final String WARN = "warn";
+	private static final String WARN = "warn";
 
 	/** Authentication failure result. */
-	public static final String AUTHENTICATION_FAILURE = "authenticationFailure";
+	private static final String AUTHENTICATION_FAILURE = "authenticationFailure";
 
 	/** Error result. */
-	public static final String ERROR = "error";
+	private static final String ERROR = "error";
 
 	/**
 	 * Binder that allows additional binding of form object beyond Spring defaults.
@@ -86,10 +88,13 @@ public class AuthenticationViaFormAction {
 	@NotNull
 	private CookieGenerator warnCookieGenerator;
 
+	/** Flag indicating whether message context contains warning messages. */
+	private boolean hasWarningMessages;
+
 	/** Logger instance. **/
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-	public final void doBind(final RequestContext context, final Credential credential) throws Exception {
+	public final void doBind(RequestContext context, Credential credential) {
 		final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
 		if (this.credentialsBinder != null && this.credentialsBinder.supports(credential.getClass())) {
@@ -98,15 +103,15 @@ public class AuthenticationViaFormAction {
 	}
 
 	public final Event submit(
-			final RequestContext context,
-			final Credential credential,
-			final MessageContext messageContext) throws Exception {
+			RequestContext context,
+			Credential credential,
+			MessageContext messageContext) throws Exception {
 		// Validate login ticket
 		final String authoritativeLoginTicket = WebUtils.getLoginTicketFromFlowScope(context);
 		final String providedLoginTicket = WebUtils.getLoginTicketFromRequest(context);
 		if (!authoritativeLoginTicket.equals(providedLoginTicket)) {
 			logger.warn("Invalid login ticket {}", providedLoginTicket);
-			messageContext.addMessage(new MessageBuilder().error().code("error.invalid.loginticket").build());
+			messageContext.addMessage(new MessageBuilder().code("error.invalid.loginticket").build());
 			return newEvent(ERROR);
 		}
 
@@ -117,18 +122,17 @@ public class AuthenticationViaFormAction {
 				&& service != null) {
 
 			try {
-				final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
+				final String serviceTicketId = centralAuthenticationService.grantServiceTicket(
 						ticketGrantingTicketId,
 						service,
 						credential);
 				WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
-				putWarnCookieIfRequestParameterPresent(context);
 				return newEvent(WARN);
 			}
-			catch (final AuthenticationException e) {
+			catch (AuthenticationException e) {
 				return newEvent(AUTHENTICATION_FAILURE, e);
 			}
-			catch (final TicketCreationException e) {
+			catch (TicketCreationException e) {
 				logger.warn(
 						"Invalid attempt to access service using renew=true with different credential. "
 								+ "Ending SSO session.");
@@ -140,11 +144,16 @@ public class AuthenticationViaFormAction {
 		}
 
 		try {
-			final String tgtId = this.centralAuthenticationService.createTicketGrantingTicket(credential);
+			String tgtId = centralAuthenticationService.createTicketGrantingTicket(credential);
 			WebUtils.putTicketGrantingTicketInFlowScope(context, tgtId);
-			putWarnCookieIfRequestParameterPresent(context);
 			final TicketGrantingTicket tgt = (TicketGrantingTicket) this.ticketRegistry.getTicket(tgtId);
-			if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
+			for (final Map.Entry<String, HandlerResult> entry : tgt.getAuthentication().getSuccesses()
+					.entrySet()) {
+				for (final Message message : entry.getValue().getWarnings()) {
+					addWarningToContext(messageContext, message);
+				}
+			}
+			if (hasWarningMessages) {
 				return newEvent(SUCCESS_WITH_WARNINGS);
 			}
 			return newEvent(SUCCESS);
@@ -152,63 +161,26 @@ public class AuthenticationViaFormAction {
 		catch (final AuthenticationException e) {
 			return newEvent(AUTHENTICATION_FAILURE, e);
 		}
-		catch (final Exception e) {
-			return newEvent(ERROR, e);
-		}
 	}
 
-	/**
-	 * Add warning messages to message context if needed.
-	 *
-	 * @param tgtId
-	 *            the tgt id
-	 * @param messageContext
-	 *            the message context
-	 * @return true if warnings were found and added, false otherwise.
-	 * @since 4.0.3
-	 */
-	private boolean addWarningMessagesToMessageContextIfNeeded(
-			final TicketGrantingTicket tgtId,
-			final MessageContext messageContext) {
-		boolean foundAndAddedWarnings = false;
-		for (final Map.Entry<String, HandlerResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
-			for (final Message message : entry.getValue().getWarnings()) {
-				addWarningToContext(messageContext, message);
-				foundAndAddedWarnings = true;
-			}
-		}
-		return foundAndAddedWarnings;
-
-	}
-
-	private void putWarnCookieIfRequestParameterPresent(final RequestContext context) {
-		final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
-
-		if (StringUtils.hasText(context.getExternalContext().getRequestParameterMap().get("warn"))) {
-			this.warnCookieGenerator.addCookie(response, "true");
-		}
-		else {
-			this.warnCookieGenerator.removeCookie(response);
-		}
-	}
-
-	private AuthenticationException getAuthenticationExceptionAsCause(final TicketException e) {
+	private AuthenticationException getAuthenticationExceptionAsCause(TicketException e) {
 		return (AuthenticationException) e.getCause();
 	}
 
-	private Event newEvent(final String id) {
+	private Event newEvent(String id) {
 		return new Event(this, id);
 	}
 
-	private Event newEvent(final String id, final Exception error) {
+	private Event newEvent(String id, final Exception error) {
 		return new Event(this, id, new LocalAttributeMap("error", error));
 	}
 
-	public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+	public final void setCentralAuthenticationService(
+			final CentralAuthenticationService centralAuthenticationService) {
 		this.centralAuthenticationService = centralAuthenticationService;
 	}
 
-	public void setTicketRegistry(final TicketRegistry ticketRegistry) {
+	public void setTicketRegistry(TicketRegistry ticketRegistry) {
 		this.ticketRegistry = ticketRegistry;
 	}
 
@@ -224,11 +196,11 @@ public class AuthenticationViaFormAction {
 	 * @param credentialsBinder
 	 *            the credential binder to set.
 	 */
-	public final void setCredentialsBinder(final CredentialsBinder credentialsBinder) {
+	public final void setCredentialsBinder(CredentialsBinder credentialsBinder) {
 		this.credentialsBinder = credentialsBinder;
 	}
 
-	public final void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
+	public final void setWarnCookieGenerator(CookieGenerator warnCookieGenerator) {
 		this.warnCookieGenerator = warnCookieGenerator;
 	}
 
@@ -240,13 +212,10 @@ public class AuthenticationViaFormAction {
 	 * @param warning
 	 *            Warning message.
 	 */
-	private void addWarningToContext(final MessageContext context, final Message warning) {
-		final MessageBuilder builder = new MessageBuilder()
-				.warning()
-				.code(warning.getCode())
-				.defaultText(warning.getDefaultMessage())
-				.args(warning.getParams());
+	private void addWarningToContext(MessageContext context, Message warning) {
+		final MessageBuilder builder = new MessageBuilder().warning().code(warning.getCode())
+				.defaultText(warning.getDefaultMessage()).args(warning.getParams());
 		context.addMessage(builder.build());
+		this.hasWarningMessages = true;
 	}
-
 }

@@ -23,6 +23,8 @@ import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.jasig.cas.util.InputEscape;
+
 /**
  * Credential for authenticating with a username and password.
  *
@@ -30,6 +32,7 @@ import javax.validation.constraints.Size;
  * @author Marvin S. Addison
  * @since 3.0
  */
+@SuppressWarnings("all")
 public class UsernamePasswordCredential implements Credential, Serializable {
 
 	/** Unique ID for serialization. */
@@ -61,7 +64,7 @@ public class UsernamePasswordCredential implements Credential, Serializable {
 	 *            Non-null password.
 	 */
 	public UsernamePasswordCredential(final String userName, final String password) {
-		this.username = userName;
+		this.username = InputEscape.escape(userName);
 		this.password = password;
 	}
 
@@ -92,7 +95,7 @@ public class UsernamePasswordCredential implements Credential, Serializable {
 	 *            The userName to set.
 	 */
 	public final void setUsername(final String userName) {
-		this.username = userName;
+		this.username = InputEscape.escape(userName);
 	}
 
 	/** {@inheritDoc} */
