@@ -3,7 +3,7 @@ apply from: 'caslibraries.gradle'
 apply plugin: "jacoco"
 apply plugin: "org.sonarqube"
 
-group 'de.bayern.stmelf.cas'
+group 'de.bayern.stmelf'
 
 subprojects {
     apply plugin: 'java'			
