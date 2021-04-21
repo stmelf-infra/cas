@@ -155,7 +155,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
 		for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
 			for (final Credential credential : credentials) {
-				populator.populateAttributes(builder, credential);
+				populator.populateAttributes(builder, credential, principal);
 			}
 		}
 

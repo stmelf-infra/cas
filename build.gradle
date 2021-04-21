@@ -8,8 +8,9 @@ group 'de.bayern.stmelf'
 subprojects {
     apply plugin: 'java'			
 	sourceCompatibility = 11
-	compileJava.options.encoding = 'UTF-8'	
-	
+	compileJava.options.encoding = 'UTF-8'
+	group 'de.bayern.stmelf'
+
 	dependencies {
 		implementation caslibraries.spring
 		implementation caslibraries.spring_webflow
@@ -30,4 +31,14 @@ subprojects {
 		testImplementation caslibraries.spring_test
 		testImplementation caslibraries.hsqldb
 	}
+
+	task createSourcesJar(type: Jar, dependsOn: classes) {
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
+
+	artifacts {
+		archives createSourcesJar
+	}
 }
+

@@ -80,7 +80,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
 				.addCredential(meta)
 				.addSuccess("test", new HandlerResult(handler, meta));
 
-		this.p.populateAttributes(builder, credential);
+		this.p.populateAttributes(builder, credential, null);
 		return builder;
 	}
 

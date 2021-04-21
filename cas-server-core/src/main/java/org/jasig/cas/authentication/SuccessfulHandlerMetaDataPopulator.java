@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.Principal;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,10 +37,10 @@ public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDat
 	public static final String SUCCESSFUL_AUTHENTICATION_HANDLERS = "successfulAuthenticationHandlers";
 
 	@Override
-	public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
+	public void populateAttributes(final AuthenticationBuilder builder, final Credential credential, Principal principal) {
 		Set<String> successes = builder.getSuccesses().keySet();
 		if (successes != null) {
-			successes = new HashSet<String>(successes);
+			successes = new HashSet<>(successes);
 		}
 
 		builder.addAttribute(SUCCESSFUL_AUTHENTICATION_HANDLERS, successes);
