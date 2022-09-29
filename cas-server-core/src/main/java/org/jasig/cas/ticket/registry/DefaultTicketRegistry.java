@@ -40,7 +40,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry {
 	private final Map<String, Ticket> cache;
 
 	public DefaultTicketRegistry() {
-		this.cache = new ConcurrentHashMap<String, Ticket>();
+		this.cache = new ConcurrentHashMap<>();
 	}
 
 	/**

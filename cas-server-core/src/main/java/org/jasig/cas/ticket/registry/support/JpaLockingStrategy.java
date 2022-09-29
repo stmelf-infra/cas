@@ -103,14 +103,14 @@ public class JpaLockingStrategy implements LockingStrategy {
 
 	/** {@inheritDoc} */
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public boolean acquire() {
 		Lock lock;
 		try {
 			lock = entityManager.find(Lock.class, applicationId, LockModeType.PESSIMISTIC_WRITE);
 		}
 		catch (final PersistenceException e) {
-			logger.debug("{} failed querying for {} lock.", new Object[] { uniqueId, applicationId, e });
+			logger.debug("{} failed querying for {} lock.",  uniqueId, applicationId, e );
 			return false;
 		}
 
@@ -138,7 +138,7 @@ public class JpaLockingStrategy implements LockingStrategy {
 
 	/** {@inheritDoc} */
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional
 	public void release() {
 		final Lock lock = entityManager.find(Lock.class, applicationId, LockModeType.PESSIMISTIC_WRITE);
 
@@ -163,7 +163,7 @@ public class JpaLockingStrategy implements LockingStrategy {
 	 *
 	 * @return Current lock owner or null if no one presently owns lock.
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public String getOwner() {
 		final Lock lock = entityManager.find(Lock.class, applicationId);
 		if (lock != null) {

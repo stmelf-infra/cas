@@ -31,8 +31,6 @@ import javax.persistence.Table;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -50,9 +48,6 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 	/** Unique Id for serialization. */
 	private static final long serialVersionUID = -8608149809180911599L;
 
-	/** Logger instance. */
-	private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketImpl.class);
-
 	/** The authenticated object for which this ticket was generated for. */
 	@Lob
 	@Column(name = "AUTHENTICATION", nullable = false)
@@ -65,11 +60,11 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 	/** The services associated to this ticket. */
 	@Lob
 	@Column(name = "SERVICES_GRANTED_ACCESS_TO", nullable = false)
-	private final HashMap<String, Service> services = new HashMap<String, Service>();
+	private final HashMap<String, Service> services = new HashMap<>();
 
 	@Lob
 	@Column(name = "SUPPLEMENTAL_AUTHENTICATIONS", nullable = false)
-	private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<Authentication>();
+	private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<>();
 
 	public TicketGrantingTicketImpl() {
 		// nothing to do
@@ -162,7 +157,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 	 */
 	@Override
 	public synchronized Map<String, Service> getServices() {
-		final Map<String, Service> map = new HashMap<String, Service>(services.size());
+		final Map<String, Service> map = new HashMap<>(services.size());
 		for (final String ticket : services.keySet()) {
 			map.put(ticket, services.get(ticket));
 		}
@@ -224,7 +219,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 	/** {@inheritDoc} */
 	@Override
 	public List<Authentication> getChainedAuthentications() {
-		final List<Authentication> list = new ArrayList<Authentication>();
+		final List<Authentication> list = new ArrayList<>();
 
 		list.add(getAuthentication());
 
@@ -239,8 +234,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 	/** {@inheritDoc} */
 	@Override
 	public boolean equals(final Object object) {
-		if (object == null
-				|| !(object instanceof TicketGrantingTicket)) {
+		if (!(object instanceof TicketGrantingTicket)) {
 			return false;
 		}
 

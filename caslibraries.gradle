@@ -1,27 +1,28 @@
 apply plugin: 'java'
 
 ext {
-	springversion = '5.3.3'
-	springsecurityversion = '5.4.4'
-	springldapcoreversion = '2.3.3.RELEASE'
+	springversion = '5.3.22'
+	springsecurityversion = '5.7.3'
+	springldapcoreversion = '2.4.1'
 	springwebflowversion = '2.5.1.RELEASE'
-	hibernateversion = '5.4.28.Final'
+	hibernateversion = '5.6.10.Final'
 	hibernatevalidatorversion = '5.4.3.Final'
 	commonslangversion = '2.6'
-	commonsioversion = '2.8.0'
+	commonsioversion = '2.11.0'
 	servletapiversion = '4.0.1'
 	quartzversion = '2.3.2'
 	jcifsversion = '1.3.17'
 	jcifsextversion = '0.9.4'
-	junitversion = '4.13.2'
+	junitversion = '5.9.0'
 	mockitoversion = '1.10.19'
-	casclientversion = '3.6.2'
+	casclientversion = '3.6.4'
 	javaxelversion = '3.0.0'
 	hsqldbversion = '2.3.2'
 	perf4jversion = '0.9.16'
 	inspektrversion = '1.1.GA'
 	persondirversion = '1.8.0'
-	junitversion = '5.7.1'
+	junitversion = '5.9.0'
+	log4jversion = '1.2.17'
 }
 
 ext.caslibraries = [
@@ -39,7 +40,7 @@ ext.caslibraries = [
 		'org.jasig.service.persondir:person-directory-impl:' + persondirversion
 	],
 	log4j: [
-		'log4j:log4j:1.2.17'
+		'log4j:log4j:' + log4jversion
 	],
 	spring: [
 		'org.springframework:spring-core:' + springversion,

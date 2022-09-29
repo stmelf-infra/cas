@@ -92,7 +92,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 		}
 		logger.debug("Acquired lock.  Proceeding with cleanup.");
 		try {
-			final List<Ticket> ticketsToRemove = new ArrayList<Ticket>();
+			final List<Ticket> ticketsToRemove = new ArrayList<>();
 			final Collection<Ticket> ticketsInCache;
 			ticketsInCache = this.ticketRegistry.getTickets();
 			for (final Ticket ticket : ticketsInCache) {

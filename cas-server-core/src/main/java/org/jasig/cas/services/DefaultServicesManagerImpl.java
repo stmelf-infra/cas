@@ -74,7 +74,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 		load();
 	}
 
-	@Transactional(readOnly = false)
+	@Transactional
 	@Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER", resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
 	public synchronized RegisteredService delete(final long id) {
 		final RegisteredService r = findServiceBy(id);
@@ -130,7 +130,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 		return findServiceBy(service) != null;
 	}
 
-	@Transactional(readOnly = false)
+	@Transactional
 	@Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER", resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
 	public synchronized RegisteredService save(final RegisteredService registeredService) {
 		final RegisteredService r = this.serviceRegistryDao.save(registeredService);

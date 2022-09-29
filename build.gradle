@@ -1,7 +1,6 @@
 apply from: 'caslibraries.gradle'
 
 apply plugin: "jacoco"
-apply plugin: "org.sonarqube"
 
 group 'de.bayern.stmelf'
 

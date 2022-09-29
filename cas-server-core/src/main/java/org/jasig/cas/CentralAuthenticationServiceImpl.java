@@ -267,7 +267,7 @@ public class CentralAuthenticationServiceImpl implements CentralAuthenticationSe
 	 */
 	@Audit(action = "TICKET_GRANTING_TICKET_DESTROYED", actionResolverName = "DESTROY_TICKET_GRANTING_TICKET_RESOLVER", resourceResolverName = "DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
 	@Profiled(tag = "DESTROY_TICKET_GRANTING_TICKET", logFailuresSeparately = false)
-	@Transactional(readOnly = false)
+	@Transactional
 	@Override
 	public List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
 		Assert.notNull(ticketGrantingTicketId);
@@ -295,7 +295,7 @@ public class CentralAuthenticationServiceImpl implements CentralAuthenticationSe
 	 */
 	@Audit(action = "SERVICE_TICKET", actionResolverName = "GRANT_SERVICE_TICKET_RESOLVER", resourceResolverName = "GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
 	@Profiled(tag = "GRANT_SERVICE_TICKET", logFailuresSeparately = false)
-	@Transactional(readOnly = false)
+	@Transactional
 	public String grantServiceTicket(
 			final String ticketGrantingTicketId,
 			final Service service,
@@ -407,7 +407,7 @@ public class CentralAuthenticationServiceImpl implements CentralAuthenticationSe
 
 	@Audit(action = "SERVICE_TICKET", actionResolverName = "GRANT_SERVICE_TICKET_RESOLVER", resourceResolverName = "GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
 	@Profiled(tag = "GRANT_SERVICE_TICKET", logFailuresSeparately = false)
-	@Transactional(readOnly = false)
+	@Transactional
 	public String grantServiceTicket(
 			final String ticketGrantingTicketId,
 			final Service service) throws TicketException {
@@ -425,7 +425,7 @@ public class CentralAuthenticationServiceImpl implements CentralAuthenticationSe
 	 */
 	@Audit(action = "PROXY_GRANTING_TICKET", actionResolverName = "GRANT_PROXY_GRANTING_TICKET_RESOLVER", resourceResolverName = "GRANT_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER")
 	@Profiled(tag = "GRANT_PROXY_GRANTING_TICKET", logFailuresSeparately = false)
-	@Transactional(readOnly = false)
+	@Transactional
 	public String delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
 			throws AuthenticationException, TicketException {
 
@@ -471,7 +471,7 @@ public class CentralAuthenticationServiceImpl implements CentralAuthenticationSe
 	 */
 	@Audit(action = "SERVICE_TICKET_VALIDATE", actionResolverName = "VALIDATE_SERVICE_TICKET_RESOLVER", resourceResolverName = "VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER")
 	@Profiled(tag = "VALIDATE_SERVICE_TICKET", logFailuresSeparately = false)
-	@Transactional(readOnly = false)
+	@Transactional
 	public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
 		Assert.notNull(serviceTicketId, "serviceTicketId cannot be null");
 		Assert.notNull(service, "service cannot be null");

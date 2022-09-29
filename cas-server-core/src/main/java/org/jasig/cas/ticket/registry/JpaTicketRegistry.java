@@ -44,7 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 3.2.1
  *
  */
-public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
+public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
 	@NotNull
 	@PersistenceContext
@@ -58,13 +58,13 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 		logger.debug("Updated ticket [{}].", ticket);
 	}
 
-	@Transactional(readOnly = false)
+	@Transactional
 	public void addTicket(final Ticket ticket) {
 		entityManager.persist(ticket);
 		logger.debug("Added ticket [{}] to registry.", ticket);
 	}
 
-	@Transactional(readOnly = false)
+	@Transactional
 	public boolean deleteTicket(final String ticketId) {
 		final Ticket ticket = getRawTicket(ticketId);
 
@@ -113,7 +113,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 		try {
 			if (logger.isDebugEnabled()) {
 				final Date creationDate = new Date(ticket.getCreationTime());
-				logger.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
+				logger.debug("Removing Ticket [{}] created: {}", ticket, creationDate);
 			}
 			entityManager.remove(ticket);
 		}
@@ -122,7 +122,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 		}
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Ticket getTicket(final String ticketId) {
 		return getProxiedTicketInstance(getRawTicket(ticketId));
 	}
@@ -141,7 +141,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 		return null;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Collection<Ticket> getTickets() {
 		final List<TicketGrantingTicketImpl> tgts = entityManager
 				.createQuery("select t from TicketGrantingTicketImpl t", TicketGrantingTicketImpl.class)
@@ -150,7 +150,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 				.createQuery("select s from ServiceTicketImpl s", ServiceTicketImpl.class)
 				.getResultList();
 
-		final List<Ticket> tickets = new ArrayList<Ticket>();
+		final List<Ticket> tickets = new ArrayList<>();
 		tickets.addAll(tgts);
 		tickets.addAll(sts);
 
@@ -166,14 +166,14 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 		return false;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public int sessionCount() {
 		return countToInt(
 				entityManager.createQuery(
 						"select count(t) from TicketGrantingTicketImpl t").getSingleResult());
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public int serviceTicketCount() {
 		return countToInt(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
 	}
