@@ -89,6 +89,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 		return Collections.emptyList();
 	}
 
+	@Override
+	public String getUserId() {
+		return authentication.getPrincipal().toString();
+	}
+
 	public List<Authentication> getChainedAuthentications() {
 		return Collections.emptyList();
 	}
