@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.ticket;
 
+import static org.jasig.cas.TestUtils.CONST_USERNAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -78,6 +79,7 @@ public class TicketGrantingTicketImplTests {
 
 		assertEquals(t.getAuthentication(), authentication);
 		assertEquals(t.getId(), t.toString());
+		assertEquals(CONST_USERNAME, t.getUserId());
 	}
 
 	@Test
@@ -110,7 +112,7 @@ public class TicketGrantingTicketImplTests {
 	@Test
 	public void testGetChainedPrincipalsWithOne() {
 		Authentication authentication = TestUtils.getAuthentication();
-		List<Authentication> principals = new ArrayList<Authentication>();
+		List<Authentication> principals = new ArrayList<>();
 		principals.add(authentication);
 
 		TicketGrantingTicket t = new TicketGrantingTicketImpl(
@@ -125,7 +127,7 @@ public class TicketGrantingTicketImplTests {
 	@Test
 	public void testCheckCreationTime() {
 		Authentication authentication = TestUtils.getAuthentication();
-		List<Authentication> principals = new ArrayList<Authentication>();
+		List<Authentication> principals = new ArrayList<>();
 		principals.add(authentication);
 
 		final long startTime = System.currentTimeMillis();
@@ -142,7 +144,7 @@ public class TicketGrantingTicketImplTests {
 	public void testGetChainedPrincipalsWithTwo() {
 		Authentication authentication = TestUtils.getAuthentication();
 		Authentication authentication1 = TestUtils.getAuthentication("test1");
-		List<Authentication> principals = new ArrayList<Authentication>();
+		List<Authentication> principals = new ArrayList<>();
 		principals.add(authentication);
 		principals.add(authentication1);
 

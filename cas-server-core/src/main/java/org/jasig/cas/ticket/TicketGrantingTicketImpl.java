@@ -66,6 +66,9 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 	@Column(name = "SUPPLEMENTAL_AUTHENTICATIONS", nullable = false)
 	private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<>();
 
+	@Column(name = "USER_ID", nullable = false)
+	private String userId;
+
 	public TicketGrantingTicketImpl() {
 		// nothing to do
 	}
@@ -93,6 +96,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 		Assert.notNull(authentication, "authentication cannot be null");
 
 		this.authentication = authentication;
+		this.userId = authentication.getPrincipal().toString();
 	}
 
 	/**
@@ -110,6 +114,11 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 			final Authentication authentication,
 			final ExpirationPolicy policy) {
 		this(id, null, authentication, policy);
+	}
+
+	@Override
+	public String getUserId() {
+		return this.userId;
 	}
 
 	/**

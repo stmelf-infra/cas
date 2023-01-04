@@ -54,6 +54,11 @@ public interface TicketGrantingTicket extends Ticket {
 	List<Authentication> getSupplementalAuthentications();
 
 	/**
+	 * @return user identification, never null
+	 */
+	String getUserId();
+
+	/**
 	 * Grant a ServiceTicket for a specific service.
 	 *
 	 * @param id
