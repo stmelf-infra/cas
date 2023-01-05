@@ -127,7 +127,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
 
 		return new TicketGrantingTicketImpl(
 				id,
-				(TicketGrantingTicketImpl) this.getGrantingTicket(),
+				this.getGrantingTicket(),
 				authentication,
 				expirationPolicy);
 	}

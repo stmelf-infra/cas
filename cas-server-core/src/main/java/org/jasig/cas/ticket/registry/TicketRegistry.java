@@ -82,9 +82,11 @@ public interface TicketRegistry {
 	 *
 	 * @param userId
 	 *            The id of user stored in TICKETGRANTINGTICKET#USER_ID
-	 * @return true if the ticket was removed and false if the ticket did not exist.
+	 * @return the amount of deleted tickets
 	 */
-	//boolean deleteTicketByUserId(String userId);
+	default int deleteTicketByUserId(String userId) {
+		throw new IllegalStateException("Not implemented");
+	}
 
 	/**
 	 * Retrieve all tickets from the registry.
