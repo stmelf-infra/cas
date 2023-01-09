@@ -67,8 +67,8 @@ public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
 	@Override
 	public int deleteTicketByUserId(String userId) {
-		int cnt = deleteTGTForUser(userId);
 		deleteSTForUser(userId);
+		int cnt = deleteTGTForUser(userId);
 		logger.debug("{} tickets deleted for {}.", cnt, userId);
 		return cnt;
 	}

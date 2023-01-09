@@ -101,9 +101,11 @@ public class JpaTicketRegistryTests {
 	public void testTicketGrantingTicketCreationAndDeletionByUser() {
 		TicketGrantingTicket newTgt = newTGT();
 		addTicketInTransaction(newTgt);
+		ServiceTicket newSt = grantServiceTicketInTransaction(newTgt);
 
 		TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
 		assertNotNull(tgtFromDb);
+		assertNotNull(getTicketInTransaction(newSt.getId()));
 
 		int delCount = deleteTicketByUserInTransaction(tgtFromDb.getUserId());
 		assertEquals(1, delCount);
@@ -111,8 +113,8 @@ public class JpaTicketRegistryTests {
 		int delCount1 = deleteTicketByUserInTransaction(tgtFromDb.getUserId());
 		assertEquals(0, delCount1);
 
-		TicketGrantingTicket tgtFromDbDel = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
-		assertNull(tgtFromDbDel);
+		assertNull(getTicketInTransaction(newTgt.getId()));
+		assertNull(getTicketInTransaction(newSt.getId()));
 	}
 
 	@Test
