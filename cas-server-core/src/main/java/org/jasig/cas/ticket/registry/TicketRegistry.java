@@ -78,6 +78,17 @@ public interface TicketRegistry {
 	boolean deleteTicket(String ticketId);
 
 	/**
+	 * Remove a specific ticket from the registry.
+	 *
+	 * @param userId
+	 *            The id of user stored in TICKETGRANTINGTICKET#USER_ID
+	 * @return the amount of deleted tickets
+	 */
+	default int deleteTicketByUserId(String userId) {
+		throw new IllegalStateException("Not implemented");
+	}
+
+	/**
 	 * Retrieve all tickets from the registry.
 	 *
 	 * @return collection of tickets currently stored in the registry. Tickets might or might not be valid i.e. expired.

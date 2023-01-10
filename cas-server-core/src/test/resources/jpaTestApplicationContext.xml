@@ -26,18 +26,7 @@
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-
-	<!--
-	NOTE:
-	This bean supports testing JPA components on multiple platforms.
-	In order to test a particular database platform, do the following:
-	 1. Place a database.properties at the root of the cas-server-core module directory
-	 2. Copy the database driver jar to cas-server-core/target/test-lib/jdbc-driver.jar
-	 3. OPTIONAL: Set cas.jpa.concurrent system property to invoke concurrent tests
-	 4. Execute test goal as usual
-	 -->
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-		  p:location="file:database.properties"
 		  p:ignoreResourceNotFound="true"
 		  p:ignoreUnresolvablePlaceholders="true">
 		<property name="properties">
@@ -46,7 +35,7 @@
 				<prop key="database.user">sa</prop>
 				<prop key="database.password"></prop>
 				<prop key="database.url">jdbc:hsqldb:mem:cas-ticket-registry</prop>
-				<prop key="database.dialect">org.hibernate.dialect.HSQLDialect</prop>
+				<prop key="database.dialect">org.jasig.cas.TestingHSQLDialect</prop>
 				<prop key="database.batchSize">1</prop>
 			</props>
 		</property>

@@ -189,6 +189,11 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
 		}
 
 		@Override
+		public String getUserId() {
+			return getTicket().getUserId();
+		}
+
+		@Override
 		public ServiceTicket grantServiceTicket(
 				final String id,
 				final Service service,

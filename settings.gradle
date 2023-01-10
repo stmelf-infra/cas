@@ -1,8 +1,8 @@
+rootProject.name = 'cas'
+
 include 'cas-server-core'
 include 'cas-server-core-test'
 include 'cas-server-support-jdbc'
 include 'cas-server-webapp-support'
 include 'cas-server-support-legacy'
 include 'cas-server-support-spnego'
-
-rootProject.name = 'cas'

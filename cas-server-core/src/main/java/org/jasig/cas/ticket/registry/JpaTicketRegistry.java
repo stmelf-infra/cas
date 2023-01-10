@@ -26,6 +26,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.ticket.ServiceTicket;
@@ -44,6 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @since 3.2.1
  *
  */
+@Transactional
 public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
 	@NotNull
@@ -58,15 +60,35 @@ public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 		logger.debug("Updated ticket [{}].", ticket);
 	}
 
-	@Transactional
 	public void addTicket(final Ticket ticket) {
 		entityManager.persist(ticket);
 		logger.debug("Added ticket [{}] to registry.", ticket);
 	}
 
-	@Transactional
+	@Override
+	public int deleteTicketByUserId(String userId) {
+		deleteSTForUser(userId);
+		int cnt = deleteTGTForUser(userId);
+		logger.debug("{} tickets deleted for {}.", cnt, userId);
+		return cnt;
+	}
+
+	private int deleteSTForUser(String userId) {
+		Query query = entityManager.createQuery(
+				"delete ServiceTicketImpl st where st.ticketGrantingTicket.id in (select id from TicketGrantingTicketImpl t where t.userId = :uid)");
+		query.setParameter("uid", userId);
+		return query.executeUpdate();
+	}
+
+	private int deleteTGTForUser(String userId) {
+		Query query = entityManager.createQuery("delete from TicketGrantingTicketImpl t where t.userId = :uid");
+		query.setParameter("uid", userId);
+		return query.executeUpdate();
+	}
+
+	@Override
 	public boolean deleteTicket(final String ticketId) {
-		final Ticket ticket = getRawTicket(ticketId);
+		final Ticket ticket = getRawTicketById(ticketId);
 
 		if (ticket == null) {
 			return false;
@@ -124,10 +146,10 @@ public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
 	@Transactional
 	public Ticket getTicket(final String ticketId) {
-		return getProxiedTicketInstance(getRawTicket(ticketId));
+		return getProxiedTicketInstance(getRawTicketById(ticketId));
 	}
 
-	private Ticket getRawTicket(final String ticketId) {
+	private Ticket getRawTicketById(final String ticketId) {
 		try {
 			if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
 				return entityManager.find(TicketGrantingTicketImpl.class, ticketId, LockModeType.PESSIMISTIC_WRITE);
@@ -166,14 +188,14 @@ public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 		return false;
 	}
 
-	@Transactional
+	@Override
 	public int sessionCount() {
 		return countToInt(
 				entityManager.createQuery(
 						"select count(t) from TicketGrantingTicketImpl t").getSingleResult());
 	}
 
-	@Transactional
+	@Override
 	public int serviceTicketCount() {
 		return countToInt(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
 	}
