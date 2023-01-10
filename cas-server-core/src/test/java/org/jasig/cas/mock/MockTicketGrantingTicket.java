@@ -91,7 +91,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
 	@Override
 	public String getUserId() {
-		return authentication.getPrincipal().toString();
+		return authentication.getPrincipal().getId();
 	}
 
 	public List<Authentication> getChainedAuthentications() {

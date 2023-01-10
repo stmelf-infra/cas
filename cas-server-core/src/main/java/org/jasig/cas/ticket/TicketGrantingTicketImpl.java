@@ -96,7 +96,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 		Assert.notNull(authentication, "authentication cannot be null");
 
 		this.authentication = authentication;
-		this.userId = authentication.getPrincipal() == null ? "UNKNOWN" : authentication.getPrincipal().toString();
+		this.userId = authentication.getPrincipal() == null ? "UNKNOWN" : authentication.getPrincipal().getId();
 	}
 
 	/**
