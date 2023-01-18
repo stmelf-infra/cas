@@ -75,14 +75,14 @@ public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
 	private int deleteSTForUser(String userId) {
 		Query query = entityManager.createQuery(
-				"delete ServiceTicketImpl st where st.ticketGrantingTicket.id in (select id from TicketGrantingTicketImpl t where t.userId = :uid)");
-		query.setParameter("uid", userId);
+				"delete ServiceTicketImpl st where st.ticketGrantingTicket.id in (select id from TicketGrantingTicketImpl t where upper(t.userId) = :uid)");
+		query.setParameter("uid", userId.toUpperCase());
 		return query.executeUpdate();
 	}
 
 	private int deleteTGTForUser(String userId) {
-		Query query = entityManager.createQuery("delete from TicketGrantingTicketImpl t where t.userId = :uid");
-		query.setParameter("uid", userId);
+		Query query = entityManager.createQuery("delete from TicketGrantingTicketImpl t where upper(t.userId) = :uid");
+		query.setParameter("uid", userId.toUpperCase());
 		return query.executeUpdate();
 	}
 
