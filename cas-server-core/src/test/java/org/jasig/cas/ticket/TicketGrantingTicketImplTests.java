@@ -24,11 +24,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -44,6 +48,59 @@ import org.junit.Test;
 public class TicketGrantingTicketImplTests {
 
 	private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+
+	@Test
+	public void testUserId_principalSet() {
+		TicketGrantingTicket t = new TicketGrantingTicketImpl(
+				"test",
+				null,
+				TestUtils.getAuthentication(),
+				new NeverExpiresExpirationPolicy());
+
+		assertEquals("test", t.getUserId());
+	}
+
+	@Test
+	public void testUserId_principalNotSet() {
+		TicketGrantingTicket t = new TicketGrantingTicketImpl(
+				"test",
+				null,
+				new Authentication() {
+
+					@Override
+					public Principal getPrincipal() {
+						return null;
+					}
+
+					@Override
+					public Date getAuthenticatedDate() {
+						return null;
+					}
+
+					@Override
+					public Map<String, Object> getAttributes() {
+						return null;
+					}
+
+					@Override
+					public List<CredentialMetaData> getCredentials() {
+						return null;
+					}
+
+					@Override
+					public Map<String, HandlerResult> getSuccesses() {
+						return null;
+					}
+
+					@Override
+					public Map<String, Class<? extends Exception>> getFailures() {
+						return null;
+					}
+				},
+				new NeverExpiresExpirationPolicy());
+
+		assertEquals("UNKNOWN", t.getUserId());
+	}
 
 	@Test
 	public void testEquals() {
