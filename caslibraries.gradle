@@ -14,7 +14,7 @@ ext {
 	jcifsversion = '1.3.17'
 	jcifsextversion = '0.9.4'
 	junitversion = '5.9.0'
-	mockitoversion = '1.10.19'
+	mockitoversion = '5.2.0'
 	casclientversion = '3.6.4'
 	javaxelversion = '3.0.0'
 	hsqldbversion = '2.3.2'
@@ -26,57 +26,57 @@ ext {
 }
 
 ext.caslibraries = [
-	hsqldb: [
-		'org.hsqldb:hsqldb:' + hsqldbversion
-	],
-	perf4j: [
-		'org.perf4j:perf4j:' + perf4jversion
-	],
-	inspektr: [
-		'com.github.inspektr:inspektr-audit:' + inspektrversion
-	],
-	persondir: [
-		'org.jasig.service.persondir:person-directory-api:' + persondirversion,
-		'org.jasig.service.persondir:person-directory-impl:' + persondirversion
-	],
-	log4j: [
-		'log4j:log4j:' + log4jversion
-	],
-	spring: [
-		'org.springframework:spring-core:' + springversion,
-		'org.springframework:spring-context-support:' + springversion,
-		'org.springframework:spring-orm:' + springversion,
-		'org.jasig.cas.client:cas-client-core:' + casclientversion,
-		'org.springframework.security:spring-security-config:' + springsecurityversion,
-		'org.springframework.ldap:spring-ldap-core:' + springldapcoreversion			
-	],
-	spring_webflow: [
-			'org.springframework.webflow:spring-webflow:' + springwebflowversion
-	],
-	hibernate: [
-		'org.hibernate:hibernate-core:' + hibernateversion,
-		'org.hibernate:hibernate-validator:' + hibernatevalidatorversion
-	],
-	commons_lang: 'commons-lang:commons-lang:' + commonslangversion,
-	commons_io: 'commons-io:commons-io:' + commonsioversion,
-	servlet_api: 'javax.servlet:javax.servlet-api:' + servletapiversion,
-	quartz: [
-		'org.quartz-scheduler:quartz:' + quartzversion
-	],
-	jcifs: [
-		'org.samba.jcifs:jcifs:' + jcifsversion,
-		'org.samba.jcifs:jcifs-ext:' + jcifsextversion
-	],
-	junit: [
-		'org.junit.jupiter:junit-jupiter-api:' + junitversion,
-		'org.junit.jupiter:junit-jupiter-params:' + junitversion,
-		'org.junit.jupiter:junit-jupiter-engine:' + junitversion,
-		'org.junit.vintage:junit-vintage-engine:' + junitversion
-	],
-	mockito: 'org.mockito:mockito-core:' + mockitoversion,
-	spring_test: 'org.springframework:spring-test:' + springversion,
-	javax_el: [
-		'javax.el:javax.el-api:' + javaxelversion,
-		'org.glassfish:javax.el:' + javaxelversion
-	]
+		hsqldb        : [
+				'org.hsqldb:hsqldb:' + hsqldbversion
+		],
+		perf4j        : [
+				'org.perf4j:perf4j:' + perf4jversion
+		],
+		inspektr      : [
+				'com.github.inspektr:inspektr-audit:' + inspektrversion
+		],
+		persondir     : [
+				'org.jasig.service.persondir:person-directory-api:' + persondirversion,
+				'org.jasig.service.persondir:person-directory-impl:' + persondirversion
+		],
+		log4j         : [
+				'log4j:log4j:' + log4jversion
+		],
+		spring        : [
+				'org.springframework:spring-core:' + springversion,
+				'org.springframework:spring-context-support:' + springversion,
+				'org.springframework:spring-orm:' + springversion,
+				'org.jasig.cas.client:cas-client-core:' + casclientversion,
+				'org.springframework.security:spring-security-config:' + springsecurityversion,
+				'org.springframework.ldap:spring-ldap-core:' + springldapcoreversion
+		],
+		spring_webflow: [
+				'org.springframework.webflow:spring-webflow:' + springwebflowversion
+		],
+		hibernate     : [
+				'org.hibernate:hibernate-core:' + hibernateversion,
+				'org.hibernate:hibernate-validator:' + hibernatevalidatorversion
+		],
+		commons_lang  : 'commons-lang:commons-lang:' + commonslangversion,
+		commons_io    : 'commons-io:commons-io:' + commonsioversion,
+		servlet_api   : 'javax.servlet:javax.servlet-api:' + servletapiversion,
+		quartz        : [
+				'org.quartz-scheduler:quartz:' + quartzversion
+		],
+		jcifs         : [
+				'org.samba.jcifs:jcifs:' + jcifsversion,
+				'org.samba.jcifs:jcifs-ext:' + jcifsextversion
+		],
+		junit         : [
+				'org.junit.jupiter:junit-jupiter-api:' + junitversion,
+				'org.junit.jupiter:junit-jupiter-params:' + junitversion,
+				'org.junit.jupiter:junit-jupiter-engine:' + junitversion,
+				'org.junit.vintage:junit-vintage-engine:' + junitversion
+		],
+		mockito       : 'org.mockito:mockito-core:' + mockitoversion,
+		spring_test   : 'org.springframework:spring-test:' + springversion,
+		javax_el      : [
+				'javax.el:javax.el-api:' + javaxelversion,
+				'org.glassfish:javax.el:' + javaxelversion
+		]
 ]

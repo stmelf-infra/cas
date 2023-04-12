@@ -22,12 +22,12 @@ package org.jasig.cas;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -86,7 +86,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
 	private CentralAuthenticationServiceImpl cas;
 	private Authentication authentication;
 
-	private static class VerifyServiceByIdMatcher extends ArgumentMatcher<Service> {
+	private static class VerifyServiceByIdMatcher implements ArgumentMatcher<Service> {
 		private String id;
 
 		public VerifyServiceByIdMatcher(final String id) {
@@ -94,11 +94,9 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
 		}
 
 		@Override
-		public boolean matches(final Object argument) {
-			final Service s = (Service) argument;
-			return s != null && s.getId().equals(this.id);
+		public boolean matches(Service argument) {
+			return argument != null && argument.getId().equals(this.id);
 		}
-
 	}
 
 	@Before
@@ -107,7 +105,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
 		when(this.authentication.getAuthenticatedDate()).thenReturn(new Date());
 		final CredentialMetaData metadata =
 				new BasicCredentialMetaData(TestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
-		final Map<String, HandlerResult> successes = new HashMap<String, HandlerResult>();
+		final Map<String, HandlerResult> successes = new HashMap<>();
 		successes.put("handler1", new HandlerResult(mock(AuthenticationHandler.class), metadata));
 		when(this.authentication.getCredentials()).thenReturn(Arrays.asList(metadata));
 		when(this.authentication.getSuccesses()).thenReturn(successes);

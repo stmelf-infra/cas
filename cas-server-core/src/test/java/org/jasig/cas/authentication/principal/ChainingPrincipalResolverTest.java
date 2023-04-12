@@ -31,7 +31,6 @@ import java.util.Collections;
 
 import org.jasig.cas.authentication.Credential;
 import org.junit.Test;
-import org.mockito.ArgumentMatcher;
 
 /**
  * Unit test for {@link ChainingPrincipalResolver}.
@@ -67,12 +66,7 @@ public class ChainingPrincipalResolverTest {
 
 		final PrincipalResolver resolver2 = mock(PrincipalResolver.class);
 		when(resolver2.supports(any(Credential.class))).thenReturn(false);
-		when(resolver2.resolve(argThat(new ArgumentMatcher<Credential>() {
-			@Override
-			public boolean matches(final Object o) {
-				return ((Credential) o).getId().equals("output");
-			}
-		}))).thenReturn(
+		when(resolver2.resolve(argThat(o -> o.getId().equals("output")))).thenReturn(
 				new SimplePrincipal("final", Collections.<String, Object> singletonMap("mail", "final@example.com")));
 
 		final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
