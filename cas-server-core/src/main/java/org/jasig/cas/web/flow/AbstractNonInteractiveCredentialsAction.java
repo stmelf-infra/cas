@@ -44,7 +44,7 @@ import org.springframework.webflow.execution.RequestContext;
 public abstract class AbstractNonInteractiveCredentialsAction extends
 		AbstractAction {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/** Instance of CentralAuthenticationService. */
 	@NotNull
