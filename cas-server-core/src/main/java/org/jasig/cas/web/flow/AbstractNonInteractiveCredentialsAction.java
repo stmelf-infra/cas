@@ -26,8 +26,6 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -43,8 +41,6 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public abstract class AbstractNonInteractiveCredentialsAction extends
 		AbstractAction {
-
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/** Instance of CentralAuthenticationService. */
 	@NotNull
