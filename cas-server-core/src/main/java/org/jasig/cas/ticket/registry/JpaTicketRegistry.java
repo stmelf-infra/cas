@@ -150,17 +150,11 @@ public class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 	}
 
 	private Ticket getRawTicketById(final String ticketId) {
-		try {
-			if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
-				return entityManager.find(TicketGrantingTicketImpl.class, ticketId, LockModeType.PESSIMISTIC_WRITE);
-			}
+		if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
+			return entityManager.find(TicketGrantingTicketImpl.class, ticketId, LockModeType.PESSIMISTIC_WRITE);
+		}
 
-			return entityManager.find(ServiceTicketImpl.class, ticketId);
-		}
-		catch (final Exception e) {
-			logger.error("Error getting ticket {} from registry.", ticketId, e);
-		}
-		return null;
+		return entityManager.find(ServiceTicketImpl.class, ticketId);
 	}
 
 	@Transactional
