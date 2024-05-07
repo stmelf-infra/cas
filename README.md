@@ -1,4 +1,4 @@
-# Central Authentication Service (CAS) - fork based on 4.7.0
+# Central Authentication Service (CAS) - fork by STMLF based on 4.7.0
 
 <http://www.jasig.org/cas>
 
